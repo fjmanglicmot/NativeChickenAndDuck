@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BreederEggQualityRecordsLogCreate1"
+    android:background="@color/teal"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/navigation_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:gravity="start|end">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Egg Quality Parameters"
+            android:textColor="#000"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Family: 0001"
+            android:textStyle="bold"
+            android:layout_margin="10dp"/>
+        <EditText
+            android:id="@+id/breeder_egg_quality_records_date_eggset"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:hint="Date Egg Set"
+            android:inputType="text"
+            android:textSize="14sp" />
+
+
+
+        <EditText
+            android:id="@+id/breeder_egg_quality_records_noEggs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:hint="No. of Eggs Set"
+            android:inputType="number"
+            android:textSize="14sp"
+            />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|end">
+        <Button
+            android:id="@+id/breeder_egg_quality_records_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:background="@color/turmeric"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

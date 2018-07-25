@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BreederHatcheryRecordsLogDialog1"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Hatchery Parameters"
+        android:textColor="#000"
+        android:textSize="20sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Family: 0001"
+        android:textStyle="bold"
+        android:layout_margin="15dp"/>
+
+    <EditText
+        android:id="@+id/breeder_hatching_records_nofertile"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:hint="No. of Fertile Eggs (pcs)"
+        android:inputType="number"
+        android:textSize="14sp"
+        />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/capacity"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/action_ok"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/capacity"
+            android:layout_margin="15dp"
+            android:background="@drawable/buttonstylepaprika"
+            android:drawableLeft="@drawable/ic_add_black_24dp"
+            android:text="Add"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+</LinearLayout>
