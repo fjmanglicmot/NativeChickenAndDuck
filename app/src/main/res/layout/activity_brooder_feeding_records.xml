@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BrooderFeedingRecords"
+    tools:context=".BroodersDirectory.BrooderFeedingRecordsActivity"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true">
 
@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-
         <LinearLayout
             android:id="@+id/pen_layout"
             android:layout_width="match_parent"
@@ -29,169 +28,162 @@
 
 
             <TextView
+                android:id="@+id/brooder_pen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="Brooder\nFeeding Record"
+                android:text="Brooder Feeding Records"
                 android:textColor="#000"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="6dp"
-                android:drawableLeft="@drawable/ic_search_black_24dp"
-                android:hint="Search"
-                android:inputType="text"
-                android:textSize="15dp" />
+
         </LinearLayout>
 
         <LinearLayout
-        android:id="@+id/pen_frame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.CardView
+            android:id="@+id/brooder_inventory_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:layout_margin="15dp">
-            <TableLayout
-                android:id="@+id/pen_table"
+            android:orientation="vertical">
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:stretchColumns="*"
-                android:layout_marginBottom="10dp">
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:layout_margin="15dp"
+                >
 
-                <TableRow
+                <TableLayout
+                    android:id="@+id/breeder_gen_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*"
+                  >
+
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                       >
+
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_code"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:text="Date"
+                            android:textStyle="bold"
+                            />
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_family"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Tag" />
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_line"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Offered\n(g)" />
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_gen"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Refused\n(g)" />
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_batch_date"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Remarks" />
+
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_cull"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Cull" />
+
+                    </TableRow>
+
+
+
+
+                </TableLayout>
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewBrooderFeedingRecords"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:stretchColumns="*"
-                    android:gravity="center"
+                    android:layout_marginTop="40dp"
+
                     >
 
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textSize="12sp"
-                        android:text="Date Fed"
-                        android:textStyle="bold"
-                        />
-
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Type Offered" />
-
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Type Refused" />
-
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Amount Offered" />
-
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Amount Refused" />
-
-                    <TextView
-                        android:layout_width="45dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Edit" />
-
-                </TableRow>
+                </android.support.v7.widget.RecyclerView>
 
 
 
-            </TableLayout>
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
-            android:orientation="vertical">
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/pen_frame"
-                android:gravity="center"
+                android:layout_gravity="bottom"
                 android:orientation="horizontal">
 
-                <Button
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Page 1" />
 
-                <Button
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />
-            </LinearLayout>
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/footer"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_below="@+id/pen_frame"
-                android:layout_marginTop="30dp"
-                android:background="@color/teal"
-                android:gravity="bottom"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="250dp"
-                    android:layout_height="90dp"
-                    android:layout_gravity="end"
+                <ImageButton
+
+                    android:id="@+id/open_dialog"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginBottom="28dp"
-                    android:layout_marginStart="16dp"
-                    android:src="@drawable/logo5"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/floatingbutton"
+                    android:src="@drawable/ic_add_black_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
+
+            </android.support.v7.widget.CardView>
         </LinearLayout>
+
+
+
+
+
+
+
+
     </LinearLayout>
+
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

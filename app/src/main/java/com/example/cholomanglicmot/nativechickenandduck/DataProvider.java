@@ -1,13 +1,8 @@
 package com.example.cholomanglicmot.nativechickenandduck;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 public class DataProvider {
 
@@ -17,25 +12,30 @@ public class DataProvider {
         //no child
 
         List<String> Create_Pens = new ArrayList<String>();
+        List<String> Create_Generation_And_Lines = new ArrayList<String>();
+        List<String> Create_Families = new ArrayList<String>();
+        List<String> Create_Breeders = new ArrayList<String>();
+        List<String> Create_Brooders = new ArrayList<String>();
+        List<String> Create_Replacements = new ArrayList<String>();
         //no child
 
-        List<String> Breeder = new ArrayList<String>();
+  /*      List<String> Breeder = new ArrayList<String>();
         Breeder.add("Generation");
         Breeder.add("Family Records");
         Breeder.add("Daily Records");
         Breeder.add("Hatchery Records");
-        Breeder.add("Egg Quality Records");
+        Breeder.add("Egg Quality Records");*/
 
-        List<String> Replacement = new ArrayList<String>();
+/*        List<String> Replacement = new ArrayList<String>();
         Replacement.add("Add Replacement Stocks");
         Replacement.add("Phenotypic and Morphometric");
-        Replacement.add("Feeding Record");
+        Replacement.add("Feeding Record");*/
 
-        List<String> Brooders = new ArrayList<String>();
-        Brooders.add("Growth Performance");
-        Brooders.add("Feeding Records");
+/*
+        Create_Brooders.add("Growth Performance");
+        Create_Brooders.add("Feeding Records");*/
 
-        List<String> Mortality_Culling_and_Sales = new ArrayList<String>();
+
         //no child
 
         List<String> Reports = new ArrayList<String>();
@@ -44,11 +44,15 @@ public class DataProvider {
 
 
         ProjectDetails.put("Dashboard", Dashboard);
-        ProjectDetails.put("Create Pens", Create_Pens);
-        ProjectDetails.put("Breeder", Breeder);
-        ProjectDetails.put("Replacement", Replacement);
-        ProjectDetails.put("Brooders", Brooders);
-        ProjectDetails.put("Mortality, Culling, and Sales",Mortality_Culling_and_Sales);
+        ProjectDetails.put("Pens", Create_Pens);
+        ProjectDetails.put("Generations and Lines", Create_Generation_And_Lines);
+        ProjectDetails.put("Families", Create_Families);
+        ProjectDetails.put("Breeders", Create_Breeders);
+        //ProjectDetails.put("Breeders", Breeder);
+        ProjectDetails.put("Replacements", Create_Replacements);
+        ProjectDetails.put("Brooders", Create_Brooders);
+
+
         ProjectDetails.put("Reports", Reports);
         ProjectDetails.put("Farm Settings", Farm_Settings);
 

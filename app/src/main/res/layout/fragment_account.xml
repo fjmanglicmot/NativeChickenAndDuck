@@ -1,150 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="285dp"
+    android:layout_height="match_parent"
     android:background="#eeeeee"
-    tools:context=".AccountFragment">
+    tools:context=".DashboardDirectory.AccountFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+        <android.support.v7.widget.CardView
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="300dp"
-        android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/farm_id"
-                android:textSize="17sp" />
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/farm_id"
+                    android:textSize="17sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="25dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/profile_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="0dp"
-                android:text="QUEBAI"
-                android:textSize="29sp"
-                android:textStyle="bold" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"></LinearLayout>
+                android:layout_marginTop="25dp"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/profile_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:text="QUEBAI"
+                    android:textSize="29sp"
+                    android:textStyle="bold" />
 
-    </android.support.v7.widget.CardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"></LinearLayout>
 
-    <LinearLayout
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="125dp"
-        android:layout_gravity="center_horizontal"
-        >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_format_list_bulleted_black_24dp"/>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
             >
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/breed"
-                android:layout_marginLeft="5dp"/>
-
-            <EditText
-                android:id="@+id/profile_breed"
-                android:layout_width="150dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_format_list_bulleted_black_24dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:editable="false"
-                android:inputType="none"
-                android:text="BP"
-                android:background="@android:color/transparent"
-                android:textSize="14sp" />
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/breed"
+                    android:layout_marginLeft="5dp"/>
+
+                <EditText
+                    android:id="@+id/profile_breed"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:editable="false"
+                    android:inputType="none"
+                    android:text="BP"
+                    android:background="@android:color/transparent"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_file_upload_black_24dp" />
+
+            <LinearLayout
+                android:layout_marginTop="-5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/upload" />
+
+                <EditText
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Upload profile photo"
+                    android:inputType="none"
+                    android:editable="false"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/button4"
+                    android:layout_width="31dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_folder_open_black_24dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_marginTop="10dp"
+        android:gravity="bottom"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="175dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_file_upload_black_24dp" />
-
-        <LinearLayout
-            android:layout_marginTop="-5dp"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+>
+        <Button
+            android:id="@+id/account_submit_button"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="@string/upload" />
-
-            <EditText
-                android:layout_width="129dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Upload profile photo"
-                android:inputType="none"
-                android:editable="false"
-                android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="31dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/ic_folder_open_black_24dp" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/turmeric"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/account_submit_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/turmeric"
-        android:text="@string/submit"
-        android:textColor="@color/white" />
+
+
+
+
 </FrameLayout>

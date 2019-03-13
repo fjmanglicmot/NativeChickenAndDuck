@@ -7,11 +7,11 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Native Chicken and Itik Pinas"
+        android:label="Native Chicken and Duck"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".DashboardDirectory.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,76 +19,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".DashboardDirectory.MainActivity"
             android:windowSoftInputMode="stateHidden" />
+
+
         <activity
-            android:name=".BreederFamilyRecordsAdd"
+            android:name=".PensDirectory.CreatePen"
             android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederDailyRecords"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederDailyRecordsRecords"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederDailyRecordsAddEgg"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederDailyRecordsAddFeeding"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".CreatePen"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederGeneration"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederFamilyRecords"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementIndividualRecord"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementIndividualRecordAdd"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometric"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddPheno"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddPheno2"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddPheno3"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddPheno4"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddPheno5"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".ReplacementPhenotypicMorphometricAddMorpho"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederHatcheryRecords"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederHatcheryRecordsLog"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".BreederHatcheryRecordsLogCreate1"
-            android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".BreederEggQualityRecords" />
-        <activity android:name=".BreederEggQualityRecordsLog" />
-        <activity android:name=".BreederEggQualityRecordsLogCreate1" />
-        <activity android:name=".ReplacementFeedingRecord" />
-        <activity android:name=".ReplacementFeedingRecordAdd" />
-        <activity android:name=".BroodersGrowthPerformance" />
-        <activity android:name=".BroodersGrowthPerformanceAdd" />
-        <activity android:name=".BrooderFeedingRecords" />
+
+        <activity android:name=".GenerationsAndLinesDirectory.CreateGenerationsAndLines" />
+        <activity android:name=".FamilyDirectory.CreateFamilies" />
+        <activity android:name=".BreedersDirectory.CreateBreeders" />
+        <activity android:name=".BroodersDirectory.CreateBrooders" />
+        <activity android:name=".BroodersDirectory.BrooderInventoryActivity" />
+        <activity android:name=".BroodersDirectory.BrooderFeedingRecordsActivity" />
+        <activity android:name=".BroodersDirectory.BrooderGrowthRecordsActivity" />
+        <activity android:name=".ReplacementsDirectory.CreateReplacements" />
+        <activity android:name=".ReplacementsDirectory.ReplacementInventoryActivity" />
+        <activity android:name=".ReplacementsDirectory.ReplacementFeedingRecordsActivity" />
+        <activity android:name=".ReplacementsDirectory.ReplacementGrowthRecordsActivity" />
+        <activity android:name=".ReplacementsDirectory.ReplacementPhenoMorphoRecordsActivity" />
+        <activity android:name=".ReplacementsDirectory.ReplacementPhenoMorphoViewActivity" />
+        <activity android:name=".BreedersDirectory.BreederFeedingRecordsActivity" />
+        <activity android:name=".BreedersDirectory.EggProductionRecords" />
+        <activity android:name=".BreedersDirectory.HatcheryRecords" />
+        <activity android:name=".BreedersDirectory.EggQualityRecords" />
+        <activity android:name=".BreedersDirectory.MortalityAndSalesRecords" />
+        <activity android:name=".BreedersDirectory.BreederPhenoMorphoRecordsActivity" />
+        <activity android:name=".BreedersDirectory.BreederPhenoMorphoViewActivity" />
+
     </application>
 
 </manifest>

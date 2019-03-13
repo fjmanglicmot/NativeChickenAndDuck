@@ -9,10 +9,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 public class ProjectAdapter extends BaseExpandableListAdapter {
 
@@ -79,14 +77,20 @@ public class ProjectAdapter extends BaseExpandableListAdapter {
             case "Dashboard":
                 parent_imageview.setImageResource(R.drawable.ic_dashboard_black_24dp);
                 break;
-            case "Create Pens":
-                parent_imageview.setImageResource(R.drawable.ic_add_circle_outline_black_24dp);
+            case "Pens":
+                parent_imageview.setImageResource(R.drawable.ic_view_column_black_24dp);
                 break;
-            case "Breeder":
-                parent_imageview.setImageResource(R.drawable.ic_add_circle_outline_black_24dp);
+            case "Generations and Lines":
+                parent_imageview.setImageResource(R.drawable.ic_linear_scale_black_24dp);
                 break;
-            case "Replacement":
-                parent_imageview.setImageResource(R.drawable.ic_add_circle_black2_24dp);
+            case "Families":
+                parent_imageview.setImageResource(R.drawable.ic_add_to_photos_black_24dp);
+                break;
+            case "Breeders":
+                parent_imageview.setImageResource(R.drawable.ic_stars_black_24dp);
+                break;
+            case "Replacements":
+                parent_imageview.setImageResource(R.drawable.ic_sync_black_24dp);
                 break;
             case "Brooders":
                 parent_imageview.setImageResource(R.drawable.ic_child_friendly_black_24dp);

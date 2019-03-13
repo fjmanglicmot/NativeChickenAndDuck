@@ -38,6 +38,7 @@
     <string name="grower">Grower</string>
     <string name="layer">Layer</string>
     <string name="add_generation">Add Generation</string>
+    <string name="add_line">Add Line</string>
     <string name="egg_production">Egg Production</string>
     <string name="feeding_records">Feeding Records</string>
 
@@ -155,5 +156,12 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
+
+    <string-array name="reason">
+        <item>Sickness</item>
+        <item>Trauma - Natural</item>
+        <item>Trauma - Predatory</item>
+    </string-array>
+
 
 </resources>
