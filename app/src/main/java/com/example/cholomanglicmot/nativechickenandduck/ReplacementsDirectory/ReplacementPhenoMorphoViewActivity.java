@@ -29,6 +29,8 @@ public class ReplacementPhenoMorphoViewActivity extends AppCompatActivity {
     ArrayList<Replacements> arrayListReplacements = new ArrayList<>();
     ArrayList<Replacement_PhenoMorphoView>arrayList_temp = new ArrayList<>();
     ArrayList<Replacement_PhenoMorphoView>arrayListPhenoMorpho = new ArrayList<>();
+    ArrayList<Integer>arrayListValuesID = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +77,7 @@ StringBuffer buffer = new StringBuffer();
         //////////////////////////DATABASE
 
         ////inventory
-        Cursor cursor_inventory = myDb.getAllDataFromReplacementInventory();
+/*        Cursor cursor_inventory = myDb.getAllDataFromReplacementInventory();
         cursor_inventory.moveToFirst();
 
         if (cursor_inventory.getCount() == 0) {
@@ -86,69 +88,34 @@ StringBuffer buffer = new StringBuffer();
                 arrayListReplacementInventory.add(replacement_inventory);
             } while (cursor_inventory.moveToNext());
         }
+*//*getAlLDataFromPhenoMorphoRecords*/
 
+        Cursor cursor_inv = myDb.getIDFromReplacementInventoyWhereTag(replacement_inv_tag);
+        cursor_inv.moveToFirst();
 
-        ///PHENO MORPHO RECORDS
-        Cursor cursor_pheno_morpho = myDb.getAllDataFromPhenoMorphoRecords();
-        cursor_pheno_morpho.moveToFirst();
+        Cursor cursor_view = myDb.getDataFromReplacementPhenoMorphosWhere(cursor_inv.getInt(0));
+        cursor_view.moveToFirst();
 
-        if(cursor_pheno_morpho.getCount()==0){
-            Toast.makeText(this,"No data from pheno morpho records", Toast.LENGTH_SHORT).show();
+        if(cursor_view.getCount() == 0){
+            Toast.makeText(this, "No records yet", Toast.LENGTH_SHORT).show();
         }else{
             do{
-                /*  private Integer id;    private Integer inv_id;    private String date;    private String gender;    private String tag;    private String pheno_record;    private String morpho_record;
+                arrayListValuesID.add(cursor_view.getInt(0));
 
-                 */
-                Replacement_PhenoMorphoView replacement_phenoMorphoView = new Replacement_PhenoMorphoView(cursor_pheno_morpho.getInt(0), cursor_pheno_morpho.getInt(1), cursor_pheno_morpho.getString(2),cursor_pheno_morpho.getString(3),cursor_pheno_morpho.getString(4),cursor_pheno_morpho.getString(5),cursor_pheno_morpho.getString(6) );
-                arrayList_temp.add(replacement_phenoMorphoView);
+            }while(cursor_view.moveToNext());
+        }
 
-            }while (cursor_pheno_morpho.moveToNext());
 
+        for(int i=0; i<arrayListValuesID.size();i++){
+            Cursor cursor_values = myDb.getDataFromPhenoMorphoValuesWhereValuesID(arrayListValuesID.get(i));
+            cursor_values.moveToFirst();
+
+            Replacement_PhenoMorphoView replacement_phenoMorphoView = new Replacement_PhenoMorphoView(cursor_values.getInt(0), cursor_values.getString(1), cursor_values.getString(2),cursor_values.getString(3),cursor_values.getString(4),cursor_values.getString(5),cursor_values.getString(6) );
+            arrayListPhenoMorpho.add(replacement_phenoMorphoView);
         }
 
 
 
-        //kunin mo naman yung replacement inventories ng given inventory tag
-        for (int j=0; j<arrayList_temp.size();j++){
-            for (int i = 0; i<arrayListReplacementInventory.size();i++){
-                if (arrayListReplacementInventory.get(i).getId().equals(arrayList_temp.get(j).getId())) {
-                    arrayListPhenoMorpho.add(arrayList_temp.get(j));
-
-                }
-            }
-        }
-
-
-/*
-        for (int i=0;i<arrayList_temp.size();i++){
-            buffer.append(arrayList_temp.get(i).getPheno_morpho_inv_id());
-        }
-        buffer.append("\n\n\n\n");
-
-        for (int i=0;i<arrayListReplacementInventory.size();i++){
-            buffer.append(arrayListReplacementInventory.get(i).getId());
-        }
-        buffer.append("\n\n\n\n");
-
-        for (int i=0;i<arrayListPhenoMorpho.size();i++){
-            buffer.append(arrayListPhenoMorpho.get(i).getPheno_morpho_inv_id());
-        }
-*/
-
-       // showMessage("arrayListPhenoMorpho", buffer.toString() );
-
-        //kunin mo naman yung phenomorpho records based sa id ng brooder inventories sa arrayListReplacementInventory1
-
-/*        for (int i=0; i<arrayList_temp.size();i++){
-            for(int j=0;j<arrayListReplacementInventory1.size();j++){
-                if (arrayList_temp.get(i).getPheno_morpho_inv_id().equals(arrayListReplacementInventory1.get(j).getId())){
-                    arrayListPhenoMorpho.add(arrayList_temp.get(i));
-
-                }
-            }
-        }*/
-
-//hindi mo pa finifilter, binago mo kanina. dapat arrayListPhenoMorpho yung ipapasa sa recyclerview kaso di gumagana
         recycler_adapter = new RecyclerAdapter_Replacement_PhenoMorphoView(arrayListPhenoMorpho);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();

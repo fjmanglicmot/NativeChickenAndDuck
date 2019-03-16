@@ -51,9 +51,6 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
         args.putString("Breeder Tag", breeders.getBrooder_inv_brooder_tag());
 
 
-
-
-
         holder.breeder_number.setText(breeders.getBrooder_inv_brooder_tag());
         holder.breeder_family.setText(breeders.getFamily());
         holder.breeder_line.setText(breeders.getLine());

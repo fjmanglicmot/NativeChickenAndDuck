@@ -273,8 +273,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String MORT_SALES_COL_13  = "MORT_AND_SALES_DELETED_AT";
 
 
+
+    public static final String TABLE_PHENO_MORPHOS = "pheno_morphos";
+    public static final String PHENO_MORPHOS_COL_0 = "id";
+    public static final String PHENO_MORPHOS_COL_1   = "replacement_inventory";
+    public static final String PHENO_MORPHOS_COL_2   = "breeder_inventory";
+    public static final String PHENO_MORPHOS_COL_3   = "values_id";
+    public static final String PHENO_MORPHOS_COL_4   = "deleted_at";
+
+
+    public static final String TABLE_PHENO_MORPHO_VALUES = "pheno_morpho_values";
+    public static final String PHENO_MORPHO_VALUES_COL_0 = "id";
+    public static final String PHENO_MORPHO_VALUES_COL_1   = "gender";
+    public static final String PHENO_MORPHO_VALUES_COL_2   = "tag";
+    public static final String PHENO_MORPHO_VALUES_COL_3   = "phenotypic";
+    public static final String PHENO_MORPHO_VALUES_COL_4   = "morphometric";
+    public static final String PHENO_MORPHO_VALUES_COL_5   = "date_collected";
+    public static final String PHENO_MORPHO_VALUES_COL_6   = "deleted_at";
+
+
+
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 80);
+        super(context, DATABASE_NAME, null, 82);
     }
 
     @Override
@@ -318,6 +338,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                                                                                                                                                                                    /*        "ID";"MORT_AND_SALES_DATE";"MORT_AND_SALES_BREEDER_INV_ID";"MORT_AND_SALES_REPLACEMENT_INV_ID";"MORT_AND_SALES_BROODER_INV_ID";                                                                    "MORT_AND_SALES_TYPE";"MORT_AND_SALES_CATEGORY"; "      MORT_AND_SALES_PRICE";"MORT_AND_SALES_MALE";"               MORT_AND_SALES_FEMALE";"MORT_AND_SALES_TOTAL"; "MORT_AND_SALES_REASON";"MORT_AND_SALES_REMARKS";"MORT_AND_SALES_DELETED_AT";
     */
+        db.execSQL("create table "+ TABLE_PHENO_MORPHO_VALUES + "(id INTEGER PRIMARY KEY, gender TEXT, tag TEXT , phenotypic TEXT, morphometric TEXT, date_collected TEXT, deleted_at TEXT)");
+
+        db.execSQL("create table "+ TABLE_PHENO_MORPHOS + "(id INTEGER PRIMARY KEY, replacement_inventory INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), breeder_inventory INTEGER REFERENCES TABLE_BREEDER_INVENTORIES(ID), values_id INTEGER REFERENCES TABLE_PHENO_MORPHO_VALUES(id), deleted_at TEXT    )");
 
     }
     @Override
@@ -354,6 +377,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_MORTALITY_AND_SALES);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_PHENO_MORPHOS);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_PHENO_MORPHO_VALUES);
+
 
 
         onCreate(db);
@@ -904,6 +930,37 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
     }
 
+    public boolean insertPhenoMorphoRecords(String gender, String tag, String phenotypic, String morphometric, String date_collected, String  deleted_at){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PHENO_MORPHO_VALUES_COL_1, gender);
+        contentValues.put(PHENO_MORPHO_VALUES_COL_2, tag);
+        contentValues.put(PHENO_MORPHO_VALUES_COL_3, phenotypic);
+        contentValues.put(PHENO_MORPHO_VALUES_COL_4, morphometric);
+        contentValues.put(PHENO_MORPHO_VALUES_COL_5, date_collected);
+        contentValues.put(PHENO_MORPHO_VALUES_COL_6, deleted_at);
+        long result = db.insert(TABLE_PHENO_MORPHO_VALUES,null,contentValues);
+
+        if (result == -1)
+            return  false;
+        else
+            return true;
+    }
+
+    public boolean insertPhenoMorphos(Integer replacement_inv, Integer breeder_inv, Integer values_id, String deleted_at){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PHENO_MORPHOS_COL_1, replacement_inv);
+        contentValues.put(PHENO_MORPHOS_COL_2, breeder_inv);
+        contentValues.put(PHENO_MORPHOS_COL_3, values_id);
+        contentValues.put(PHENO_MORPHOS_COL_4, deleted_at);
+        long result = db.insert(TABLE_PHENO_MORPHOS,null,contentValues);
+
+        if (result == -1)
+            return  false;
+        else
+            return true;
+    }
     public void deleteAll()
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -912,52 +969,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         db.close();
     }
-    public Cursor getAllData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PROFILE, null);
-        return res;
-    }
-
-    public Cursor getAllDataFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
-        return res;
-    }
-
-    public Cursor getIDFromBroodersWhere(String generation, String line, String family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER+ " where BROODER_FAMILY is "+family+ " and BROODER_LINE is "+line+" and BROODER_GENERATION is "+generation, null);
-        return res;
-    }
-    public Cursor getIDFromBreedersWhere(String generation, String line, String family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER+ " where BREEDER_FAMILY is "+family+ " and BREEDER_LINE is "+line+" and BREEDER_GENERATION is "+generation, null);
-        return res;
-    }
-    public Cursor getIDFromReplacementsWhere(String generation, String line, String family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT+ " where REPLACEMENT_FAMILY is "+family+ " and REPLACEMENT_LINE is "+line+" and REPLACEMENT_GENERATION is "+generation, null);
-        return res;
-    }
-
-    public Cursor getBroodersFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Brooder%'", null);
-        return res;
-    }
-
-    public Cursor getReplacementsFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Grower%'", null);
-        return res;
-    }
-
-    public Cursor getBreedersFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Layer%'", null);
-        return res;
-    }
-
 
     public Cursor getAllDataFromGeneration(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -976,31 +987,31 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-
-    public Cursor getRowID(){
+    public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select " +BROODER_COL_1+" from " +TABLE_BROODER, null);
-
+        Cursor res = db.rawQuery("select * from " +TABLE_PROFILE, null);
         return res;
     }
 
+    public Cursor getAllDataFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
+        return res;
+    }
+
+    public Cursor getIDFromBroodersWhere(String generation, String line, String family){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER+ " where BROODER_FAMILY is "+family+ " and BROODER_LINE is "+line+" and BROODER_GENERATION is "+generation, null);
+        return res;
+    }
+    public Cursor getBroodersFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Brooder%'", null);
+        return res;
+    }
     public Cursor getAllDataFromBrooders(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBreeders(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER, null);
-
-        return res;
-    }
-
-
-    public Cursor getAllDataFromReplacements(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT, null);
 
         return res;
     }
@@ -1010,62 +1021,21 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-
-    public Cursor getAllDataFromReplacementsWhere(String replacement_generation, String replacemet_line, String replacement_family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT + " where REPLACEMENT_GENERATION is "+replacement_generation+ " and REPLACEMENT_LINE is "+replacemet_line+" and REPLACEMENT_FAMILY is "+replacement_family, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBreedersWhere(String replacement_generation, String replacement_line, String replacement_family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER + " where REPLACEMENT_GENERATION is "+replacement_generation+ " and REPLACEMENT_LINE is "+replacement_line+" and REPLACEMENT_FAMILY is "+replacement_family, null);
-
-        return res;
-    }
     public Cursor getIDFromBroodersInvWhere(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_ID is "+id, null);
 
         return res;
     }
-
-
-    public Cursor getIDFromReplacementInvWhere(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_ID is "+id, null);
-
-        return res;
-    }
-    public Cursor getIDFromBreedersInvWhere(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_INVENTORIES + " where BREEDER_INV_BREEDER_ID is "+id, null);
-
-        return res;
-    }
-
     public Cursor getAllDataFromBrooderInventory(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES, null);
 
         return res;
     }
-    public Cursor getAllDataFromReplacementInventory(){
+    public Cursor getAllDataFromBrooderInventoryWherePen(String pen){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES, null);
-
-        return res;
-    }
-
-    public Cursor getAllDataFromBreederInventory(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_INVENTORIES, null);
-
-        return res;
-    }
-    public Cursor getDataFromReplacementInventoryWhereTag(String tag){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is " + tag, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_PEN_NUMBER is "+pen, null);
 
         return res;
     }
@@ -1075,30 +1045,87 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-
-    public Cursor getAllDataFromBrooderInventoryWherePen(String pen){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_PEN_NUMBER is "+pen, null);
-
-        return res;
-    }
-
     public Cursor getAllDataFromBrooderFeedingRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_FEEDING_RECORDS, null);
 
         return res;
     }
-
-    public Cursor getAllDataFromReplacementFeedingRecords(){
+    public Cursor getAllDataFromBrooderGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_FEEDING_RECORDS, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
 
         return res;
     }
-    public Cursor getAllDataFromBreederFeedingRecords(){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public Cursor getIDFromReplacementsWhere(String generation, String line, String family){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_FEEDING_RECORDS, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT+ " where REPLACEMENT_FAMILY is "+family+ " and REPLACEMENT_LINE is "+line+" and REPLACEMENT_GENERATION is "+generation, null);
+        return res;
+    }
+
+    public Cursor getReplacementsFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Grower%'", null);
+        return res;
+    }
+    public Cursor getAllDataFromReplacements(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromReplacementsWhere(String replacement_generation, String replacemet_line, String replacement_family){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT + " where REPLACEMENT_GENERATION is "+replacement_generation+ " and REPLACEMENT_LINE is "+replacemet_line+" and REPLACEMENT_FAMILY is "+replacement_family, null);
+
+        return res;
+    }
+    public Cursor getIDFromReplacementInvWhere(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_ID is "+id, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromReplacementInventory(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES, null);
+
+        return res;
+    }
+    public Cursor getDataFromReplacementInventoryWhereTag(String tag){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is " + tag, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromReplacementFeedingRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_FEEDING_RECORDS, null);
 
         return res;
     }
@@ -1109,25 +1136,107 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-
-
-    public Cursor getAllDataFromBreederPhenoMorphoRecords(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS, null);
-
-        return res;
-    }
-
-    public Cursor getAllDataFromBrooderGrowthRecords(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
-
-        return res;
-    }
-
     public Cursor getAllDataFromReplacementGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_GROWTH_RECORDS, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromPhenoMorphoRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PHENO_MORPHO_VALUES, null);
+
+        return res;
+    }
+    public Cursor getDataFromPhenoMorphoValuesWhere(String sex, String tag, String pheno, String morphos, String date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PHENO_MORPHO_VALUES+ " where gender is ? and tag is ? and phenotypic is ? and morphometric is ? and date_collected is ?", new String[]{sex, tag, pheno, morphos, date});
+
+        return res;
+    }
+    public Cursor getDataFromReplacementPhenoMorphosWhere(Integer inv_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select values_id from " +TABLE_PHENO_MORPHOS+" where replacement_inventory is ?", new String[]{inv_id.toString()});
+
+        return res;
+    }
+    public Cursor getIDFromReplacementInventoyWhereTag(String tag){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select ID from " +TABLE_REPLACEMENT_INVENTORIES+" where REPLACEMENT_INV_REPLACEMENT_TAG is ?", new String[]{tag});
+
+        return res;
+    }
+    public Cursor getDataFromPhenoMorphoValuesWhereValuesID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PHENO_MORPHO_VALUES+" where id is ?", new String[]{id.toString()});
+
+        return res;
+    }
+
+    /*pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);*/
+
+/*    public static final String TABLE_PHENO_MORPHO_VALUES = "pheno_morpho_values";
+    public static final String PHENO_MORPHO_VALUES_COL_0 = "id";
+    public static final String PHENO_MORPHO_VALUES_COL_1   = "gender";
+    public static final String PHENO_MORPHO_VALUES_COL_2   = "tag";
+    public static final String PHENO_MORPHO_VALUES_COL_3   = "phenotypic";
+    public static final String PHENO_MORPHO_VALUES_COL_4   = "morphometric";
+    public static final String PHENO_MORPHO_VALUES_COL_5   = "date_collected";
+    public static final String PHENO_MORPHO_VALUES_COL_6   = "deleted_at";
+*/
+
+
+
+
+
+
+
+
+
+
+    public Cursor getIDFromBreedersWhere(String generation, String line, String family){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER+ " where BREEDER_FAMILY is "+family+ " and BREEDER_LINE is "+line+" and BREEDER_GENERATION is "+generation, null);
+        return res;
+    }
+    public Cursor getBreedersFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Layer%'", null);
+        return res;
+    }
+    public Cursor getAllDataFromBreeders(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER, null);
+
+        return res;
+    }
+    public Cursor getDataFromBreederInvWhereTag(String tag){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_INVENTORIES+ " where BREEDER_INV_BREEDER_TAG like ?", new String[]{tag}, null);
+
+        return res;
+    }
+    public Cursor getBreederPhenoRecordwhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS+ " where BREEDER_PHENO_MORPHO_INVENTORY_ID like ?", new String[] {id.toString()}, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromBreederInventory(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_INVENTORIES, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromBreederFeedingRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_FEEDING_RECORDS, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromBreederPhenoMorphoRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS, null);
 
         return res;
     }
@@ -1138,12 +1247,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-    public Cursor getAllDataFromPhenoMorphoRecords(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS, null);
-
-        return res;
-    }
     public Cursor getAllDataFromPhenoMorphoRecordsBreeder(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS, null);
@@ -1151,12 +1254,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
     }
 
-    public Cursor getAllDataFromPhenoMorphoRecordsWhereReplacementID(Integer id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS+ " where REPLACEMENT_PHENO_MORPHO_INVENTORY_ID is " +id, null);
-
-        return res;
-    }
     public Cursor getAllDataFromEggProduction(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_EGG_PRODUCTION, null);
@@ -1180,6 +1277,18 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     public Cursor getAllDataFromMortandSalesRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_MORTALITY_AND_SALES, null);
+
+        return res;
+    }
+    public Cursor getIDFromBreederInventoyWhereTag(String tag){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select ID from " +TABLE_BREEDER_INVENTORIES+" where BREEDER_INV_BREEDER_TAG is ?", new String[]{tag});
+
+        return res;
+    }
+    public Cursor getDataFromBreederPhenoMorphosWhere(Integer inv_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select values_id from " +TABLE_PHENO_MORPHOS+" where breeder_inventory is ?", new String[]{inv_id.toString()});
 
         return res;
     }

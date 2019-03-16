@@ -62,7 +62,7 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
         morpho_shank_length = view.findViewById(R.id.morpho_shank_length);
 
 
-        myDb = new DatabaseHelper(getContext());
+       /* myDb = new DatabaseHelper(getContext());
 
 
 
@@ -116,21 +116,21 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
                         }
                     }
 
-/*
+*//*
                     buffer.append(arrayListReplacementInventory1.get(0).getId().toString() + "\n");
                     buffer.append(pheno_date + "\n");
                     buffer.append(pheno_sex + "\n");
                     buffer.append(pheno_tag + "\n");
                     buffer.append(pheno_record + "\n");
                     buffer.append(morpho.toString() + "\n");
-                    String morphos  = morpho.toString();*/
+                    String morphos  = morpho.toString();*//*
 
                     Integer inv_id = arrayListReplacementInventory1.get(0).getId();
-
-                    boolean isInserted = myDb.insertDataBreederPhenoMorphoRecords(inv_id, pheno_date, pheno_sex, pheno_tag, pheno_record, morpho.toString());
+                    boolean isInsertedNEW = myDb.insertPhenoMorphoRecords(pheno_sex, pheno_tag, pheno_record, morpho.toString(), pheno_date, null);
+                    //boolean isInserted = myDb.insertDataBreederPhenoMorphoRecords(inv_id, pheno_date, pheno_sex, pheno_tag, pheno_record, morpho.toString());
                     //
 
-                    if(isInserted == true){
+                    if(isInsertedNEW == true){
                         Toast.makeText(getContext(), "Added to database", Toast.LENGTH_SHORT).show();
                         getDialog().dismiss();
                     }else{
@@ -139,6 +139,121 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
                     }
 
                   //  showMessage("Pheno", buffer.toString());
+
+
+
+
+                }else{
+                    Toast.makeText(getContext(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });*/
+
+        myDb = new DatabaseHelper(getContext());
+
+
+
+
+        mActionOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                StringBuffer morpho = new StringBuffer();
+                StringBuffer buffer = new StringBuffer();
+                if(!morpho_height.getText().toString().isEmpty() && !morpho_weight.getText().toString().isEmpty() && !morpho_body_length.getText().toString().isEmpty()&&!morpho_chest_circumference.getText().toString().isEmpty()&&!morpho_wing_span.getText().toString().isEmpty()&&!morpho_shank_length.getText().toString().isEmpty()){
+
+                    morpho.append(morpho_height.getText().toString() +", ");
+                    morpho.append(morpho_weight.getText().toString() +", ");
+                    morpho.append(morpho_body_length.getText().toString() +", ");
+                    morpho.append(morpho_chest_circumference.getText().toString() +", ");
+                    morpho.append(morpho_wing_span.getText().toString() +", ");
+                    morpho.append(morpho_shank_length.getText().toString());
+
+
+                    ////DATABASE OPERATIONS
+                    Cursor cursor_inventory = myDb.getAllDataFromBreederInventory();
+                    cursor_inventory.moveToFirst();
+
+                    if (cursor_inventory.getCount() == 0) {
+
+                    } else {
+                        do {
+                                                                                                        /*Integer id,  brooder_inv_brooder_id,           brooder_inv_pen,                   brooder_inv_brooder_tag,        String brooder_inv_batching_date,   Integer brooder_male_quantity,  brooder_female_quantity, Integer brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at, String family, String line, String generation) {
+                             */
+                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), cursor_inventory.getString(2), cursor_inventory.getString(3), cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9), null, null, null);
+                                                                                                        /*   "ID";     "BREEDER_INV_BREEDER_ID";     "BREEDER_INV_PEN_NUMBER";               "BREEDER_INV_BREEDER_TAG";     "BREEDER_INV_BATCHING_DATE";            "BREEDER_INV_NUMBER_MALE"; "BREEDER_INV_NUMBER_FEMALE";     "BREEDER_INV_TOTAL";     "BREEDER_INV_LAST_UPDATE";     "BREEDER_INV_DELETED_AT";*/
+                            arrayListReplacementInventory.add(breeder_inventory);
+                        } while (cursor_inventory.moveToNext());
+                    }
+
+                    Cursor cursor_pheno_morpho = myDb.getAllDataFromPhenoMorphoRecords();
+                    cursor_pheno_morpho.moveToFirst();
+
+                    if(cursor_pheno_morpho.getCount()==0){
+                        Toast.makeText(getContext(),"No data from pheno and morpho records", Toast.LENGTH_SHORT).show();
+                    }else{
+                        do{
+                            Breeder_PhenoMorphoRecords replacement_phenoMorphoRecords = new Breeder_PhenoMorphoRecords(cursor_pheno_morpho.getInt(0), cursor_pheno_morpho.getInt(1), cursor_pheno_morpho.getString(2), cursor_pheno_morpho.getString(3), cursor_pheno_morpho.getString(4), cursor_pheno_morpho.getString(5),  null, null);
+                            arrayList_temp.add(replacement_phenoMorphoRecords);
+                        }while (cursor_pheno_morpho.moveToNext());
+
+                    }
+                    //get inventory given the tag
+                    for (int i = 0; i<arrayListReplacementInventory.size();i++){
+                        if (arrayListReplacementInventory.get(i).getBrooder_inv_brooder_tag().equals(replacement_inv_tag)){
+                            arrayListReplacementInventory1.add(arrayListReplacementInventory.get(i));
+
+                        }
+                    }
+
+
+                    //insert data sa brooderinv na given na tag
+
+                    //Toast.makeText(getContext(), arrayListReplacementInventory1.get(0).getId().toString(), Toast.LENGTH_SHORT).show();
+/*                    buffer.append(arrayListReplacementInventory1.get(0).getId().toString() + "\n");
+                    buffer.append(pheno_date + "\n");
+                    buffer.append(pheno_sex + "\n");
+                    buffer.append(pheno_tag + "\n");
+                    buffer.append(pheno_record + "\n");
+                    buffer.append(morpho.toString() + "\n");*/
+                    String morphos  = morpho.toString();
+                    //boolean isInserted = myDb.insertDataGeneration(arrayListReplacementInventory1.get(0).getId());
+                    Integer inv_id = arrayListReplacementInventory1.get(0).getId();
+                    /**/
+                    //  boolean isInserted = myDb.insertDataReplacementPhenoMorphoRecords(inv_id, pheno_date, pheno_sex, pheno_tag, pheno_record, morphos);
+                    // insertPhenoMorphos
+                    /*/*    public static final String PHENO_MORPHOS_COL_0 = "id";
+    public static final String PHENO_MORPHOS_COL_1   = "replacement_inventory";
+    public static final String PHENO_MORPHOS_COL_2   = "breeder_inventory";
+    public static final String PHENO_MORPHOS_COL_3   = "values_id";
+    public static final String PHENO_MORPHOS_COL_4   = "deleted_at";
+*/
+
+                    boolean isInserted2 = myDb.insertPhenoMorphoRecords(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);
+                    Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date);
+                    cursor.moveToFirst();
+                    if(cursor.getCount() != 0){
+                        // buffer.append(cursor.getInt(0)+"\n");
+                        boolean isInserted1 = myDb.insertPhenoMorphos(null, inv_id, cursor.getInt(0), null);
+                        if (isInserted1 != true){
+                            Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+
+                    /* public boolean insertPhenoMorphoRecords(String gender, String tag, String phenotypic, String morphometric, String date_collected, String  deleted_at){*/
+                    //
+
+                    if(isInserted2 == true){
+                        Toast.makeText(getContext(), "Added to database", Toast.LENGTH_SHORT).show();
+                        getDialog().dismiss();
+                    }else{
+                        Toast.makeText(getContext(), "Error adding to database", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    //showMessage("Pheno", buffer.toString());
 
 
 

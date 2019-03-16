@@ -235,6 +235,14 @@ public class CreatePen extends AppCompatActivity {
         builder.setMessage(message);
         builder.show();
     }
+    @Override
+    public void onBackPressed() {
+
+
+        finish();
+        startActivity(getIntent());
+
+    }
 
 
 }

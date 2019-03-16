@@ -86,6 +86,7 @@ public class RecyclerAdapter_Breeder_PhenoMorpho extends RecyclerView.Adapter<Re
             public void onClick(View view) {
                 Intent intent_replacement_inventory_pheno_morpho = new Intent(context, BreederPhenoMorphoViewActivity.class);
                 intent_replacement_inventory_pheno_morpho.putExtra("Replacement Tag",replacement_inventory.getBrooder_inv_brooder_tag());
+                intent_replacement_inventory_pheno_morpho.putExtra("Breeder Inv ID",replacement_inventory.getBrooder_inv_brooder_id());
                 intent_replacement_inventory_pheno_morpho.putExtra("Replacement Pen",replacement_inventory.getBrooder_inv_pen());
                 context.startActivity(intent_replacement_inventory_pheno_morpho);
 

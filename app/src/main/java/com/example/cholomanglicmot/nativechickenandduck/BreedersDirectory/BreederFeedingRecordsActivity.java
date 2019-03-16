@@ -1,6 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -116,17 +117,27 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
 
 
     }
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
     public void showMessage(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        Intent intent_brooders = new Intent(BreederFeedingRecordsActivity.this, CreateBreeders.class);
+        startActivity(intent_brooders);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+
+        Intent intent_brooders = new Intent(BreederFeedingRecordsActivity.this, CreateBreeders.class);
+        startActivity(intent_brooders);
+
     }
 
 

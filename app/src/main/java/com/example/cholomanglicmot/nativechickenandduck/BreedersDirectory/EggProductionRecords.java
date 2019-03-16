@@ -1,5 +1,6 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -119,25 +120,20 @@ public class EggProductionRecords extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        Intent intent_brooders = new Intent(EggProductionRecords.this, CreateBreeders.class);
+        startActivity(intent_brooders);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+
+        Intent intent_brooders = new Intent(EggProductionRecords.this, CreateBreeders.class);
+        startActivity(intent_brooders);
+
     }
 }
