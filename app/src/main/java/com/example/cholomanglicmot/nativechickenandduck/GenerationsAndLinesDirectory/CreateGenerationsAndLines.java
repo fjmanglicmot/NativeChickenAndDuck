@@ -239,7 +239,8 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
             cursor.moveToFirst();
             do {
-                Generation generation = new Generation(cursor.getString(0));
+
+                Generation generation = new Generation(cursor.getString(2), cursor.getString(4));
 
                 arrayList.add(generation);
 
@@ -252,15 +253,20 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
 
             }else {
+                String generation_number = null;
                 do {
-
-                    if (line_dictionary.containsKey(line_cursor.getString(2))) {
-                        list = line_dictionary.get(line_cursor.getString(2));
+                    Cursor cursor1 = myDb.getDataFromGenerationWhereID(line_cursor.getInt(2));
+                    cursor1.moveToFirst();
+                    if(cursor1.getCount() != 0){
+                        generation_number = cursor1.getString(0);
+                    }
+                    if (line_dictionary.containsKey(generation_number)) {
+                        list = line_dictionary.get(generation_number);
                         list.add(line_cursor.getString(1));
                     } else {
                         ArrayList<String> list1 = new ArrayList<String>();
                         list1.add(line_cursor.getString(1));
-                        line_dictionary.put(line_cursor.getString(2), list1);
+                        line_dictionary.put(generation_number, list1);
                     }
 
 

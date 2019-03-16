@@ -40,10 +40,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_GENERATION = "generation_table";
     public static final String GENERATION_COL_0 = "ID";
-    public static final String GENERATION_COL_1 = "GENERATION_NUMBER";
-    public static final String GENERATION_COL_2 = "GENERATION_STATUS";
-    public static final String GENERATION_COL_3 = "GENERATION_DETAILS";
-    public static final String GENERATION_COL_4 = "GENERATION_CULL";
+    public static final String GENERATION_COL_1 = "farm_id";
+    public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
+    public static final String GENERATION_COL_3 = "numerical_generation";
+    public static final String GENERATION_COL_4 = "is_active";
+    public static final String GENERATION_COL_5 = "deleted_at";
+
+
 
     public static final String TABLE_LINE = "line_table";
     public static final String LINE_COL_0 = "ID";
@@ -55,7 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String FAMILY_COL_0 = "ID";
     public static final String FAMILY_COL_1 = "FAMILY_NUMBER";
     public static final String FAMILY_COL_2 = "FAMILY_LINE";
-    public static final String FAMILY_COL_3 = "FAMILY_GENERATION";
+
 
 
 
@@ -101,8 +104,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String BROODER_GROWTH_COL_8 = "BROODER_GROWTH_TOTAL_QUANTITY";
     public static final String BROODER_GROWTH_COL_9 = "BROODER_GROWTH_TOTAL_WEIGHT";
     public static final String BROODER_GROWTH_COL_10 = "BROODER_GROWTH_DELETED_AT";
-
-
 
 
 
@@ -294,7 +295,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 82);
+        super(context, DATABASE_NAME, null, 86);
     }
 
     @Override
@@ -304,9 +305,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //ANG ILAGAY MONG REFERENCE AY YUNG COLUMN NA ID
         db.execSQL("create table " + TABLE_PROFILE +" (ID TEXT PRIMARY KEY,BREED TEXT,REGION TEXT,PROVINCE TEXT,TOWN TEXT,BARANGAY TEXT,PHONE TEXT,EMAIL TEXT)");
         db.execSQL("create table " + TABLE_PEN +" (ID INTEGER PRIMARY KEY, PEN_NUMBER TEXT, PEN_TYPE TEXT,PEN_CURRENT_CAPACITY INTEGER,PEN_TOTAL_CAPACITY INTEGER)");
-        db.execSQL("create table " + TABLE_GENERATION +" (ID INTEGER PRIMARY KEY,GENERATION_NUMBER TEXT, GENERATION_STATUS TEXT)");
-        db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, LINE_GENERATION TEXT REFERENCES TABLE_GENERATION(ID))");
-        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, FAMILY_LINE TEXT REFERENCES TABLE_LINE(ID), FAMILY_GENERATION TEXT )");
+        db.execSQL("create table " + TABLE_GENERATION +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, GENERATION_NUMBER TEXT, numerical_generation INTEGER ,is_active TEXT, deleted_at TEXT)");
+
+                              /* "generation_table";    "ID";                        "farm_id";     "GENERATION_NUMBER";     "numerical_generation";    "GENERATION_STATUS";     "deleted_at";    */
+        db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, LINE_GENERATION INTEGER, FOREIGN KEY (LINE_GENERATION) REFERENCES TABLE_GENERATION(ID))");
+        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, FAMILY_LINE INTEGER, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID) )");
 
 
 
@@ -402,23 +405,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //--------------------
-    public boolean insertDataGeneration(String generation_number ){
+
+    /*    public static final String GENERATION_COL_0 = "ID";
+    public static final String GENERATION_COL_1 = "farm_id";
+    public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
+    public static final String GENERATION_COL_3 = "numerical_generation";
+    public static final String GENERATION_COL_4 = "GENERATION_STATUS";
+    public static final String GENERATION_COL_5 = "GENERATION_CULL";*/
+
+    /*   boolean isInserted = myDb.insertDataGeneration(generation_number, Integer.parseInt(mInput_generation_number.getText().toString()), "Active");*/
+    public boolean insertDataGeneration(String generation_number, Integer numerical_gen, String is_active){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GENERATION_COL_1, generation_number);
+        contentValues.put(GENERATION_COL_1, 0);
+        contentValues.put(GENERATION_COL_2, generation_number);
+        contentValues.put(GENERATION_COL_3, numerical_gen);
+        contentValues.put(GENERATION_COL_4, is_active);
+        contentValues.put(GENERATION_COL_5, "0/0/0");
 
 
         long result = db.insert(TABLE_GENERATION,null,contentValues);
 
         if (result == -1)
-            return  false;
+            return false;
         else
             return true;
 
     }
 
 //--------------------
-    public boolean insertDataLine(String line_number, String line_generation_number ){
+    public boolean insertDataLine(String line_number, Integer line_generation_number ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -435,13 +451,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-    public boolean insertDataFamily(String family_number, String family_line_number, String family_generation_number ){
+    public boolean insertDataFamily(String family_number, Integer family_line_number ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FAMILY_COL_1, family_number);
         contentValues.put(FAMILY_COL_2, family_line_number);
-        contentValues.put(FAMILY_COL_3, family_generation_number);
+
 
 
 
@@ -1039,9 +1055,9 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-    public Cursor getAllDataFromBrooderInventoryWherePenAndID(String pen, Integer id){
+    public Cursor getDataFromBrooderInventoryWherePenAndID(String tag){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_PEN_NUMBER is "+pen+ " and BROODER_INV_BROODER_ID is "+id, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_TAG is ?", new String[] {tag});
 
         return res;
     }
@@ -1054,6 +1070,31 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     public Cursor getAllDataFromBrooderGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
+
+        return res;
+    }
+
+    public Cursor getDataFromGenerationWhereGenNumber(String number){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_GENERATION+ " where GENERATION_NUMBER is ?", new String[]{number});
+
+        return res;
+    }
+    public Cursor getDataFromGenerationWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select GENERATION_NUMBER from " +TABLE_GENERATION+ " where ID is ?", new String[]{id.toString()});
+
+        return res;
+    }
+    public Cursor getDataFromLineWhereLineNumber(String number){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_LINE+ " where LINE_NUMBER is ?", new String[]{number});
+
+        return res;
+    }
+    public Cursor getDataFromLineWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_LINE+ " where ID is ?", new String[]{id.toString()});
 
         return res;
     }

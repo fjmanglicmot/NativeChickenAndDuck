@@ -8,7 +8,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="150dp"
         android:layout_margin="15dp"
         android:background="@color/white">
 
@@ -106,40 +106,96 @@
                 >
 
 
-
-
-                <ImageButton
-                    android:id="@+id/brooder_inventory"
-                    android:layout_marginLeft="20dp"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_info_black_24dp"
-                    android:background="@null"
-                    />
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="center"
 
-                <ImageButton
-                    android:id="@+id/brooder_add"
-                    android:layout_marginLeft="20dp"
+                    >
+                    <ImageButton
+                        android:layout_gravity="center"
+                        android:id="@+id/brooder_inventory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_info_black_24dp"
+                        android:background="@null"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Inventories"
+                        android:textSize="10dp"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_add_box_black_24dp"
-                    android:background="@null"/>
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <ImageButton
+                        android:layout_gravity="center"
+                        android:id="@+id/brooder_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add_box_black_24dp"
+                        android:background="@null"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Add"
+                        android:textSize="10dp"/>
+                </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/brooder_feeding_records"
-                    android:layout_marginLeft="20dp"
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_restaurant_black_24dp"
-                    android:background="@null"/>
-
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+                    <ImageButton
+                        android:layout_gravity="center"
+                        android:id="@+id/brooder_feeding_records"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_restaurant_black_24dp"
+                        android:background="@null"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="Feeding"
+                        android:textSize="10dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
                 <ImageButton
                     android:id="@+id/brooder_growth_records"
-                    android:layout_marginLeft="20dp"
+                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_fitness_center_black_24dp"
                     android:background="@null"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Growth"
+                        android:textSize="10dp"/>
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

@@ -40,10 +40,6 @@
 
         </LinearLayout>
 
-        <HorizontalScrollView
-            android:id="@+id/brooder_inventory_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -60,8 +56,7 @@
 
                     <TableRow
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                    >
+                        android:layout_height="match_parent">
 
 
                         <TextView
@@ -76,7 +71,7 @@
 
                             />
 
-                        <TextView
+                       <!-- <TextView
                             android:id="@+id/brooder_inventory_family"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -105,18 +100,27 @@
                             android:text="Gen"
                             android:textSize="12sp"
                             android:textStyle="bold" />
+-->
 
                         <TextView
                             android:id="@+id/brooder_inventory_batch_date"
-                            android:layout_width="50dp"
+                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:gravity="center"
                             android:text="Batch Date"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-
                         <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:text="View"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                     <!--   <TextView
                             android:id="@+id/brooder_inventory_number_male"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -154,9 +158,9 @@
                             android:gravity="center"
                             android:text="Added"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold" />-->
 
-                        <TextView
+                      <!--  <TextView
                             android:id="@+id/brooder_inventory_last_update"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -164,7 +168,7 @@
                             android:gravity="center"
                             android:text="Update"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold" />-->
 
                         <TextView
                             android:id="@+id/brooder_inventory_mort"
@@ -204,7 +208,6 @@
             </android.support.v7.widget.CardView>
 
 
-        </HorizontalScrollView>
 
 
 

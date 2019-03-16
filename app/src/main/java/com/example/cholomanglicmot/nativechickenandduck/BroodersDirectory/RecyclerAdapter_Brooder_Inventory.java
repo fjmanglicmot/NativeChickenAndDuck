@@ -2,11 +2,15 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
@@ -58,34 +62,9 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
 
 
         final Brooder_Inventory brooder_inventory = arrayListInventory.get(position);
-
-
-        //CANT PROPERLY SHOW DATA FROM ANOTHER TABLE PERO GUMAGANA NA
-            for (int i=0;i<arrayListBrooder.size();i++){
-                if(arrayListBrooder.get(i).getId().equals(brooder_inventory.getBrooder_inv_brooder_id()) ){ //ang kinukuha lang kasi nito ay yung nasa unahan ng arraylist na brooder
-                    //arrayListInventory.clear();
-                    //arrayListBrooder2.add(arrayListBrooder.get(i));
-                    final Brooders brooders_temp = arrayListBrooder.get(i);
-                    holder.brooder_inventory_family.setText(brooders_temp.getBrooder_family_number()); //BAKA NAMAN PWEDE KUNIN SA BROODER
-                    holder.brooder_inventory_line.setText(brooders_temp.getBrooder_line_number());
-                    holder.brooder_inventory_gen.setText(brooders_temp.getBrooder_generation_number());
-                }
-            }
-
-           
-        //brooder_id_dictionary.get(1);
- /*       StringBuffer buffer = new StringBuffer();
-
-        try{
-
-                buffer.append( "Line "+ brooder_id_dictionary.get(1).get(1).getBrooder_inv_brooder_id()+"\n");
-
-        }catch (Exception e){
-            buffer.append("No lines yet.");
-        }
-
-
-        showMessage("Generation ", buffer.toString());*/
+        final Bundle args = new Bundle();
+        args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
+        args.putString("Brooder Pen", brooder_inventory.getBrooder_inv_pen());
 
 
 
@@ -99,12 +78,35 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
             holder.brooder_inventory_gen.setText(brooders_temp.getBrooder_generation_number());*/
 
             holder.brooder_inventory_batch_date.setText(brooder_inventory.getBrooder_inv_batching_date());
-            holder.brooder_inventory_number_male.setText(brooder_inventory.getBrooder_male_quantity().toString());
-            holder.brooder_inventory_number_female.setText(brooder_inventory.getBrooder_female_quantity().toString());
-            holder.brooder_inventory_total.setText(brooder_inventory.getBrooder_total_quantity().toString());
-            //holder.brooder_inventory_date_added.setText(brooder_inventory.getB);
-            holder.brooder_inventory_last_update.setText(brooder_inventory.getBrooder_inv_last_update());
-            // holder.brooder.setText(brooder_inventory.getBrooder_inv_last_update());
+            holder.brooder_view_inventory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create dialog box
+                    //tapos sa loob ng box na yun, nandun yung lahat ng details
+                    //tapos dun mo pwede i-edit yung number of males and females ng brooders
+                    FragmentActivity activity = (FragmentActivity)(context);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    ViewBrooderInventoryDialog alertDialog = new ViewBrooderInventoryDialog();
+                    alertDialog.setArguments(args);
+                    alertDialog.show(fm, "CreateBrooderDialog");
+                    notifyDataSetChanged();
+
+                }
+            });
+
+            holder.brooder_feeding_mort_sale.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create dialog box ng mort and sales
+                }
+            });
+
+            holder.brooder_feeding_cull.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create dialog box for cull
+                }
+            });
 
 
 
@@ -140,21 +142,32 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
         TextView brooder_inventory_number_female;
         TextView brooder_inventory_total;
 
+        ImageButton brooder_view_inventory;
+        ImageButton brooder_edit;
+        ImageButton brooder_feeding_mort_sale;
+        ImageButton brooder_feeding_cull;
+
+
         RecyclerViewHolder(View view){
             super(view);
             brooder_inventory_code = view.findViewById(R.id.brooder_inventory_code);
-            brooder_inventory_family= view.findViewById(R.id.brooder_inventory_family);
+           /* brooder_inventory_family= view.findViewById(R.id.brooder_inventory_family);
             brooder_inventory_line = view.findViewById(R.id.brooder_inventory_line);
-            brooder_inventory_gen = view.findViewById(R.id.brooder_inventory_gen);
+            brooder_inventory_gen = view.findViewById(R.id.brooder_inventory_gen);*/
             brooder_inventory_batch_date = view.findViewById(R.id.brooder_inventory_batch_date);;
-            brooder_inventory_date_added = view.findViewById(R.id.brooder_inventory_date_added);;
+           /* brooder_inventory_date_added = view.findViewById(R.id.brooder_inventory_date_added);;
             brooder_inventory_last_update = view.findViewById(R.id.brooder_inventory_last_update);;
             brooder_inventory_mort = view.findViewById(R.id.brooder_inventory_mort);;
             brooder_inventory_cull = view.findViewById(R.id.brooder_inventory_cull);;
 
             brooder_inventory_number_male = view.findViewById(R.id.brooder_inventory_number_male);;
             brooder_inventory_number_female = view.findViewById(R.id.brooder_inventory_number_female);;
-            brooder_inventory_total = view.findViewById(R.id.brooder_inventory_total);;
+            brooder_inventory_total = view.findViewById(R.id.brooder_inventory_total);;*/
+            brooder_view_inventory= view.findViewById(R.id.brooder_view_inventory);
+
+            brooder_feeding_mort_sale= view.findViewById(R.id.brooder_feeding_mort_sale);;
+            brooder_feeding_cull= view.findViewById(R.id.brooder_feeding_cull);;
+
 
 
         }

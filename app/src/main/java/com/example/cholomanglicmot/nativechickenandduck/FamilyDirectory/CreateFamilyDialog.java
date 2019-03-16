@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,7 +29,7 @@ public class CreateFamilyDialog extends DialogFragment {
     private Spinner generation_spinner, line_spinner;
     private Button mActionOk;
     DatabaseHelper myDb;
-
+    StringBuffer buffer = new StringBuffer();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,17 +67,45 @@ public class CreateFamilyDialog extends DialogFragment {
 
 
                 if(!family_number.getText().toString().isEmpty()){
+                    Cursor cursor_line = myDb.getDataFromLineWhereLineNumber(line_spinner.getSelectedItem().toString());
+                    cursor_line.moveToFirst();
+                    if(cursor_line.getCount() != 0){
+                        Integer line_id = cursor_line.getInt(0);
+                        String family = new String();
+                        switch (family_number.getText().toString().length()){
+                            case 1:
+                                family = String.format("%04d" , Integer.parseInt(family_number.getText().toString()));
+                                break;
+                            case 2:
+                                family = String.format("%04d" , Integer.parseInt(family_number.getText().toString()));
+                                break;
+                            case 3:
+                                family = String.format("%04d" ,Integer.parseInt(family_number.getText().toString()));
+                                break;
+                            case 4:
+                                family = String.format("%04d" , Integer.parseInt(family_number.getText().toString()));
+                                break;
+                            default:
+                                break;
 
-                    boolean isInserted = myDb.insertDataFamily(family_number.getText().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
-                    if(isInserted == true){
-                        Toast.makeText(getActivity(),"Family added to database", Toast.LENGTH_SHORT).show();
-                        Intent intent_family = new Intent(getActivity(), CreateFamilies.class);
-                        startActivity(intent_family);
+                        }
+                        boolean isInserted = myDb.insertDataFamily(family,line_id);
+                       /* Cursor cursor1 = myDb.getDataFromLineWhereID(line_id);
+                        cursor1.moveToFirst();
+                        buffer.append(cursor1.getString(1)+"\n");
+                        showMessage("YO", buffer.toString());*/
+
+                        if(isInserted == true){
+                            Toast.makeText(getActivity(),"Family added to database", Toast.LENGTH_SHORT).show();
+                            Intent intent_family = new Intent(getActivity(), CreateFamilies.class);
+                            startActivity(intent_family);
+                            getDialog().dismiss();
+                        }else{
+                            Toast.makeText(getActivity(),"Family not added to database", Toast.LENGTH_SHORT).show();
+                        }
                         getDialog().dismiss();
-                    }else{
-                        Toast.makeText(getActivity(),"Family not added to database", Toast.LENGTH_SHORT).show();
                     }
-                    getDialog().dismiss();
+
                 }else{
                     Toast.makeText(getActivity(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
                 }

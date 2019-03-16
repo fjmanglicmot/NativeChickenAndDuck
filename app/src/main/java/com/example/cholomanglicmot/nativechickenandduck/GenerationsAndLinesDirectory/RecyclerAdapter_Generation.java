@@ -50,6 +50,7 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
 
 
         holder.generation_number.setText(generation.getGeneration_number());
+        holder.generation_status.setText(generation.getGeneration_status());
         holder.generation_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +71,7 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
         });
 
 
+
     //notifyDataSetChanged();
     }
 
@@ -82,11 +84,13 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder{
         TextView generation_number;
+        TextView generation_status;
         ImageButton generation_details;
         ImageButton generation_cull;
         RecyclerViewHolder(View view){
             super(view);
             generation_details = view.findViewById(R.id.generation_details);
+            generation_status = view.findViewById(R.id.generation_status);
             generation_cull = view.findViewById(R.id.generation_cull);
             generation_number = (TextView)view.findViewById(R.id.generation_number);
 

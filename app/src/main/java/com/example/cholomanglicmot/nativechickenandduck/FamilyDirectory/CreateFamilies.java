@@ -57,6 +57,7 @@ public class CreateFamilies extends AppCompatActivity {
     String[] lines;
     Map<String, ArrayList<String>> line_dictionary = new HashMap<String, ArrayList<String>>();
     ArrayList<String> list = new ArrayList<String>();
+    StringBuffer buffer = new StringBuffer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,8 +202,10 @@ public class CreateFamilies extends AppCompatActivity {
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Families");
-        Cursor cursor = myDb.getAllDataFromFamily();
 
+
+        Cursor cursor = myDb.getAllDataFromFamily();
+        cursor.moveToFirst();
 
 //-----DATABASE
         if(cursor.getCount() == 0){
@@ -211,9 +214,26 @@ public class CreateFamilies extends AppCompatActivity {
             return;
         }else{
 
-            cursor.moveToFirst();
+
+
+
             do {
-                Family family = new Family(cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                String line_number = null;
+                Integer generation_id = null;
+                String generation_number = null;
+                Cursor cursor1 = myDb.getDataFromLineWhereID(cursor.getInt(2));
+
+                cursor1.moveToFirst();
+
+                if(cursor1.getCount() != 0){
+                    line_number = cursor1.getString(1);
+                    generation_id = cursor1.getInt(2);
+
+                    Cursor cursor2 = myDb.getDataFromGenerationWhereID(generation_id);
+                    cursor2.moveToFirst();
+                    generation_number = cursor2.getString(0);
+                }
+                Family family = new Family(cursor.getString(1), line_number, generation_number);
                 arrayList.add(family);
             }while (cursor.moveToNext());
 

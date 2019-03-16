@@ -30,7 +30,7 @@ public class CreateGenerationDialog extends DialogFragment {
     private EditText mInput_pen_capacity;
     private Button mActionOk;
     DatabaseHelper myDb;
-
+    String generation_number;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,13 +51,40 @@ public class CreateGenerationDialog extends DialogFragment {
 
 
                 if(!mInput_generation_number.getText().toString().isEmpty()){
+                    switch (mInput_generation_number.getText().toString().length()){
+                        case 1:
+                            generation_number = String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));
+                            break;
+                        case 2:
+                            generation_number = String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));
+                            break;
+                        case 3:
+                            generation_number = String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));
+                            break;
+                        case 4:
+                            generation_number = String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));
+                            break;
+                        default:
+                            break;
 
-                    boolean isInserted = myDb.insertDataGeneration(mInput_generation_number.getText().toString());
+                    }
+/*    /*    public static final String GENERATION_COL_0 = "ID";
+    public static final String GENERATION_COL_1 = "farm_id";
+    public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
+    public static final String GENERATION_COL_3 = "numerical_generation";
+    public static final String GENERATION_COL_4 = "GENERATION_STATUS";
+    public static final String GENERATION_COL_5 = "GENERATION_CULL";*/
+
+/*        contentValues.put(GENERATION_COL_2, generation_number);
+        contentValues.put(GENERATION_COL_3, numerical_gen);
+        contentValues.put(GENERATION_COL_4, is_active);
+*/
+                    boolean isInserted = myDb.insertDataGeneration(generation_number, Integer.parseInt(mInput_generation_number.getText().toString()), "Active");
                     if(isInserted == true){
                         Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
                         Intent intent_generation = new Intent(getActivity(), CreateGenerationsAndLines.class);
                         startActivity(intent_generation);
-                       //does not work, kailangan may way ka para maupdate yung adapter mo
+
                         getDialog().dismiss();
                     }else{
                         Toast.makeText(getActivity(),"Generation not added to database", Toast.LENGTH_SHORT).show();

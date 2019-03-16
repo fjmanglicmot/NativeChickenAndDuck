@@ -208,27 +208,11 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
                     }
 
 
-                    //insert data sa brooderinv na given na tag
-
-                    //Toast.makeText(getContext(), arrayListReplacementInventory1.get(0).getId().toString(), Toast.LENGTH_SHORT).show();
-/*                    buffer.append(arrayListReplacementInventory1.get(0).getId().toString() + "\n");
-                    buffer.append(pheno_date + "\n");
-                    buffer.append(pheno_sex + "\n");
-                    buffer.append(pheno_tag + "\n");
-                    buffer.append(pheno_record + "\n");
-                    buffer.append(morpho.toString() + "\n");*/
                     String morphos  = morpho.toString();
-                    //boolean isInserted = myDb.insertDataGeneration(arrayListReplacementInventory1.get(0).getId());
+
                     Integer inv_id = arrayListReplacementInventory1.get(0).getId();
-                    /**/
-                    //  boolean isInserted = myDb.insertDataReplacementPhenoMorphoRecords(inv_id, pheno_date, pheno_sex, pheno_tag, pheno_record, morphos);
-                    // insertPhenoMorphos
-                    /*/*    public static final String PHENO_MORPHOS_COL_0 = "id";
-    public static final String PHENO_MORPHOS_COL_1   = "replacement_inventory";
-    public static final String PHENO_MORPHOS_COL_2   = "breeder_inventory";
-    public static final String PHENO_MORPHOS_COL_3   = "values_id";
-    public static final String PHENO_MORPHOS_COL_4   = "deleted_at";
-*/
+
+
 
                     boolean isInserted2 = myDb.insertPhenoMorphoRecords(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);
                     Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date);
