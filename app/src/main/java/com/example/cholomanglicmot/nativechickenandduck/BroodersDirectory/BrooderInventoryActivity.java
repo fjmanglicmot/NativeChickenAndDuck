@@ -67,17 +67,18 @@ public class BrooderInventoryActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        Cursor cursor_brooder = myDb.getAllDataFromBrooders();
+
+
         Cursor cursor_brooder_inventory2 = myDb.getAllDataFromBrooderInventory(); //GINAMIT SA DICTIONARY PERO DI PA NAIIMPLEMENT
         cursor_brooder_inventory2.moveToFirst();
-        cursor_brooder.moveToPosition(1); //just in case lang na gagamitin mo
+
 
         ///////so meron ka nang arraylist para sa brooders
                 //////meron narin para sa brooderinventory
                     ///////gawa ka ng dictionary na ang key ay ang brooder_id ng brooder
 
 
-
+        //famLineGen = myDb.getFamLineGen(cursor_brooder_inventory.get)
 
         Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory(); //para sa pagstore ng data sa arraylist
         cursor_brooder_inventory.moveToFirst();
@@ -87,7 +88,8 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
         }else {
             do {
-                Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory2.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+
+                Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
                 arrayListBrooderInventory.add(brooder_inventory);
             } while (cursor_brooder_inventory.moveToNext());
         }
@@ -98,7 +100,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
             if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
 
                 arrayList_temp.add(arrayListBrooderInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
-                    //lol mukhang di mo naman ginamit
+
             }
         }
 
@@ -129,7 +131,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
 
 
-        recycler_adapter = new RecyclerAdapter_Brooder_Inventory(arrayList_temp, brooder_pen, brooder_id_dictionary);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
+        recycler_adapter = new RecyclerAdapter_Brooder_Inventory(arrayList_temp, brooder_pen);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();
     }

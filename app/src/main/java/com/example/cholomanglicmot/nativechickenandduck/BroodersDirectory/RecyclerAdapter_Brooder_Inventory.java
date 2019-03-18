@@ -25,7 +25,7 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
     ArrayList<Brooder_Inventory> arrayListInventory = new ArrayList<>();
     ArrayList<Brooders> arrayListBrooder = new ArrayList<>();
     DatabaseHelper myDb;
-    Map<String, ArrayList<String>> brooder_inventory_dictionary = new HashMap<String, ArrayList<String>>();
+    //Map<String, ArrayList<String>> brooder_inventory_dictionary = new HashMap<String, ArrayList<String>>();
     ArrayList<Brooders> arrayListBrooder2 = new ArrayList<>();
     //Integer position_pen_number;
     ArrayList<Brooder_Inventory> arrayList_temp = new ArrayList<>();
@@ -33,10 +33,10 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
     String brooder_pen_number;
 
 
-    RecyclerAdapter_Brooder_Inventory(ArrayList<Brooder_Inventory> arrayListInventory, String brooder_pen_number, Map<Integer, ArrayList<Brooder_Inventory>> brooder_id_dictionary){
+    RecyclerAdapter_Brooder_Inventory(ArrayList<Brooder_Inventory> arrayListInventory, String brooder_pen_number){
         this.brooder_pen_number = brooder_pen_number;
         this.arrayListInventory = arrayListInventory;
-        this.brooder_id_dictionary = brooder_id_dictionary;
+
         this.context = context;
        // this.brooder_inventory_dictionary = brooder_inventory_dictionary;
 

@@ -61,7 +61,7 @@ public class CreatePen extends AppCompatActivity {
         Exp_list.setAdapter(adapter);
         create_pen = findViewById(R.id.open_dialog);
 
-        delete_pen_table = findViewById(R.id.delete_pen_table);
+
         myDb = new DatabaseHelper(this);
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView1);
@@ -81,12 +81,7 @@ public class CreatePen extends AppCompatActivity {
 
             }
         });
-        delete_pen_table.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myDb.deleteAll();
-            }
-        });
+
 
       /*  Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override

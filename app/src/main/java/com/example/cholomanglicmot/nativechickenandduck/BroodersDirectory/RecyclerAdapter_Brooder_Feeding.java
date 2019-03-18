@@ -44,7 +44,7 @@ public class RecyclerAdapter_Brooder_Feeding extends RecyclerView.Adapter<Recycl
 
         final Brooder_FeedingRecords brooder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());
-      //  holder.brooder_feeding_tag.setText(brooder_feedingRecords.); data not from brooder_feedingRecords
+        holder.brooder_feeding_tag.setText(brooder_feedingRecords.getBrooder_tag());
         holder.brooder_feeding_offered.setText(brooder_feedingRecords.getBrooder_feeding_offered().toString());
         holder.brooder_feeding_refused.setText(brooder_feedingRecords.getBrooder_feeding_refused().toString());
         holder.brooder_feeding_remarks.setText(brooder_feedingRecords.getBrooder_feeding_remarks());

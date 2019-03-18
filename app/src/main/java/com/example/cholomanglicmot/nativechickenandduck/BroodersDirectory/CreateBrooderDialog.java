@@ -135,6 +135,14 @@ public class CreateBrooderDialog extends DialogFragment {
             }
         });
 
+
+
+
+
+
+
+
+
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,15 +150,25 @@ public class CreateBrooderDialog extends DialogFragment {
                 int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
                 if(!generation_spinner.getSelectedItem().toString().isEmpty() && !line_spinner.getSelectedItem().toString().isEmpty() && !family_spinner.getSelectedItem().toString().isEmpty() && !brooder_total_number.getText().toString().isEmpty() &&!brooder_estimated_date_of_hatch.getText().toString().isEmpty() && !brooder_date_added.getText().toString().isEmpty() ){
 
-                    Cursor cursorBrooderChecker = myDb.getAllDataFromBroodersWhere(generation_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),family_spinner.getSelectedItem().toString());
+
+                    //dapat ang ipapasa dito ay yung primary key ng family number
+                    //gawa ka ng function na nagrereturn ng id ng family based sa selected line and generation. gayahin mo nalang yung sa spinner loader ng family
+
+                    //Cursor cursorBrooderChecker = myDb.getAllDataFromBroodersWhere(generation_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),family_spinner.getSelectedItem().toString());
+                    Cursor cursorBrooderChecker = myDb.familyChecker(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
                     cursorBrooderChecker.moveToFirst();
-
-
-
-
-                    if(cursorBrooderChecker.getCount()==0){ //kapag wala pang laman
-
-                        boolean isInserted = myDb.insertDataBrooder(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString(),brooder_date_added.getText().toString(),null);
+                    //kapag wala pang laman
+                    if(cursorBrooderChecker.getCount()==0){
+                        Integer familyID = null;
+                        Cursor cursor_familyID = myDb.getFamilyID(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
+                        cursor_familyID.moveToFirst();
+                        if(cursor_familyID.getCount() != 0){
+                            familyID = cursor_familyID.getInt(0);
+                        }
+                        boolean isInserted = myDb.insertDataBrooder(familyID,brooder_date_added.getText().toString(),null);
+                        if(isInserted == true){
+                            Toast.makeText(getContext(), "Gujab", Toast.LENGTH_SHORT).show();
+                        }
                         //INSERT DATA SA BROODER TABLE
                         Cursor cursor_pen = myDb.getAllDataFromPen();
                         cursor_pen.moveToFirst();
@@ -174,14 +192,14 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         //GET ID OF INSERTED BROODER
 
-                        Cursor cursor = myDb.getIDFromBroodersWhere(generation_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),family_spinner.getSelectedItem().toString());
+                        Cursor cursor = myDb.getIDFromBroodersWhere(familyID);
                         cursor.moveToFirst();
 
 
 
                         Integer id = cursor.getInt(0);
 
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI5678"+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString(), brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(brooder_total_number.getText().toString())+total,current);
                         if(isPenUpdated == true){
                             Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
@@ -231,7 +249,7 @@ public class CreateBrooderDialog extends DialogFragment {
                             startActivity(intent_line);
 
                         }
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI5678"+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString(), brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
 
 

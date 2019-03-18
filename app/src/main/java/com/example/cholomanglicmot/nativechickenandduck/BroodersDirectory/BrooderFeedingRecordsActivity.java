@@ -96,9 +96,13 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
 
         }else {
             do {
+                Cursor cursor = myDb.getTagFromBrooderInventory(cursor_brooder_feeding_records.getInt(1));
+                cursor.moveToFirst();
+                if(cursor.getCount() != 0){
+                    Brooder_FeedingRecords brooderFeedingRecords = new Brooder_FeedingRecords(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), cursor.getString(0),cursor_brooder_feeding_records.getFloat(3),cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getString(5), cursor_brooder_feeding_records.getString(6));
+                    arrayListBrooderFeedingRecords.add(brooderFeedingRecords);
+                }
 
-                Brooder_FeedingRecords brooderFeedingRecords = new Brooder_FeedingRecords(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), cursor_brooder_feeding_records.getFloat(3),cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getString(5), cursor_brooder_feeding_records.getString(6));
-                arrayListBrooderFeedingRecords.add(brooderFeedingRecords);
 
             } while (cursor_brooder_feeding_records.moveToNext());
         }

@@ -81,7 +81,7 @@ public class CreateBrooders extends AppCompatActivity {
         Exp_list.setAdapter(adapter);
 
 
-        delete_pen_table = findViewById(R.id.delete_pen_table);
+
         myDb = new DatabaseHelper(this);
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView1);
@@ -167,8 +167,13 @@ public class CreateBrooders extends AppCompatActivity {
 
         }else {
             do {
+                /*    private Integer id;
+    private Integer brooder_family_number;
+    private String brooder_date_added;
+    private String brooder_deleted_at;
+*/
 
-                Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getString(1), cursor_brooder.getString(2),cursor_brooder.getString(3), cursor_brooder.getString(4), cursor_brooder.getString(5));
+                Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2),cursor_brooder.getString(3));
                 arrayList3.add(brooders);
 
 

@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory.Line;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,10 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_BROODER = "brooder_table";
     public static final String BROODER_COL_0 = "ID";
     public static final String BROODER_COL_1 = "BROODER_FAMILY";
-    public static final String BROODER_COL_2 = "BROODER_LINE";
-    public static final String BROODER_COL_3 = "BROODER_GENERATION";
-    public static final String BROODER_COL_4 = "BROODER_DATE_ADDED";
-    public static final String BROODER_COL_5 = "BROODER_DELETED_AT";
+    public static final String BROODER_COL_2 = "BROODER_DATE_ADDED";
+    public static final String BROODER_COL_3 = "BROODER_DELETED_AT";
 
     public static final String TABLE_BROODER_INVENTORIES = "brooder_inventory_table";
     public static final String BROODER_INV_COL_0 = "ID";
@@ -295,7 +291,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 86);
+        super(context, DATABASE_NAME, null, 87);
     }
 
     @Override
@@ -313,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-        db.execSQL("create table " + TABLE_BROODER +" (ID INTEGER PRIMARY KEY, BROODER_FAMILY TEXT REFERENCES TABLE_FAMILY(ID), BROODER_LINE TEXT, BROODER_GENERATION TEXT, BROODER_DATE_ADDED TEXT, BROODER_DELETED_AT TEXT)");
+        db.execSQL("create table " + TABLE_BROODER +" (ID INTEGER PRIMARY KEY, BROODER_FAMILY INTEGER, BROODER_DATE_ADDED TEXT, BROODER_DELETED_AT TEXT, FOREIGN KEY (BROODER_FAMILY) REFERENCES TABLE_FAMILY(ID))");
         db.execSQL("create table " + TABLE_BROODER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BROODER_INV_BROODER_ID TEXT REFERENCES TABLE_BROODER(ID), BROODER_INV_PEN_NUMBER TEXT, BROODER_INV_BROODER_TAG TEXT, BROODER_INV_BATCHING_DATE TEXT, BROODER_INV_NUMBER_MALE INTEGER, BROODER_INV_NUMBER_FEMALE INTEGER, BROODER_INV_TOTAL INTEGER, BROODER_INV_LAST_UPDATE TEXT, BROODER_INV_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_BROODER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_FEEDING_DATE_COLLECTED TEXT, BROODER_FEEDING_AMOUNT_OFFERED TEXT, BROODER_FEEDING_AMOUNT_REFUSED INTEGER, BROODER_FEEDING_REMARKS TEXT, BROODER_FEEDING_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_BROODER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_GROWTH_COLLECTION_DAY TEXT, BROODER_GROWTH_DATE_COLLECTED TEXT, BROODER_GROWTH_MALE_QUANTITY INTEGER, BROODER_GROWTH_MALE_WEIGHT INTEGER, BROODER_GROWTH_FEMALE_QUANTITY INTEGER, BROODER_GROWTH_FEMALE_WEIGHT INTEGER,BROODER_GROWTH_TOTAL_QUANTITY INTEGER, BROODER_GROWTH_TOTAL_WEIGHT INTEGER,BROODER_GROWTH_DELETED_AT TEXT)");
@@ -470,16 +466,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertDataBrooder(String brooder_family_number, String brooder_line_number, String brooder_generation_number, String brooder_date_added, String brooder_deleted_at ){
+    public boolean insertDataBrooder(Integer brooder_family_number, String brooder_date_added, String brooder_deleted_at ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(BROODER_COL_1, brooder_family_number);
-        contentValues.put(BROODER_COL_2, brooder_line_number);
-        contentValues.put(BROODER_COL_3, brooder_generation_number);
-        contentValues.put(BROODER_COL_4, brooder_date_added);
-        contentValues.put(BROODER_COL_5, brooder_deleted_at);
+        contentValues.put(BROODER_COL_2, brooder_date_added);
+        contentValues.put(BROODER_COL_3, brooder_deleted_at);
 
         long result = db.insert(TABLE_BROODER,null,contentValues);
 
@@ -1003,76 +997,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-    public Cursor getAllData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PROFILE, null);
-        return res;
-    }
 
-    public Cursor getAllDataFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
-        return res;
-    }
-
-    public Cursor getIDFromBroodersWhere(String generation, String line, String family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER+ " where BROODER_FAMILY is "+family+ " and BROODER_LINE is "+line+" and BROODER_GENERATION is "+generation, null);
-        return res;
-    }
-    public Cursor getBroodersFromPen(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Brooder%'", null);
-        return res;
-    }
-    public Cursor getAllDataFromBrooders(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBroodersWhere(String brooder_generation, String brooder_line, String brooder_family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER + " where BROODER_GENERATION is "+brooder_generation+ " and BROODER_LINE is "+brooder_line+" and BROODER_FAMILY is "+brooder_family, null);
-
-        return res;
-    }
-    public Cursor getIDFromBroodersInvWhere(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_ID is "+id, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBrooderInventory(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBrooderInventoryWherePen(String pen){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_PEN_NUMBER is "+pen, null);
-
-        return res;
-    }
-    public Cursor getDataFromBrooderInventoryWherePenAndID(String tag){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_TAG is ?", new String[] {tag});
-
-        return res;
-    }
-    public Cursor getAllDataFromBrooderFeedingRecords(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_FEEDING_RECORDS, null);
-
-        return res;
-    }
-    public Cursor getAllDataFromBrooderGrowthRecords(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
-
-        return res;
-    }
 
     public Cursor getDataFromGenerationWhereGenNumber(String number){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1097,6 +1022,90 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         Cursor res = db.rawQuery("select * from " +TABLE_LINE+ " where ID is ?", new String[]{id.toString()});
 
         return res;
+    }
+
+
+    public Cursor getAllData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PROFILE, null);
+        return res;
+    }
+
+    public Cursor getAllDataFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
+        return res;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public Cursor getIDFromBroodersWhere(Integer family){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER+ " where BROODER_FAMILY is ?", new String[]{family.toString()},null);
+        return res;
+    }
+    public Cursor getBroodersFromPen(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Brooder%'", null);
+        return res;
+    }
+    public Cursor getAllDataFromBrooders(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER, null);
+
+        return res;
+    }
+
+    public Cursor getAllDataFromBrooderInventory(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES, null);
+
+        return res;
+    }
+
+    public Cursor getDataFromBrooderInventoryWherePenAndID(String tag, String pen){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_TAG is ? and BROODER_INV_PEN_NUMBER is ?", new String[] {tag, pen});
+
+        return res;
+    }
+    public Cursor getAllDataFromBrooderFeedingRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_FEEDING_RECORDS, null);
+
+        return res;
+    }
+    public Cursor getAllDataFromBrooderGrowthRecords(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
+
+        return res;
+    }
+    public Cursor getTagFromBrooderInventory(Integer inventory_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select BROODER_INV_BROODER_TAG from " +TABLE_BROODER_INVENTORIES+ " where ID is ?",new String[]{inventory_id.toString()});
+
+        return res;
+    }
+    public Integer getFamIDFromBrooders(Integer id){
+        Integer fam_id = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select BROODER_FAMILY from " +TABLE_BROODER+ " where ID is ?",new String[]{id.toString()});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            fam_id = res.getInt(0);
+        }
+        return fam_id;
     }
 
 
@@ -1333,6 +1342,109 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor familyChecker(String family, String selected_line, String selected_generation){
+
+        List<String> families = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer family_id =null;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM "+TABLE_LINE+ " WHERE LINE_GENERATION LIKE ? AND LINE_NUMBER LIKE ?",new String[]{generation.toString(),selected_line}, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM "+TABLE_FAMILY+ " WHERE FAMILY_LINE LIKE ? AND FAMILY_NUMBER LIKE ? ",new String[]{line.toString(), family},null);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            family_id = cursor1.getInt(0);
+        }
+
+        db3.close();
+
+        SQLiteDatabase db4 = this.getReadableDatabase();
+        Cursor res = db4.rawQuery("select * from " +TABLE_BROODER + " where BROODER_FAMILY like ? ",new String[]{family_id.toString()}, null);
+
+        return res;
+
+    }
+    public List<String> getFamLineGen(Integer family_id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<String> famLineGen = new ArrayList<>();
+        Integer line_id = null;
+        Integer gen_id = null;
+
+
+        Cursor fam = db.rawQuery("select FAMILY_LINE, FAMILY_NUMBER from " +TABLE_FAMILY + " where ID like ? ",new String[]{family_id.toString()}, null);
+        fam.moveToFirst();
+        if(fam.getCount() != 0){
+            line_id = fam.getInt(0);
+            famLineGen.add(fam.getString(1));
+        }
+
+        Cursor line = db.rawQuery("select LINE_GENERATION, LINE_NUMBER from " +TABLE_LINE + " where ID like ? ",new String[]{line_id.toString()}, null);
+        line.moveToFirst();
+        if(line.getCount() != 0){
+            gen_id = line.getInt(0);
+            famLineGen.add(line.getString(1));
+        }
+
+        Cursor gen = db.rawQuery("select GENERATION_NUMBER from " +TABLE_GENERATION + " where ID like ? ",new String[]{gen_id.toString()}, null);
+        gen.moveToFirst();
+        if(gen.getCount() != 0){
+            famLineGen.add(gen.getString(0));
+        }
+
+        return famLineGen;
+    }
+    public Cursor getFamilyID(String family, String selected_line, String selected_generation){
+
+        List<String> families = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer family_id =null;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM "+TABLE_LINE+ " WHERE LINE_GENERATION LIKE ? AND LINE_NUMBER LIKE ?",new String[]{generation.toString(),selected_line}, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM "+TABLE_FAMILY+ " WHERE FAMILY_LINE LIKE ? AND FAMILY_NUMBER LIKE ? ",new String[]{line.toString(), family},null);
+        cursor1.moveToFirst();
+
+        db3.close();
+
+
+        return cursor1;
+    }
 
 
 
@@ -1377,50 +1489,78 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return generations;
     }
     public List<String> getAllDataFromLineasList(String selected_generation){
-        List<String> lines = new ArrayList<String>();
 
-        // Select All Query
-        String selectQuery = "SELECT LINE_NUMBER FROM " + TABLE_LINE + " WHERE LINE_GENERATION = " + selected_generation;
+        List<String> lines = new ArrayList<String>();
+        Integer generation = null;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
 
+       // String getGenNumberQuery = "SELECT * FROM " +TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE '%0003%'";// +selected_generation;
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+        // Select All Query
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        String selectQuery = "SELECT LINE_NUMBER FROM " + TABLE_LINE + " WHERE LINE_GENERATION like " + generation;
+        Cursor cursor = db2.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
         // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
+        if (cursor.getCount()!= 0) {
             do {
                 lines.add(cursor.getString(0));
             } while (cursor.moveToNext());
+        }else{
         }
-
+        db2.close();
         // closing connection
         cursor.close();
-        db.close();
 
-        // returning lables
         return lines;
     }
     public List<String> getAllDataFromFamilyasList(String selected_line, String selected_generation){
-        List<String> lines = new ArrayList<String>();
-
-        // Select All Query
-        String selectQuery = "SELECT FAMILY_NUMBER FROM " + TABLE_FAMILY + " WHERE FAMILY_LINE = " + selected_line + " AND FAMILY_GENERATION = " + selected_generation;
-
+        List<String> families = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Integer generation = null;
+        Integer line = null;
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                lines.add(cursor.getString(0));
-            } while (cursor.moveToNext());
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
         }
-
-        // closing connection
-        cursor.close();
         db.close();
 
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM "+TABLE_LINE+ " WHERE LINE_GENERATION LIKE ? AND LINE_NUMBER LIKE ?",new String[]{generation.toString(),selected_line}, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+          line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT FAMILY_NUMBER FROM "+TABLE_FAMILY+ " WHERE FAMILY_LINE LIKE ?",new String[]{line.toString()},null);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            do {
+                families.add(cursor1.getString(0));
+            } while (cursor1.moveToNext());
+        }
+
+        db3.close();
+
+
+        cursor1.close();
+
+
         // returning lables
-        return lines;
+        return families;
     }
     public List<String> getAllDataFromPenasList(){
         String pen = "Layer";
@@ -1476,6 +1616,20 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         // returning lables
         return generations;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public boolean updatePen(String number, String type, Integer current, Integer total){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -1524,22 +1678,14 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         db.update(TABLE_PROFILE, contentValues, "ID = ?", new String[]{ id });
         return true;
     }
-    private Line cursorToLine(Cursor cursor) {
-        Line line = new Line();
-        line.setGeneration_number(cursor.getString(0));
-        line.setLine_number(cursor.getString(1));
 
-
-        // get The company by id
-      /*  long companyId = cursor.getLong(7);
-        Generation generation = new Generation();*/
-        //generation.getGeneration_number();
-
-      /*  CompanyDAO dao = new CompanyDAO(mContext);
-        Company company = dao.getCompanyById(companyId);*/
-      /*  if ( generation.getGeneration_number() != null)
-            line.setGeneration_number(company);
-*/
-        return line;
+    public boolean updateMaleFemaleCount(String tag, Integer male_count, Integer female_count){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BROODER_INV_COL_3, tag);
+        contentValues.put(BROODER_INV_COL_5, male_count);
+        contentValues.put(BROODER_INV_COL_6, female_count);
+        db.update(TABLE_BROODER_INVENTORIES, contentValues, "BROODER_INV_BROODER_TAG = ?", new String[]{ tag });
+        return true;
     }
 }

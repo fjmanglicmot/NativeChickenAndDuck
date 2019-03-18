@@ -68,19 +68,20 @@ public class CreatePenDialog extends DialogFragment {
                     case radio_brooder:
                         // the first RadioButton is checked.
                         selected_pen_type = "Brooder";
-                        pen_number = "B"+mInput_pen_number.getText().toString();
+                        /*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
+                        pen_number = "B"+String.format("%02d" , Integer.parseInt(mInput_pen_number.getText().toString()));
                         break;
                     //other checks for the other RadioButtons ids from the RadioGroup
                     case radio_grower:
                         // the first RadioButton is checked.
                         selected_pen_type = "Grower";
-                        pen_number = "G"+mInput_pen_number.getText().toString();
+                        pen_number = "G"+String.format("%02d" , Integer.parseInt(mInput_pen_number.getText().toString()));
                         break;
                     //other checks for the other RadioButtons ids from the RadioGroup
                     case radio_layer:
                         // the first RadioButton is checked.
                         selected_pen_type = "Layer";
-                        pen_number = "L"+mInput_pen_number.getText().toString();
+                        pen_number = "L"+String.format("%02d" , Integer.parseInt(mInput_pen_number.getText().toString()));
                         break;
                     //other checks for the other RadioButtons ids from the RadioGroup
                     case -1:
