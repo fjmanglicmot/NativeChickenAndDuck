@@ -28,7 +28,7 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <!--<TextView
                             android:id="@+id/brooder_growth_collection_day"
                             android:layout_width="60dp"
                             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                             android:gravity="center"
                             android:text="CollectionDay"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold" />-->
 
                         <TextView
                             android:id="@+id/brooder_growth_inventory_tag"
@@ -48,7 +48,7 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                       <!-- <TextView
                             android:id="@+id/brooder_growth_male_count"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -108,7 +108,16 @@
                             android:text="Total Weight"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-
+-->
+                        <ImageButton
+                            android:id="@+id/brooder_growth_view"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:src="@drawable/ic_remove_red_eye_black_24dp"
+                            android:background="@null"
+                            android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/brooder_growth_delete"
                             android:layout_width="50dp"

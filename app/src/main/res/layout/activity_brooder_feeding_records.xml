@@ -136,7 +136,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Cull" />
+                            android:text="Delete" />
 
                     </TableRow>
 

@@ -78,7 +78,7 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <TextView
+             <!--           <TextView
                             android:id="@+id/brooder_inventory_family"
                             android:layout_width="60dp"
                             android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Collection\nDay" />
+                            android:text="Collection\nDay" />-->
 
                         <TextView
                             android:id="@+id/brooder_inventory_line"
@@ -96,9 +96,9 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Inventory\nCode" />
+                            android:text="Tag" />
 
-                        <TextView
+      <!--                  <TextView
                             android:id="@+id/brooder_inventory_gen"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -154,7 +154,16 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Total Weight" />
+                            android:text="Total Weight" />-->
+                        <TextView
+
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="View" />
                         <TextView
                             android:id="@+id/brooder_delete"
                             android:layout_width="50dp"
@@ -163,7 +172,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Delete Record" />
+                            android:text="Delete" />
                     </TableRow>
 
 
@@ -182,6 +191,7 @@
                 </android.support.v7.widget.RecyclerView>
 
 
+
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -189,16 +199,19 @@
                     android:orientation="horizontal">
 
 
+
+
                     <ImageButton
 
                         android:id="@+id/open_dialog"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="28dp"
+                        android:layout_marginEnd="16dp"
                         android:background="@drawable/floatingbutton"
                         android:src="@drawable/ic_add_black_24dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:layout_editor_absoluteY="0dp" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                 </android.support.constraint.ConstraintLayout>
 

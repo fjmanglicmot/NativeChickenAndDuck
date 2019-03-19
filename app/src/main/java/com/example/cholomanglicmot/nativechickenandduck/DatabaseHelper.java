@@ -1092,6 +1092,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromBrooderGrowthRecordsWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS+ " where BROODER_GROWTH_INVENTORY_ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
     public Cursor getAllDataFromBrooderGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
