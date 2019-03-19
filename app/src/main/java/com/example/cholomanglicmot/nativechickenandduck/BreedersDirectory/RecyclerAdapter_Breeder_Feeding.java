@@ -45,10 +45,10 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
 
         final Breeder_FeedingRecords brooder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());
-      //  holder.brooder_feeding_tag.setText(brooder_feedingRecords.); data not from brooder_feedingRecords
-        holder.brooder_feeding_offered.setText(brooder_feedingRecords.getBrooder_feeding_offered().toString());
-        holder.brooder_feeding_refused.setText(brooder_feedingRecords.getBrooder_feeding_refused().toString());
-        holder.brooder_feeding_remarks.setText(brooder_feedingRecords.getBrooder_feeding_remarks());
+       // holder.brooder_feeding_tag.setText(brooder_feedingRecords.); data not from brooder_feedingRecords
+      //  holder.brooder_feeding_offered.setText(brooder_feedingRecords.getBrooder_feeding_offered().toString());
+       // holder.brooder_feeding_refused.setText(brooder_feedingRecords.getBrooder_feeding_refused().toString());
+     //   holder.brooder_feeding_remarks.setText(brooder_feedingRecords.getBrooder_feeding_remarks());
 
         holder.brooder_feeding_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +81,8 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
             brooder_feeding_date = view.findViewById(R.id.brooder_feeding_date);
             brooder_feeding_tag = view.findViewById(R.id.brooder_feeding_tag);
             brooder_feeding_offered = view.findViewById(R.id.brooder_feeding_offered);
-            brooder_feeding_refused= view.findViewById(R.id.brooder_feeding_refused);
-            brooder_feeding_remarks= view.findViewById(R.id.brooder_feeding_remarks);
+         //   brooder_feeding_refused= view.findViewById(R.id.brooder_feeding_refused);
+           // brooder_feeding_remarks= view.findViewById(R.id.brooder_feeding_remarks);
             brooder_feeding_delete = view.findViewById(R.id.brooder_feeding_delete);
 
 

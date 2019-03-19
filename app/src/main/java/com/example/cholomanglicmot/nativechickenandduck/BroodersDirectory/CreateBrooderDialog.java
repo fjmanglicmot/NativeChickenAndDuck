@@ -199,7 +199,9 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         Integer id = cursor.getInt(0);
 
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString(), brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                       // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(brooder_total_number.getText().toString())+total,current);
                         if(isPenUpdated == true){
                             Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
@@ -244,12 +246,13 @@ public class CreateBrooderDialog extends DialogFragment {
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(brooder_total_number.getText().toString())+total),current);
 
                         if(isPenUpdated == true){
-                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
                             Intent intent_line = new Intent(getActivity(), CreateBrooders.class);
                             startActivity(intent_line);
 
                         }
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString(), brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                     //   boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
 
 

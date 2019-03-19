@@ -1,6 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -76,6 +77,8 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
             }
         });
 
+
+
         myDb = new DatabaseHelper(this);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerViewBrooderFeedingRecords);
         layoutManager = new LinearLayoutManager(this);
@@ -134,6 +137,13 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
         recycler_adapter.notifyDataSetChanged();
 
 
+
+    }
+    @Override
+    public void onBackPressed() {
+
+        Intent intent_brooders = new Intent(this, CreateBrooders.class);
+        startActivity(intent_brooders);
 
     }
     @Override

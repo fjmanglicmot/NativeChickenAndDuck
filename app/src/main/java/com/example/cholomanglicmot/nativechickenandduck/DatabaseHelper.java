@@ -1085,6 +1085,13 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
+    public Cursor getAllDataFromBrooderFeedingRecordsWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select BROODER_FEEDING_AMOUNT_OFFERED,BROODER_FEEDING_AMOUNT_REFUSED,BROODER_FEEDING_REMARKS,BROODER_FEEDING_DATE_COLLECTED from " +TABLE_BROODER_FEEDING_RECORDS+ " where BROODER_FEEDING_INVENTORY_ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
     public Cursor getAllDataFromBrooderGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS, null);
@@ -1107,6 +1114,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         }
         return fam_id;
     }
+
 
 
 
