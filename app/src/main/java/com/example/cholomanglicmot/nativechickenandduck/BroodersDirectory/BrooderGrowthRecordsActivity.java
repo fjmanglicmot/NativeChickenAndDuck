@@ -119,7 +119,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
 
 
 
-
+/*
         int count_inventory =0;
 
         for(int i=0;i<arrayList_temp.size();i++){
@@ -148,10 +148,10 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
             }else if(arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
                 inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id())+arrayList_temp.get(i).getBrooder_total_quantity());
             }
-        }
+        }*/
 
         ////growth records
-        StringBuffer buffer = new StringBuffer();
+
         Cursor cursor_brooder_growth_records = myDb.getAllDataFromBrooderGrowthRecords();
         cursor_brooder_growth_records.moveToFirst();
 
@@ -167,7 +167,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
                     if(arrayList_temp.get(k).getBrooder_inv_brooder_id().equals(cursor_brooder_growth_records.getInt(1))){
                         Brooder_GrowthRecords brooderGrowthRecords = new Brooder_GrowthRecords(cursor_brooder_growth_records.getInt(0),cursor_brooder_growth_records.getInt(1),arrayList_temp.get(k).getBrooder_inv_brooder_tag(),cursor_brooder_growth_records.getInt(2), cursor_brooder_growth_records.getString(3),cursor_brooder_growth_records.getInt(4), cursor_brooder_growth_records.getFloat(5), cursor_brooder_growth_records.getInt(6), cursor_brooder_growth_records.getFloat(7),cursor_brooder_growth_records.getInt(8), cursor_brooder_growth_records.getFloat(9), cursor_brooder_growth_records.getString(10));
                         arrayListBrooderGrowthRecords.add(brooderGrowthRecords);
-                        buffer.append("Browth brooder_inv_id"+cursor_brooder_growth_records.getInt(1) + "\n");
+
 
                     }
                 }

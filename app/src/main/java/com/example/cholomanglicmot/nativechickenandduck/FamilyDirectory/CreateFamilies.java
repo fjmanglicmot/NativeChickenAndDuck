@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
-import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.MainActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
+import com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory.MainActivity;
 import com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory.CreateGenerationsAndLines;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.CreatePen;
 import com.example.cholomanglicmot.nativechickenandduck.ProjectAdapter;
@@ -214,24 +214,26 @@ public class CreateFamilies extends AppCompatActivity {
             return;
         }else{
 
-
-
-
+//BASTA MAY MALI PARIN DITO, YUNG SA LINE AT GENERATION
             do {
                 String line_number = null;
-                Integer generation_id = null;
-                String generation_number = null;
+                String generation_number = new String();
                 Cursor cursor1 = myDb.getDataFromLineWhereID(cursor.getInt(2));
 
                 cursor1.moveToFirst();
 
                 if(cursor1.getCount() != 0){
+
                     line_number = cursor1.getString(1);
-                    generation_id = cursor1.getInt(2);
+                    Integer generation_id = cursor1.getInt(2);
 
                     Cursor cursor2 = myDb.getDataFromGenerationWhereID(generation_id);
                     cursor2.moveToFirst();
-                    generation_number = cursor2.getString(0);
+
+                    if(cursor2.getCount() != 0){
+                        generation_number = cursor2.getString(0);
+                    }
+
                 }
                 Family family = new Family(cursor.getString(1), line_number, generation_number);
                 arrayList.add(family);

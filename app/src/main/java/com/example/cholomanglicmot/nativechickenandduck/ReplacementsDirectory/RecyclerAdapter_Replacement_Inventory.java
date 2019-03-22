@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,19 +62,39 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
 
 
         final Replacement_Inventory replacement_inventory = arrayListReplacementInventory.get(position);
+        final Bundle args = new Bundle();
+        args.putString("Replacement Tag", replacement_inventory.getReplacement_inv_replacement_tag());
+        args.putString("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
 
         holder.replacement_inventory_code.setText(replacement_inventory.getReplacement_inv_replacement_tag());
-        holder.replacement_inventory_family.setText(replacement_inventory.getReplacement_inv_family_number());
+     /*   holder.replacement_inventory_family.setText(replacement_inventory.getReplacement_inv_family_number());
         holder.replacement_inventory_line.setText(replacement_inventory.getReplacement_inv_line_number());
-        holder.replacement_inventory_gen.setText(replacement_inventory.getReplacement_inv_generation_number());
+        holder.replacement_inventory_gen.setText(replacement_inventory.getReplacement_inv_generation_number());*/
         holder.replacement_inventory_batch_date.setText(replacement_inventory.getReplacement_inv_batching_date());
-        holder.replacement_inventory_number_male.setText(replacement_inventory.getReplacement_male_quantity().toString());
+      /*  holder.replacement_inventory_number_male.setText(replacement_inventory.getReplacement_male_quantity().toString());
         holder.replacement_inventory_number_female.setText(replacement_inventory.getReplacement_female_quantity().toString());
-        holder.replacement_inventory_total.setText(replacement_inventory.getReplacement_total_quantity().toString());
-        holder.replacement_inventory_date_added.setText(replacement_inventory.getReplacement_date_added());
-        holder.replacement_inventory_last_update.setText(replacement_inventory.getReplacement_inv_last_update());
+        holder.replacement_inventory_total.setText(replacement_inventory.getReplacement_total_quantity().toString());*/
+     /*   holder.replacement_inventory_date_added.setText(replacement_inventory.getReplacement_date_added());*/
+        //holder.replacement_inventory_last_update.setText(replacement_inventory.getReplacement_inv_last_update());
+        holder.replacement_inventory_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewReplacementDialog alertDialog = new ViewReplacementDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewReplacementDialog");
+                notifyDataSetChanged();*/
 
+            }
+        });
 
+        holder.replacement_inventory_cull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
     }
 
@@ -94,7 +115,7 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
 
         TextView replacement_inventory_date_added;
         TextView replacement_inventory_last_update;
-        ImageButton replacement_inventory_mort;
+        ImageButton replacement_inventory_view;
         ImageButton replacement_inventory_cull;
 
         TextView replacement_inventory_number_male;
@@ -104,18 +125,19 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
         RecyclerViewHolder(View view){
             super(view);
             replacement_inventory_code = view.findViewById(R.id.replacement_inventory_code);
-            replacement_inventory_family = view.findViewById(R.id.replacement_inventory_family);
+           /* replacement_inventory_family = view.findViewById(R.id.replacement_inventory_family);
             replacement_inventory_line = view.findViewById(R.id.replacement_inventory_line);
-            replacement_inventory_gen = view.findViewById(R.id.replacement_inventory_gen);
+            replacement_inventory_gen = view.findViewById(R.id.replacement_inventory_gen);*/
             replacement_inventory_batch_date = view.findViewById(R.id.replacement_inventory_batch_date);;
-            replacement_inventory_date_added = view.findViewById(R.id.replacement_inventory_date_added);;
+         /*   replacement_inventory_date_added = view.findViewById(R.id.replacement_inventory_date_added);;
             replacement_inventory_last_update = view.findViewById(R.id.replacement_inventory_last_update);;
-            replacement_inventory_mort = view.findViewById(R.id.replacement_inventory_mort);;
+            replacement_inventory_mort = view.findViewById(R.id.replacement_inventory_mort);;*/
             replacement_inventory_cull = view.findViewById(R.id.replacement_inventory_cull);;
+            replacement_inventory_view = view.findViewById(R.id.replacement_inventory_view);;
 
-            replacement_inventory_number_male = view.findViewById(R.id.replacement_inventory_number_male);;
-            replacement_inventory_number_female = view.findViewById(R.id.replacement_inventory_number_female);;
-            replacement_inventory_total = view.findViewById(R.id.replacement_inventory_total);;
+           /* replacement_inventory_number_male = view.findViewById(R.id.replacement_inventory_number_male);;
+            replacement_inventory_number_female = view.findViewById(R.id.replacement_inventory_number_female);;*/
+           //replacement_inventory_total = view.findViewById(R.id.replacement_inventory_total);;
 
 
         }

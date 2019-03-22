@@ -37,8 +37,9 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
     private RadioButton radioButton,radioButton2,radioButton3,  radioButtonNo,   radioButtonYes;
     private LinearLayout linear_total, linear_male, linear_female;
     Integer male_count, female_count, total_count;
+    Float total_weight;
 
-    boolean isSexingCheched;
+    boolean isSexingCheched, isOtherDayChecked;
     private Button mActionOk;
     DatabaseHelper myDb;
     Calendar calendar;
@@ -88,17 +89,23 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                 if (isChecked) {
                     brooder_growth_other_day.setVisibility(View.VISIBLE);
                     radio_group_collection_day.setVisibility(View.GONE);
+                    isOtherDayChecked = true;
 
 
                 } else {
 
                     brooder_growth_other_day.setVisibility(View.GONE);
                     radio_group_collection_day.setVisibility(View.VISIBLE);
+                    isOtherDayChecked = false;
 
                 }
 
             }
         });
+        final int day_0 = 1000;
+        final int day_21 = 1001;
+        radioButton.setId(day_0);
+        radioButton2.setId(day_21);
 
 
 
@@ -117,6 +124,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     linear_male.setVisibility(View.VISIBLE);
                     linear_female.setVisibility(View.VISIBLE);
                     isSexingCheched = true;
+
                     //total_count = 0;
                     //male_count = Integer.parseInt(brooder_growth_male_weight.getText().toString());
 
@@ -125,7 +133,8 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     linear_total.setVisibility(View.VISIBLE);
                     linear_male.setVisibility(View.GONE);
                     linear_female.setVisibility(View.GONE);
-                    brooder_growth_other_day.setText("-1");
+
+
                     isSexingCheched = false;
 
 
@@ -134,6 +143,8 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
             }
         });
+
+
         brooder_growth_date_added.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -156,37 +167,40 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
         });
 
 
-        final int day_0 = 1000;
-        final int day_21 = 1001;
-        radioButton.setId(day_0);
-        radioButton2.setId(day_21);
+
+
+
 
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Integer brooder_growth_collection = new Integer(0);
+                if(isOtherDayChecked){
+                    brooder_growth_collection = Integer.parseInt(brooder_growth_other_day.getText().toString());
+                }else{
+                    int selectedDay = radio_group_collection_day.getCheckedRadioButtonId();
+                    //////for radio button
 
-                //////for radio button
-                int selectedDay = radio_group_collection_day.getCheckedRadioButtonId();
-                int brooder_growth_collection = 0;
-               // if(!())
-                switch (selectedDay) {
-                    case day_0:
-                        // the first RadioButton is checked.
-                        brooder_growth_collection = 0;
+                    switch (selectedDay) {
+                        case day_0:
+                            // the first RadioButton is checked.
+                            brooder_growth_collection = 0;
 
-                        break;
-                    //other checks for the other RadioButtons ids from the RadioGroup
-                    case day_21:
-                        // the first RadioButton is checked.
-                        brooder_growth_collection = 21;
-                        break;
-                    //other checks for the other RadioButtons ids from the RadioGroup
+                            break;
+                        //other checks for the other RadioButtons ids from the RadioGroup
+                        case day_21:
+                            // the first RadioButton is checked.
+                            brooder_growth_collection = 21;
+                            break;
+                        //other checks for the other RadioButtons ids from the RadioGroup
 
-                    case -1:
-                        brooder_growth_collection = 0;
-                        // no RadioButton is checked inthe Radiogroup
-                        break;
+                        case -1:
+                            brooder_growth_collection = 0;
+                            // no RadioButton is checked inthe Radiogroup
+                            break;
+                    }
                 }
+
 
                 //////for radio button
 //(brooder_growth_collection != 0 || !brooder_growth_other_day.getText().toString().isEmpty()) && !brooder_growth_date_added.getText().toString().isEmpty() && (!brooder_growth_total_weight.getText().toString().isEmpty() || !brooder_growth_male_weight.getText().toString().isEmpty() || !brooder_growth_female_weight.getText().toString().isEmpty()
@@ -219,10 +233,23 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                     //GETTING TOTAL BROODER INVENTORY COUNT
                     int count_inventory = 0;
+                    int count_male = 0;
+                    int count_female = 0;
 
                     for(int i=0;i<arrayList_temp.size();i++){
                         count_inventory = count_inventory+arrayList_temp.get(i).getBrooder_total_quantity();
                     }
+
+                    for(int i=0;i<arrayList_temp.size();i++){
+                        count_male = count_male+arrayList_temp.get(i).getBrooder_male_quantity();
+                    }
+
+
+                    for(int i=0;i<arrayList_temp.size();i++){
+                        count_female = count_female+arrayList_temp.get(i).getBrooder_female_quantity();
+                    }
+                    //
+
 
 
 
@@ -253,8 +280,8 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                         if(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()) != null && !arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
                             ArrayList<Float> arrayList2 = new ArrayList<>();
                             arrayList2.add((float)arrayList_temp.get(i).getBrooder_total_quantity());
-                            arrayList2.add((float)arrayList_temp.get(i).getBrooder_total_quantity());
-                            arrayList2.add((float)arrayList_temp.get(i).getBrooder_total_quantity());
+                            arrayList2.add((float)arrayList_temp.get(i).getBrooder_male_quantity());
+                            arrayList2.add((float)arrayList_temp.get(i).getBrooder_female_quantity());
                             inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),arrayList2);
                             arrayList.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
                         }else if(arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
@@ -262,8 +289,8 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                             ArrayList<Float> arrayList3 = new ArrayList<>();
                             arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(0)+arrayList_temp.get(i).getBrooder_total_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(1)+arrayList_temp.get(i).getBrooder_total_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(2)+arrayList_temp.get(i).getBrooder_total_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(1)+arrayList_temp.get(i).getBrooder_male_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(2)+arrayList_temp.get(i).getBrooder_female_quantity());
 
 
                             inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),arrayList3);
@@ -283,9 +310,11 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                     float maleWeight, femaleWeight, totalWeight = 0.0f;
                     if (isSexingCheched){
+
                         maleWeight = Float.parseFloat(brooder_growth_male_weight.getText().toString());
                         femaleWeight = Float.parseFloat(brooder_growth_female_weight.getText().toString());
-                        totalWeight = 0.0f;
+                        totalWeight = (Float.parseFloat(brooder_growth_male_weight.getText().toString())+ Float.parseFloat(brooder_growth_female_weight.getText().toString()));
+                        //totalWeight = 0.0f;
 
                     }else{
                         maleWeight = 0.0f;
@@ -295,8 +324,8 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
 
                     float multiplierTotalWeight = totalWeight/count_inventory;
-                    float multiplierMaleWeight = maleWeight/count_inventory;
-                    float multiplierFemaleWeight = femaleWeight/count_inventory;
+                    float multiplierMaleWeight = maleWeight/count_male;
+                    float multiplierFemaleWeight = femaleWeight/count_female;
 
                     //float mutiplierRefused = feedRefused/count_inventory;
 
@@ -332,7 +361,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                         for(int i=0;i<arrayList_temp.size();i++){
                             if (arrayList_temp.get(i).getBrooder_inv_brooder_id().equals(key)){
 
-                                boolean isInserted = myDb.insertDataBrooderGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getBrooder_male_quantity(),male,arrayList_temp.get(i).getBrooder_female_quantity(),female,arrayList_temp.get(i).getBrooder_total_quantity(),total,null);
+                                boolean isInserted = myDb.insertDataBrooderGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getBrooder_male_quantity(),male,arrayList_temp.get(i).getBrooder_female_quantity(),female,arrayList_temp.get(i).getBrooder_total_quantity(),female+male,null);
                                 if(!isInserted){
                                     Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
                                     getDialog().dismiss();

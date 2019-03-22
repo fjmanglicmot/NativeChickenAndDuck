@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".DashboardDirectory.DashBoardActivity"></activity>
         <activity android:name=".DashboardDirectory.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,14 +20,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DashboardDirectory.MainActivity"
+            android:name=".FarmSettingsDirectory.MainActivity"
             android:windowSoftInputMode="stateHidden" />
-
-
         <activity
             android:name=".PensDirectory.CreatePen"
             android:windowSoftInputMode="stateHidden" />
-
         <activity android:name=".GenerationsAndLinesDirectory.CreateGenerationsAndLines" />
         <activity android:name=".FamilyDirectory.CreateFamilies" />
         <activity android:name=".BreedersDirectory.CreateBreeders" />
@@ -47,7 +45,6 @@
         <activity android:name=".BreedersDirectory.MortalityAndSalesRecords" />
         <activity android:name=".BreedersDirectory.BreederPhenoMorphoRecordsActivity" />
         <activity android:name=".BreedersDirectory.BreederPhenoMorphoViewActivity" />
-
     </application>
 
 </manifest>

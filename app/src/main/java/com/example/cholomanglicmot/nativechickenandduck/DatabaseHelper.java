@@ -106,10 +106,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_REPLACEMENT = "replacement_table";
     public static final String REPLACEMENT_COL_0 = "ID";
     public static final String REPLACEMENT_COL_1 = "REPLACEMENT_FAMILY";
-    public static final String REPLACEMENT_COL_2 = "REPLACEMENT_LINE";
-    public static final String REPLACEMENT_COL_3 = "REPLACEMENT_GENERATION";
-    public static final String REPLACEMENT_COL_4 = "REPLACEMENT_DATE_ADDED";
-    public static final String REPLACEMENT_COL_5 = "REPLACEMENT_DELETED_AT";
+    public static final String REPLACEMENT_COL_2 = "REPLACEMENT_DATE_ADDED";
+    public static final String REPLACEMENT_COL_3 = "REPLACEMENT_DELETED_AT";
 
     public static final String TABLE_REPLACEMENT_INVENTORIES = "replacement_inventory_table";
     public static final String REPLACEMENT_INV_COL_0 = "ID";
@@ -314,7 +312,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_BROODER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_FEEDING_DATE_COLLECTED TEXT, BROODER_FEEDING_AMOUNT_OFFERED TEXT, BROODER_FEEDING_AMOUNT_REFUSED INTEGER, BROODER_FEEDING_REMARKS TEXT, BROODER_FEEDING_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_BROODER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_GROWTH_COLLECTION_DAY TEXT, BROODER_GROWTH_DATE_COLLECTED TEXT, BROODER_GROWTH_MALE_QUANTITY INTEGER, BROODER_GROWTH_MALE_WEIGHT INTEGER, BROODER_GROWTH_FEMALE_QUANTITY INTEGER, BROODER_GROWTH_FEMALE_WEIGHT INTEGER,BROODER_GROWTH_TOTAL_QUANTITY INTEGER, BROODER_GROWTH_TOTAL_WEIGHT INTEGER,BROODER_GROWTH_DELETED_AT TEXT)");
 
-        db.execSQL("create table " + TABLE_REPLACEMENT +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FAMILY TEXT REFERENCES TABLE_FAMILY(FAMILY_NUMBER), REPLACEMENT_LINE TEXT, REPLACEMENT_GENERATION TEXT, REPLACEMENT_DATE_ADDED TEXT, REPLACEMENT_DELETED_AT TEXT)");
+        db.execSQL("create table " + TABLE_REPLACEMENT +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FAMILY INTEGER, REPLACEMENT_DATE_ADDED TEXT, REPLACEMENT_DELETED_AT TEXT, FOREIGN KEY (REPLACEMENT_FAMILY) REFERENCES TABLE_FAMILY(ID))");
         db.execSQL("create table " + TABLE_REPLACEMENT_INVENTORIES +" (ID INTEGER PRIMARY KEY,REPLACEMENT_INV_REPLACEMENT_ID TEXT REFERENCES TABLE_REPLACEMENT(ID), REPLACEMENT_INV_PEN_NUMBER TEXT, REPLACEMENT_INV_REPLACEMENT_TAG TEXT, REPLACEMENT_INV_BATCHING_DATE TEXT, REPLACEMENT_INV_NUMBER_MALE INTEGER, REPLACEMENT_INV_NUMBER_FEMALE INTEGER, REPLACEMENT_INV_TOTAL INTEGER, REPLACEMENT_INV_LAST_UPDATE TEXT, REPLACEMENT_INV_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_REPLACEMENT_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_FEEDING_DATE_COLLECTED TEXT, REPLACEMENT_FEEDING_AMOUNT_OFFERED TEXT, REPLACEMENT_FEEDING_AMOUNT_REFUSED INTEGER, REPLACEMENT_FEEDING_REMARKS TEXT, REPLACEMENT_FEEDING_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_REPLACEMENT_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_GROWTH_COLLECTION_DAY TEXT, REPLACEMENT_GROWTH_DATE_COLLECTED TEXT, REPLACEMENT_GROWTH_MALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_MALE_WEIGHT INTEGER, REPLACEMENT_GROWTH_FEMALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_FEMALE_WEIGHT INTEGER,REPLACEMENT_GROWTH_TOTAL_QUANTITY INTEGER, REPLACEMENT_GROWTH_TOTAL_WEIGHT INTEGER,REPLACEMENT_GROWTH_DELETED_AT TEXT)");
@@ -483,16 +481,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-    public boolean insertDataReplacement(String replacement_family_number, String replacement_line_number, String replacement_generation_number, String replacement_date_added, String replacment_deleted_at ){
+    public boolean insertDataReplacement(Integer replacement_family_number, String replacement_date_added, String replacment_deleted_at ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         //contentValues.put(BROODER_COL_0, brooder_id);
         contentValues.put(REPLACEMENT_COL_1, replacement_family_number);
-        contentValues.put(REPLACEMENT_COL_2, replacement_line_number);
-        contentValues.put(REPLACEMENT_COL_3, replacement_generation_number);
-        contentValues.put(REPLACEMENT_COL_4, replacement_date_added);
-        contentValues.put(REPLACEMENT_COL_5, replacment_deleted_at);
+        contentValues.put(REPLACEMENT_COL_2, replacement_date_added);
+        contentValues.put(REPLACEMENT_COL_3, replacment_deleted_at);
 
 
 
@@ -1065,6 +1061,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromBroodersFeedingWhereBrooderInv(Integer brooder_inv){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_FEEDING_RECORDS+ " where BROODER_FEEDING_INVENTORY_ID is ?", new String[] {brooder_inv.toString()});
+
+        return res;
+    }
 
     public Cursor getAllDataFromBrooderInventory(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1086,15 +1088,15 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
     }
 
-    public Cursor getAllDataFromBrooderFeedingRecordsWhereID(Integer id){
+    public Cursor getAllDataFromBrooderFeedingRecordsWhereFeedingID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select BROODER_FEEDING_AMOUNT_OFFERED,BROODER_FEEDING_AMOUNT_REFUSED,BROODER_FEEDING_REMARKS,BROODER_FEEDING_DATE_COLLECTED from " +TABLE_BROODER_FEEDING_RECORDS+ " where BROODER_FEEDING_INVENTORY_ID is ?",new String[]{id.toString()});
+        Cursor res = db.rawQuery("select BROODER_FEEDING_AMOUNT_OFFERED,BROODER_FEEDING_AMOUNT_REFUSED,BROODER_FEEDING_REMARKS,BROODER_FEEDING_DATE_COLLECTED from " +TABLE_BROODER_FEEDING_RECORDS+ " where ID is ?",new String[]{id.toString()});
 
         return res;
     }
-    public Cursor getAllDataFromBrooderGrowthRecordsWhereID(Integer id){
+    public Cursor getAllDataFromBrooderGrowthRecordsWhereGrowthID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS+ " where BROODER_GROWTH_INVENTORY_ID is ?",new String[]{id.toString()});
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_GROWTH_RECORDS+ " where ID is ?",new String[]{id.toString()});
 
         return res;
     }
@@ -1142,13 +1144,9 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
 
 
-
-
-
-
-    public Cursor getIDFromReplacementsWhere(String generation, String line, String family){
+    public Cursor getIDFromReplacementsWhere(Integer family){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT+ " where REPLACEMENT_FAMILY is "+family+ " and REPLACEMENT_LINE is "+line+" and REPLACEMENT_GENERATION is "+generation, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT+ " where REPLACEMENT_FAMILY is ?", new String[]{family.toString()},null);
         return res;
     }
 
@@ -1392,6 +1390,46 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         SQLiteDatabase db4 = this.getReadableDatabase();
         Cursor res = db4.rawQuery("select * from " +TABLE_BROODER + " where BROODER_FAMILY like ? ",new String[]{family_id.toString()}, null);
+
+        return res;
+
+    }
+    public Cursor replacementFamilyChecker(String family, String selected_line, String selected_generation){
+
+        List<String> families = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer family_id =null;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM "+TABLE_LINE+ " WHERE LINE_GENERATION LIKE ? AND LINE_NUMBER LIKE ?",new String[]{generation.toString(),selected_line}, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM "+TABLE_FAMILY+ " WHERE FAMILY_LINE LIKE ? AND FAMILY_NUMBER LIKE ? ",new String[]{line.toString(), family},null);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            family_id = cursor1.getInt(0);
+        }
+
+        db3.close();
+
+        SQLiteDatabase db4 = this.getReadableDatabase();
+        Cursor res = db4.rawQuery("select * from " +TABLE_REPLACEMENT + " where REPLACEMENT_FAMILY like ? ",new String[]{family_id.toString()}, null);
 
         return res;
 

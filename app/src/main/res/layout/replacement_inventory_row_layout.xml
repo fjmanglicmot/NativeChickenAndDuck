@@ -28,8 +28,17 @@
                 android:text="Inventory Code"
                 android:textStyle="bold"
                 />
-
             <TextView
+                android:id="@+id/replacement_inventory_batch_date"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:text="1/1/19" />
+
+            <!--<TextView
                 android:id="@+id/replacement_inventory_family"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
@@ -57,19 +66,11 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="12sp"
-                android:text="Gen" />
+                android:text="Gen" />-->
 
-            <TextView
-                android:id="@+id/replacement_inventory_batch_date"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="12sp"
-                android:text="Batch Date" />
 
-            <TextView
+
+            <!--<TextView
                 android:id="@+id/replacement_inventory_number_male"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
@@ -77,7 +78,7 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="12sp"
-                android:text="Number of males" />
+                android:text="1" />
             <TextView
                 android:id="@+id/replacement_inventory_number_female"
                 android:layout_width="50dp"
@@ -86,7 +87,7 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="12sp"
-                android:text="Number of females" />
+                android:text="1" />
             <TextView
                 android:id="@+id/replacement_inventory_total"
                 android:layout_width="50dp"
@@ -122,8 +123,15 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_do_not_disturb_on_black_24dp"
                 android:background="@null"
+                />-->
+            <ImageButton
+                android:id="@+id/replacement_inventory_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_remove_red_eye_black_24dp"
+                android:background="@null"
                 />
-
 
             <ImageButton
                 android:id="@+id/replacement_inventory_cull"

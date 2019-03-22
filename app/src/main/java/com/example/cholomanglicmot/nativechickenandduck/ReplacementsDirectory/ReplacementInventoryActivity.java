@@ -64,11 +64,12 @@ public class ReplacementInventoryActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Replacement Inventory");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        StringBuffer buffer = new StringBuffer();
+
+
         Cursor cursor_replacement = myDb.getAllDataFromReplacements();
         cursor_replacement.moveToFirst();
 
-        if(cursor_replacement.getCount() == 0){
+     /*   if(cursor_replacement.getCount() == 0){
             Toast.makeText(this,"No data on Replacement Table", Toast.LENGTH_LONG).show();
         }else{
             do{
@@ -101,13 +102,44 @@ public class ReplacementInventoryActivity extends AppCompatActivity {
                                                                                                                //  REPLACEMENT_INV_COL_0 = "ID";    "REPLACEMENT_INV_REPLACEMENT_ID";                                                                                                                                                                                                    "REPLACEMENT_INV_PEN_NUMBER";              "REPLACEMENT_INV_REPLACEMENT_TAG";            "REPLACEMENT_INV_BATCHING_DATE";             "REPLACEMENT_INV_NUMBER_MALE";             "REPLACEMENT_INV_NUMBER_FEMALE";           "REPLACEMENT_INV_TOTAL";                                                                 "REPLACEMENT_INV_LAST_UPDATE";             "REPLACEMENT_INV_DELETED_AT";
               } while (curse.moveToNext());
 
-        }
-/*
-        Cursor cursor_pen = myDb.getReplacementsFromPen();
-        cursor_pen.moveToFirst();
+        }*/
+        Cursor cursor_replacement_inv = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
+        cursor_replacement_inv.moveToFirst();
+        if(cursor_replacement_inv.getCount() == 0){
+            //show message
+            Toast.makeText(this,"No data.", Toast.LENGTH_LONG).show();
 
-        //error
-        int pen_id = cursor_pen.getInt(0);*/
+        }else {
+            do {
+/*
+    public static final String TABLE_REPLACEMENT_INVENTORIES = "replacement_inventory_table";
+    public static final String REPLACEMENT_INV_COL_0 = "ID";
+    public static final String REPLACEMENT_INV_COL_1 = "REPLACEMENT_INV_REPLACEMENT_ID";
+    public static final String REPLACEMENT_INV_COL_2 = "REPLACEMENT_INV_PEN_NUMBER"; //REFERENCES SA PEN
+    public static final String REPLACEMENT_INV_COL_3 = "REPLACEMENT_INV_REPLACEMENT_TAG";
+    public static final String REPLACEMENT_INV_COL_4 = "REPLACEMENT_INV_BATCHING_DATE";
+    public static final String REPLACEMENT_INV_COL_5 = "REPLACEMENT_INV_NUMBER_MALE";
+    public static final String REPLACEMENT_INV_COL_6 = "REPLACEMENT_INV_NUMBER_FEMALE";
+    public static final String REPLACEMENT_INV_COL_7 = "REPLACEMENT_INV_TOTAL";
+    public static final String REPLACEMENT_INV_COL_8 = "REPLACEMENT_INV_LAST_UPDATE";
+    public static final String REPLACEMENT_INV_COL_9 = "REPLACEMENT_INV_DELETED_AT";*/
+                Replacement_Inventory replace = new Replacement_Inventory(cursor_replacement_inv.getInt(0),cursor_replacement_inv.getInt(1), cursor_replacement_inv.getString(2), cursor_replacement_inv.getString(3),cursor_replacement_inv.getString(4), cursor_replacement_inv.getInt(5), cursor_replacement_inv.getInt(6), cursor_replacement_inv.getInt(7), null,null);
+                arrayListReplacementInventory.add(replace);
+            } while (cursor_replacement_inv.moveToNext());
+        }
+
+
+
+        for (int i=0;i<arrayListReplacementInventory.size();i++){
+            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
+
+                arrayList_temp.add(arrayListReplacementInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
+
+            }
+        }
+
+
+
 
         for(int i = 0; i<arrayListReplacementInventory.size();i++){
             if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen)){

@@ -104,7 +104,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
             }
         }
 
-        cursor_brooder_inventory2.moveToFirst();
+     /*   cursor_brooder_inventory2.moveToFirst();
         if(cursor_brooder_inventory2.getCount() == 0){ //if walang laman yung brooder inventory
 
             Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
@@ -127,7 +127,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
 
             } while (cursor_brooder_inventory2.moveToNext());
-        }
+        }*/
 
 
 

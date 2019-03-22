@@ -30,6 +30,7 @@ public class ViewBrooderGrowthDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_view_brooder_growth, container, false);
         final Integer brooder_ID = getArguments().getInt("Brooder Inventory ID");
         final String brooder_tag = getArguments().getString("Brooder Tag");
+        final Integer brooder_growth_id = getArguments().getInt("Brooder Growth ID");
 
 
         myDb = new DatabaseHelper(getContext());
@@ -50,7 +51,7 @@ public class ViewBrooderGrowthDialog extends DialogFragment {
         textView.setText(brooder_tag);
 
 
-        Cursor cursor = myDb.getAllDataFromBrooderGrowthRecordsWhereID(brooder_ID);
+        Cursor cursor = myDb.getAllDataFromBrooderGrowthRecordsWhereGrowthID(brooder_growth_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             Integer male_count_string = cursor.getInt(4);
@@ -65,9 +66,9 @@ public class ViewBrooderGrowthDialog extends DialogFragment {
             date_collected.setText(cursor.getString(3));
             collection_day.setText(collection_day_string.toString());
             male_count.setText(male_count_string.toString());
-            male_weight.setText(female_weight_string.toString());
+            male_weight.setText(male_weight_string.toString());
             female_count.setText(female_count_string.toString());
-            female_weight.setText(male_weight_string.toString());
+            female_weight.setText(female_weight_string.toString());
             total_count.setText(total_count_string.toString());
             total_weight.setText(total_weight_string.toString());
 

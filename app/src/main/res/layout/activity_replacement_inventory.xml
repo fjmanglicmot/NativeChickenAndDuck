@@ -64,20 +64,28 @@
                         >
 
 
+                        <TextView
+                            android:id="@+id/brooder_inventory_batch_date"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Batching Date" />
 
+                        <TextView
+                            android:id="@+id/replacement_inventory_code"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:text="Inventory Code"
+                            android:textStyle="bold"
+                            />
 
-                    <TextView
-                        android:id="@+id/replacement_inventory_code"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textSize="12sp"
-                        android:text="Inventory Code"
-                        android:textStyle="bold"
-                        />
-
-                    <TextView
+          <!--          <TextView
                         android:id="@+id/replacement_inventory_family"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
@@ -105,81 +113,84 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="12sp"
-                        android:text="Gen" />
+                        android:text="Gen" />-->
 
-                    <TextView
-                        android:id="@+id/brooder_inventory_batch_date"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Batch Date" />
 
-                    <TextView
-                        android:id="@+id/brooder_inventory_number_male"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Number of males" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_number_female"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Number of females" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_total"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Total" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_date_added"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Added" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_last_update"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Update" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_mort"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Mort/Sale" />
-                    <TextView
-                        android:id="@+id/brooder_inventory_cull"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Cull" />
+                        <!--<TextView
+                            android:id="@+id/brooder_inventory_number_male"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Number of males" />
+                        <TextView
+                            android:id="@+id/brooder_inventory_number_female"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Number of females" />
+                        <TextView
+                            android:id="@+id/brooder_inventory_total"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Total" />
+                        <TextView
+                            android:id="@+id/brooder_inventory_date_added"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Added" />
+                        <TextView
+                            android:id="@+id/brooder_inventory_last_update"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Update" />
+                        <TextView
+                            android:id="@+id/brooder_inventory_mort"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Mort/Sale" />-->
+                        <TextView
+                            android:id="@+id/brooder_inventory_view"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="View" />
+
+
+
+                        <TextView
+                            android:id="@+id/brooder_inventory_cull"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Cull" />
 
 
 

@@ -78,15 +78,15 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-             <!--           <TextView
-                            android:id="@+id/brooder_inventory_family"
-                            android:layout_width="60dp"
+                        <TextView
+                            android:id="@+id/brooder_collection_day"
+                            android:layout_width="50dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Collection\nDay" />-->
+                            android:text="Collection\nDay" />
 
                         <TextView
                             android:id="@+id/brooder_inventory_line"

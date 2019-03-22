@@ -49,7 +49,7 @@ public class RecyclerAdapter_Brooder_Feeding extends RecyclerView.Adapter<Recycl
         final Bundle args = new Bundle();
         args.putInt("Brooder Inventory ID", brooder_feedingRecords.getBrooder_feeding_inventory_id());
         args.putString("Brooder Tag", brooder_feedingRecords.getBrooder_tag());
-
+        args.putInt("Brooder Feeding ID", brooder_feedingRecords.getId());
 
        // args.putString("Brooder Pen", brooder_feedingRecords.getBrooder_inv_pen());
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());

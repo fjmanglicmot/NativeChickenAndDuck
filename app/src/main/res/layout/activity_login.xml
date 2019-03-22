@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="2"
     android:orientation="vertical"
     tools:context=".DashboardDirectory.LoginActivity">
 
@@ -11,62 +12,75 @@
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_weight=".9"
       android:background="@drawable/gradientbackground"
+      android:gravity="center_vertical"
       android:orientation="vertical"
       android:paddingBottom="10dp"
       android:paddingLeft="40dp"
-      android:paddingRight="40dp"
-      android:paddingTop="40dp">
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="142dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="@string/title"
-        android:scaleType="fitStart"
-        app:srcCompat="@drawable/logo2" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/logo4"/>
+      android:paddingRight="40dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="0dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-      <Button
-          android:id="@+id/button"
-          style="?android:attr/buttonBarButtonStyle"
+      <ImageView
+
+          android:id="@+id/imageView1"
+          android:layout_width="142dp"
+          android:layout_height="100dp"
+          android:layout_gravity="center_horizontal"
+          android:contentDescription="@string/title"
+          android:scaleType="fitStart"
+          app:srcCompat="@drawable/logo2" />
+
+      <ImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_margin="10dp"
-          android:layout_weight="1"
-          android:background="@drawable/buttonstylepaprika"
-          android:text="@string/learn"
-          android:textColor="#fff" />
+          app:srcCompat="@drawable/logo4" />
 
-      <Button
-          android:id="@+id/button2"
-          style="?android:attr/buttonBarButtonStyle"
+      <LinearLayout
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_margin="10dp"
-          android:layout_weight="1"
-          android:background="@drawable/buttonstyle2"
-          android:text="@string/join"
-          android:textColor="#fff" />
+          android:layout_gravity="center"
+          android:layout_marginTop="20dp"
+          android:orientation="horizontal"
+          >
+
+        <Button
+            android:id="@+id/button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttonstylepaprika"
+            android:text="@string/learn"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/button2"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttonstyle2"
+            android:text="@string/join"
+            android:textColor="#fff" />
+      </LinearLayout>
     </LinearLayout>
 
-  </LinearLayout>
 
+
+
+</LinearLayout>
   <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
       android:gravity="center"
       android:orientation="vertical"
       android:paddingBottom="40dp">

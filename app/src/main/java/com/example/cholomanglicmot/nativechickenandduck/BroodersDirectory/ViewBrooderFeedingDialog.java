@@ -30,6 +30,7 @@ public class ViewBrooderFeedingDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_view_brooder_feeding, container, false);
         final Integer brooder_ID = getArguments().getInt("Brooder Inventory ID");
         final String brooder_tag = getArguments().getString("Brooder Tag");
+        final Integer brooder_feeding_id = getArguments().getInt("Brooder Feeding ID");
 
 
         myDb = new DatabaseHelper(getContext());
@@ -47,7 +48,7 @@ public class ViewBrooderFeedingDialog extends DialogFragment {
         textView.setText(brooder_tag);
 
 
-        Cursor cursor = myDb.getAllDataFromBrooderFeedingRecordsWhereID(brooder_ID);
+        Cursor cursor = myDb.getAllDataFromBrooderFeedingRecordsWhereFeedingID(brooder_feeding_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             Integer offered_int = cursor.getInt(0);

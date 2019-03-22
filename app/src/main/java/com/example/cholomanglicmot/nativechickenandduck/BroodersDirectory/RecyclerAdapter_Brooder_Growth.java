@@ -49,9 +49,10 @@ public class RecyclerAdapter_Brooder_Growth extends RecyclerView.Adapter<Recycle
         final Bundle args = new Bundle();
         args.putInt("Brooder Inventory ID", brooder_growthRecords.getBrooder_growth_inventory_id());
         args.putString("Brooder Tag", brooder_growthRecords.getBrooder_growth_tag());
+        args.putInt("Brooder Growth ID", brooder_growthRecords.getId());
 
         holder.brooder_growth_date_added.setText(brooder_growthRecords.getBrooder_growth_date_collected());
-       // holder.brooder_growth_collection_day.setText(brooder_growthRecords.getBrooder_growth_collection_day().toString());
+        holder.brooder_collection_day.setText(brooder_growthRecords.getBrooder_growth_collection_day().toString());
         holder.brooder_growth_inventory_tag.setText(brooder_growthRecords.getBrooder_growth_tag());
      /*   holder.brooder_growth_male_count.setText(brooder_growthRecords.getBrooder_growth_male_quantity().toString());
         holder.brooder_growth_male_weight.setText(brooder_growthRecords.getBrooder_growth_male_weight().toString());
@@ -89,7 +90,7 @@ public class RecyclerAdapter_Brooder_Growth extends RecyclerView.Adapter<Recycle
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder{
         TextView brooder_growth_date_added;
-        TextView brooder_growth_collection_day;
+        TextView brooder_collection_day;
         TextView brooder_growth_inventory_tag;
         TextView brooder_growth_male_count;
         TextView brooder_growth_male_weight;
@@ -108,7 +109,7 @@ public class RecyclerAdapter_Brooder_Growth extends RecyclerView.Adapter<Recycle
         RecyclerViewHolder(View view){
             super(view);
             brooder_growth_date_added = view.findViewById(R.id.brooder_growth_date_added);
-           // brooder_growth_collection_day = view.findViewById(R.id.brooder_growth_collection_day);
+            brooder_collection_day = view.findViewById(R.id.brooder_collection_day);
             brooder_growth_inventory_tag = view.findViewById(R.id.brooder_growth_inventory_tag);
           /*  brooder_growth_male_count = view.findViewById(R.id.brooder_growth_male_count);
             brooder_growth_male_weight = view.findViewById(R.id.brooder_growth_male_weight);

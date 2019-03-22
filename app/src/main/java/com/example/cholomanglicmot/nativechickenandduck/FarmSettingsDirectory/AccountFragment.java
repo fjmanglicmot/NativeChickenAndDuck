@@ -1,4 +1,4 @@
-package com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory;
+package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 
 import android.database.Cursor;

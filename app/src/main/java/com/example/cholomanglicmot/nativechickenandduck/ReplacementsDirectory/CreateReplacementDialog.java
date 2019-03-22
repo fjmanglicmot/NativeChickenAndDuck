@@ -166,7 +166,7 @@ public class CreateReplacementDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
 
-                int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
+           /*     int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
                 if(!generation_spinner.getSelectedItem().toString().isEmpty() && !line_spinner.getSelectedItem().toString().isEmpty() && !family_spinner.getSelectedItem().toString().isEmpty() && !replacement_number_of_male.getText().toString().isEmpty() &&!replacement_number_of_female.getText().toString().isEmpty() && !replacement_date_added.getText().toString().isEmpty() ){
                     Cursor cursorReplacmentChecker = myDb.getAllDataFromReplacementsWhere(generation_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),family_spinner.getSelectedItem().toString());
                     cursorReplacmentChecker.moveToFirst();
@@ -281,8 +281,127 @@ public class CreateReplacementDialog extends DialogFragment {
                     Toast.makeText(getActivity(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
                 }
 
+*/
+                StringBuffer buffer = new StringBuffer();
+                int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
+                if(!generation_spinner.getSelectedItem().toString().isEmpty() && !line_spinner.getSelectedItem().toString().isEmpty() && !family_spinner.getSelectedItem().toString().isEmpty() && !replacement_number_of_male.getText().toString().isEmpty() &&!replacement_number_of_male.getText().toString().isEmpty() && !replacement_date_added.getText().toString().isEmpty() ){
 
 
+                    //dapat ang ipapasa dito ay yung primary key ng family number
+                    //gawa ka ng function na nagrereturn ng id ng family based sa selected line and generation. gayahin mo nalang yung sa spinner loader ng family
+
+                    //Cursor cursorBrooderChecker = myDb.getAllDataFromBroodersWhere(generation_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),family_spinner.getSelectedItem().toString());
+                    Cursor cursorBrooderChecker = myDb.replacementFamilyChecker(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
+                    cursorBrooderChecker.moveToFirst();
+                    //kapag wala pang laman
+                    if(cursorBrooderChecker.getCount()==0){
+                        Integer familyID = null;
+                        Cursor cursor_familyID = myDb.getFamilyID(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
+                        cursor_familyID.moveToFirst();
+                        if(cursor_familyID.getCount() != 0){
+                            familyID = cursor_familyID.getInt(0);
+                        }
+                        boolean isInserted = myDb.insertDataReplacement(familyID,replacement_date_added.getText().toString(),null);
+                        if(isInserted == true){
+                            Toast.makeText(getContext(), "Replacement Added", Toast.LENGTH_SHORT).show();
+                        }
+                        //INSERT DATA SA BROODER TABLE
+                        Cursor cursor_pen = myDb.getAllDataFromPen();
+                        cursor_pen.moveToFirst();
+                        if(cursor_pen.getCount() == 0){
+                        }else{
+                            do{
+                                if(cursor_pen != null){
+                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    arrayListPen.add(pen);
+                                }
+                            }while (cursor_pen.moveToNext());
+                        }
+                        for (int i = 0; i<arrayListPen.size();i++){
+                            if(arrayListPen.get(i).getPen_number().equals(replacement_pen)){
+                                arrayListPen2.add(arrayListPen.get(i));
+                            }
+                        }
+
+                        int total = arrayListPen2.get(0).getPen_inventory();
+                        int current = arrayListPen2.get(0).getPen_capacity();
+
+                        //GET ID OF INSERTED BROODER
+
+                        Cursor cursor = myDb.getIDFromReplacementsWhere(familyID);
+                        cursor.moveToFirst();
+
+
+
+                        Integer id = cursor.getInt(0);
+
+                        // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataReplacementInventory(id,replacement_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, replacement_date_added.getText().toString(), Integer.parseInt(replacement_number_of_male.getText().toString()),Integer.parseInt(replacement_number_of_female.getText().toString()),Integer.parseInt(replacement_number_of_male.getText().toString())+Integer.parseInt(replacement_number_of_female.getText().toString()),null,null);
+
+                        boolean isPenUpdated = myDb.updatePen(replacement_pen, "Brooder", Integer.parseInt(replacement_number_of_male.getText().toString())+Integer.parseInt(replacement_number_of_female.getText().toString())+total,current);
+                        if(isInventoryInserted == true && isPenUpdated == true){
+                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
+                            Intent intent_line = new Intent(getActivity(), CreateReplacements.class);
+                            startActivity(intent_line);
+
+
+                        }else{
+                            Toast.makeText(getActivity(), "Error in adding to the database", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }else{ //KUNG MAY LAMAN YUNG DATABASE BASED SA VALUES KANINA
+
+                        Cursor cursor_pen = myDb.getAllDataFromPen();
+                        cursor_pen.moveToFirst();
+                        if(cursor_pen.getCount() == 0){
+                            //
+                        }else{
+                            do{
+                                if(cursor_pen != null){
+                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    arrayListPen.add(pen);
+
+                                }
+
+                            }while(cursor_pen.moveToNext());
+                        }
+
+
+                        for (int i = 0; i<arrayListPen.size();i++){
+                            if(arrayListPen.get(i).getPen_number().equals(replacement_pen)){
+                                arrayListPen2.add(arrayListPen.get(i));
+                            }
+                        }
+
+                        int total = arrayListPen2.get(0).getPen_inventory();
+                        int current = arrayListPen2.get(0).getPen_capacity();
+
+
+
+                        int brooder_id = cursorBrooderChecker.getInt(0);
+                        boolean isPenUpdated = myDb.updatePen(replacement_pen, "Grower", (Integer.parseInt(replacement_number_of_male.getText().toString())+Integer.parseInt(replacement_number_of_female.getText().toString())+total),current);
+
+
+                        //   boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataReplacementInventory(brooder_id,replacement_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, replacement_date_added.getText().toString(), Integer.parseInt(replacement_number_of_male.getText().toString()),Integer.parseInt(replacement_number_of_female.getText().toString()),Integer.parseInt(replacement_number_of_male.getText().toString())+Integer.parseInt(replacement_number_of_female.getText().toString()),null,null);
+
+                        if(isPenUpdated == true && isInventoryInserted == true){
+                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
+                            Intent intent_line = new Intent(getActivity(), CreateReplacements.class);
+                            startActivity(intent_line);
+
+                        }else{
+                        Toast.makeText(getActivity(),"Replacement not added to database", Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }
+
+
+
+                }else{
+                    Toast.makeText(getActivity(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });

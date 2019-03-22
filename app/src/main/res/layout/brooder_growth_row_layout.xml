@@ -28,15 +28,15 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <!--<TextView
-                            android:id="@+id/brooder_growth_collection_day"
-                            android:layout_width="60dp"
+                        <TextView
+                            android:id="@+id/brooder_collection_day"
+                            android:layout_width="50dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:gravity="center"
-                            android:text="CollectionDay"
+                            android:text="0"
                             android:textSize="12sp"
-                            android:textStyle="bold" />-->
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/brooder_growth_inventory_tag"

@@ -1,4 +1,4 @@
-package com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory;
+package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import android.widget.ExpandableListView;
 
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -167,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
 
                 switch(string2){
                     case "Dashboard":
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent_dashboard = new Intent(MainActivity.this, DashBoardActivity.class);
+                        startActivity(intent_dashboard);
                         break;
 
                     case "Pens":
@@ -202,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case "Farm Settings":
-
+                        finish();
+                        startActivity(getIntent());
                         break;
                 }
                 return false;
