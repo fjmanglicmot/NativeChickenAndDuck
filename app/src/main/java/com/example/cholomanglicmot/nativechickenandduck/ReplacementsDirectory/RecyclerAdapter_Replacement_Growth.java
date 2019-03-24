@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,16 +47,31 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
 
         final Replacement_GrowthRecords brooder_growthRecords = arrayListBrooderGrowthRecords.get(position);
+        final Bundle args = new Bundle();
+        args.putInt("Replacement Inventory ID", brooder_growthRecords.getReplacement_growth_inventory_id());
+        args.putString("Replacement Tag", brooder_growthRecords.getReplacement_growth_tag());
+        args.putInt("Replacement Growth ID", brooder_growthRecords.getId());
 
         holder.brooder_growth_date_added.setText(brooder_growthRecords.getReplacement_growth_date_collected());
         holder.brooder_growth_collection_day.setText(brooder_growthRecords.getReplacement_growth_collection_day().toString());
-        //holder.brooder_growth_inventory_tag.setText(brooder_growthRecords.getReplacement_growth_tag().toString());
-        holder.brooder_growth_male_count.setText(brooder_growthRecords.getReplacement_growth_male_quantity().toString());
+        holder.brooder_growth_inventory_tag.setText(brooder_growthRecords.getReplacement_growth_tag().toString());
+   /*     holder.brooder_growth_male_count.setText(brooder_growthRecords.getReplacement_growth_male_quantity().toString());
         holder.brooder_growth_male_weight.setText(brooder_growthRecords.getReplacement_growth_male_weight().toString());
         holder.brooder_growth_female_count.setText(brooder_growthRecords.getReplacement_growth_female_quantity().toString());
         holder.brooder_growth_female_weight.setText(brooder_growthRecords.getReplacement_growth_female_weight().toString());
         holder.brooder_growth_total_count.setText(brooder_growthRecords.getReplacement_growth_total_quantity().toString());
-        holder.brooder_growth_total_weight.setText(brooder_growthRecords.getReplacement_growth_total_weight().toString());
+        holder.brooder_growth_total_weight.setText(brooder_growthRecords.getReplacement_growth_total_weight().toString());*/
+        holder.brooder_growth_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewReplacementGrowthDialog alertDialog = new ViewReplacementGrowthDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewReplacementGrowthDialog");
+                notifyDataSetChanged();
+            }
+        });
 
         holder.brooder_growth_deleted.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +99,7 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
         TextView brooder_growth_female_weight;
         TextView brooder_growth_total_count;
         TextView brooder_growth_total_weight;
+        ImageButton brooder_growth_view;
         ImageButton brooder_growth_deleted;
 
 
@@ -95,12 +114,13 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
             brooder_growth_date_added = view.findViewById(R.id.replacement_growth_date_added);
             brooder_growth_collection_day = view.findViewById(R.id.replacement_growth_collection_day);
             brooder_growth_inventory_tag = view.findViewById(R.id.replacement_growth_inventory_tag);
-            brooder_growth_male_count = view.findViewById(R.id.replacement_growth_male_count);
+         /*   brooder_growth_male_count = view.findViewById(R.id.replacement_growth_male_count);
             brooder_growth_male_weight = view.findViewById(R.id.replacement_growth_male_weight);
             brooder_growth_female_count = view.findViewById(R.id.replacement_growth_female_count);
             brooder_growth_female_weight = view.findViewById(R.id.replacement_growth_female_weight);
             brooder_growth_total_count = view.findViewById(R.id.replacement_growth_total_count);
-            brooder_growth_total_weight = view.findViewById(R.id.replacement_growth_total_weight);
+            brooder_growth_total_weight = view.findViewById(R.id.replacement_growth_total_weight);*/
+            brooder_growth_view = view.findViewById(R.id.replacement_growth_view);
             brooder_growth_deleted = view.findViewById(R.id.replacement_growth_delete);
 
 

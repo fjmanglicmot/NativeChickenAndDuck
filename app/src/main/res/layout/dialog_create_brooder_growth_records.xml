@@ -92,7 +92,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
-            android:hint="Input collection day between 0 and 21 days"
+            android:hint="Input collection day between 0 to 21 days"
             android:inputType="number"
             android:textSize="15sp"
             android:visibility="gone"/>
@@ -226,7 +226,7 @@
                 android:layout_below="@+id/linear_total"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:hint="Total weight of all males (kg)"
+                android:hint="Total weight of all females (kg)"
                 android:inputType="number"
                 android:textSize="15sp" />
 

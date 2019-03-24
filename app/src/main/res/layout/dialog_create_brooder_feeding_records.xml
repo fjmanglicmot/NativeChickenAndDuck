@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView5"
         android:layout_margin="10dp"
-        android:hint="Family number"
+        android:hint="Amount of feed refused in (g)"
         android:inputType="number"
         android:textSize="15sp" />
     <TextView
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linear_total"
         android:layout_margin="10dp"
-        android:hint="Family number"
+        android:hint="Add remarks"
         android:inputType="text"
         android:textSize="15sp" />
 

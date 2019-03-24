@@ -64,10 +64,10 @@ public class RecyclerAdapter_Breeder_PhenoMorphoView extends RecyclerView.Adapte
 
 
         holder.replacement_registry.setText(replacement_phenoMorphoView.getTag());
-        holder.replacement_gender.setText(replacement_phenoMorphoView.getGender());
+       /* holder.replacement_gender.setText(replacement_phenoMorphoView.getGender());
 
         holder.replacement_morpho.setText(replacement_phenoMorphoView.getMorpho_record());
-        holder.replacement_pheno.setText(replacement_phenoMorphoView.getPheno_record());
+        holder.replacement_pheno.setText(replacement_phenoMorphoView.getPheno_record());*/
         holder.replacement_date.setText(replacement_phenoMorphoView.getDate());
         holder.replacement_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +98,9 @@ public class RecyclerAdapter_Breeder_PhenoMorphoView extends RecyclerView.Adapte
         RecyclerViewHolder(View view){
             super(view);
             replacement_registry = view.findViewById(R.id.replacement_registry);
-            replacement_gender = view.findViewById(R.id.replacement_gender);
+   /*         replacement_gender = view.findViewById(R.id.replacement_gender);
             replacement_pheno = view.findViewById(R.id.replacement_pheno);
-            replacement_morpho = view.findViewById(R.id.replacement_morpho);
+            replacement_morpho = view.findViewById(R.id.replacement_morpho);*/
             replacement_date = view.findViewById(R.id.replacement_date);
             replacement_delete = view.findViewById(R.id.replacement_delete);
         /*    replacement_inventory_code = view.findViewById(R.id.replacement_inventory_code);

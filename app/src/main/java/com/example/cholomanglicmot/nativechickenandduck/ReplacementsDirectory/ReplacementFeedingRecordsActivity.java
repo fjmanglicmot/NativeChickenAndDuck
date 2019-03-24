@@ -27,8 +27,8 @@ public class ReplacementFeedingRecordsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.Adapter recycler_adapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<Replacement_FeedingRecords> arrayList_temp = new ArrayList<>();//create constructor first for brooder feeding records
-    ArrayList<Replacement_FeedingRecords> arrayListFeeding = new ArrayList<>();
+    ArrayList<Replacement_Inventory> arrayList_temp = new ArrayList<>();//create constructor first for brooder feeding records
+    ArrayList<Replacement_FeedingRecords> arrayListReplacementFeedingRecords = new ArrayList<>();
     ArrayList<Replacement_Inventory> arrayListReplacementInventory = new ArrayList<>();
     ArrayList<Replacement_Inventory> arrayListReplacementInventory1 = new ArrayList<>();
     ArrayList<Replacements>arrayListReplacements = new ArrayList<>();
@@ -153,62 +153,59 @@ public class ReplacementFeedingRecordsActivity extends AppCompatActivity {
 
 */
 
-        Cursor cursor_inventory = myDb.getAllDataFromReplacementInventory();
-        cursor_inventory.moveToFirst();
+        Cursor cursor_replacement_inv = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
+        cursor_replacement_inv.moveToFirst();
+        if(cursor_replacement_inv.getCount() == 0){
+            //show message
+            Toast.makeText(this,"No data.", Toast.LENGTH_LONG).show();
 
-        if (cursor_inventory.getCount()==0){
+        }else {
+            do {
 
-        }else{
-            do{
-              /*  Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), null,null,null,cursor_inventory.getString(2), cursor_inventory.getString(3), cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), null, cursor_inventory.getString(8), cursor_inventory.getString(9));
-                arrayListReplacementInventory.add(replacement_inventory);*/
-            }while (cursor_inventory.moveToNext());
+                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_replacement_inv.getInt(0),cursor_replacement_inv.getInt(1), cursor_replacement_inv.getString(2), cursor_replacement_inv.getString(3),cursor_replacement_inv.getString(4), cursor_replacement_inv.getInt(5), cursor_replacement_inv.getInt(6),cursor_replacement_inv.getInt(7), cursor_replacement_inv.getString(8), cursor_replacement_inv.getString(9));
+                arrayListReplacementInventory.add(replacement_inventory);
+
+
+            } while (cursor_replacement_inv.moveToNext());
         }
 
 
-        Cursor cursor_feeding_records = myDb.getAllDataFromReplacementFeedingRecords();
-        cursor_feeding_records.moveToFirst();
 
-        if(cursor_feeding_records.getCount()==0){
-            Toast.makeText(this, "No feeding records yet", Toast.LENGTH_SHORT).show();
-        }else{
-            do{
+        for (int i=0;i<arrayListReplacementInventory.size();i++){
+            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
 
-                Replacement_FeedingRecords replacement_feedingRecords = new Replacement_FeedingRecords(cursor_feeding_records.getInt(0), cursor_feeding_records.getInt(1), cursor_feeding_records.getString(2),null, cursor_feeding_records.getFloat(3), cursor_feeding_records.getFloat(4), cursor_feeding_records.getString(5),cursor_feeding_records.getString(6));
-                arrayList_temp.add(replacement_feedingRecords);
-            }while (cursor_feeding_records.moveToNext());
-        }
-
-
-        //kunin mo naman yung replacement inventories ng given PEN NUMBER
-
-        for (int i = 0; i<arrayListReplacementInventory.size();i++){
-            if (arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen)){
-                arrayListReplacementInventory1.add(arrayListReplacementInventory.get(i));
-
+                arrayList_temp.add(arrayListReplacementInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
             }
         }
 
 
-        //kunin mo naman yung feeding records based sa id ng brooder inventories sa arrayListReplacementInventory1
+        Cursor cursor_feeding = myDb.getAllDataFromReplacementFeedingRecords();
+        cursor_feeding.moveToFirst();
 
-        for (int i=0; i<arrayList_temp.size();i++){
-            for(int j=0;j<arrayListReplacementInventory1.size();j++){
-                if (arrayList_temp.get(i).getReplacement_feeding_inventory_id().equals(arrayListReplacementInventory1.get(j).getId())){
-                    arrayListFeeding.add(arrayList_temp.get(i));
+        if(cursor_feeding.getCount() == 0){
+            //show message
+            Toast.makeText(this,"No data.", Toast.LENGTH_LONG).show();
 
+        }else {
+
+            do {
+                //                                                                        Integer id,                 Integer brooder_growth_inventory_id,String , Integer brooder_growth_collection_day,      String brooder_growth_date_collected,       Integer brooder_growth_male_quantity,           Float brooder_growth_male_weight,                  Integer brooder_growth_female_quantity, Float brooder_growth_female_weight,          Integer brooder_growth_total_quantity,      Float brooder_growth_total_weight,              String brooder_growth_deleted_at){
+                for(int k=0;k<arrayList_temp.size();k++){
+                    if(arrayList_temp.get(k).getReplacement_inv_replacement_id().equals(cursor_feeding.getInt(1))){
+                        Replacement_FeedingRecords replacement_feedingRecords = new Replacement_FeedingRecords(cursor_feeding.getInt(0),cursor_feeding.getInt(1), cursor_feeding.getString(2), arrayList_temp.get(k).getReplacement_inv_replacement_tag(),cursor_feeding.getFloat(3),cursor_feeding.getFloat(4), cursor_feeding.getString(5), cursor_feeding.getString(6));
+
+                        arrayListReplacementFeedingRecords.add(replacement_feedingRecords);
+
+
+                    }
                 }
-            }
-        }
 
 
-/*        for (int i=0;i<arrayListFeeding.size();i++){
-            buffer.append(arrayListFeeding.get(i).getId()+"\n");
-            buffer.append(arrayListFeeding.get(i).getReplacement_feeding_inventory_id()+ "\n\n");
+            } while (cursor_feeding.moveToNext());
         }
-        showMessage("", buffer.toString());*/
-        recycler_adapter = new RecyclerAdapter_Replacement_Feeding(arrayListFeeding);
+
+        recycler_adapter = new RecyclerAdapter_Replacement_Feeding(arrayListReplacementFeedingRecords);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();
 

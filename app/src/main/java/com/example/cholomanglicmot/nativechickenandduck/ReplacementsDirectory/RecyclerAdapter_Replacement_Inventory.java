@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,12 +81,12 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
         holder.replacement_inventory_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* FragmentActivity activity = (FragmentActivity)(context);
+                FragmentActivity activity = (FragmentActivity)(context);
                 FragmentManager fm = activity.getSupportFragmentManager();
-                ViewReplacementDialog alertDialog = new ViewReplacementDialog();
+                ViewReplacementInventoryDialog alertDialog = new ViewReplacementInventoryDialog();
                 alertDialog.setArguments(args);
-                alertDialog.show(fm, "ViewReplacementDialog");
-                notifyDataSetChanged();*/
+                alertDialog.show(fm, "ViewReplacementInventoryDialog");
+                notifyDataSetChanged();
 
             }
         });

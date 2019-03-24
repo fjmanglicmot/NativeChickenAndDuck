@@ -49,6 +49,7 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
     //ArrayList<Replacement_Inventory>arrayList_temp = new ArrayList<>();
     ArrayList<Replacement_Inventory>arrayList_temp1 = new ArrayList<>();
     ArrayList<Replacements> arrayListReplacements = new ArrayList<>();
+    boolean  isOtherDayChecked;
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
 
@@ -99,11 +100,14 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                 if (isChecked) {
                     brooder_growth_other_day.setVisibility(View.VISIBLE);
                     radio_group_collection_day.setVisibility(View.GONE);
+                    isOtherDayChecked = true;
 
                 } else {
 
                     brooder_growth_other_day.setVisibility(View.GONE);
                     radio_group_collection_day.setVisibility(View.VISIBLE);
+                    isOtherDayChecked = false;
+
 
                 }
 
@@ -145,105 +149,95 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StringBuffer buffer = new StringBuffer();
-                //////for radio button
-                int selectedDay = radio_group_collection_day.getCheckedRadioButtonId();
-                int brooder_growth_collection = 0;
-               // if(!())
-                switch (selectedDay) {
-                    case day_45:
-                        // the first RadioButton is checked.
-                        brooder_growth_collection = 45;
+                Integer brooder_growth_collection = new Integer(0);
+                if(isOtherDayChecked){
+                    brooder_growth_collection = Integer.parseInt(brooder_growth_other_day.getText().toString());
+                }else{
+                    int selectedDay = radio_group_collection_day.getCheckedRadioButtonId();
+                    //////for radio button
 
-                        break;
-                    //other checks for the other RadioButtons ids from the RadioGroup
-                    case day_75:
-                        // the first RadioButton is checked.
-                        brooder_growth_collection = 75;
-                        break;
-                    //other checks for the other RadioButtons ids from the RadioGroup
-                    case day_100:
-                        brooder_growth_collection = 100;
-                        break;
+                    switch (selectedDay) {
+                        case day_45:
+                            // the first RadioButton is checked.
+                            brooder_growth_collection = 45;
 
-                    case -1:
-                        brooder_growth_collection = 0;
-                        // no RadioButton is checked inthe Radiogroup
-                        break;
+                            break;
+                        //other checks for the other RadioButtons ids from the RadioGroup
+                        case day_75:
+                            // the first RadioButton is checked.
+                            brooder_growth_collection = 75;
+                            break;
+                        //other checks for the other RadioButtons ids from the RadioGroup
+                        case day_100:
+                            // the first RadioButton is checked.
+                            brooder_growth_collection = 100;
+                            break;
+                        case -1:
+                            brooder_growth_collection = 0;
+                            // no RadioButton is checked inthe Radiogroup
+                            break;
+                    }
                 }
 
                 //////for radio button
 //(brooder_growth_collection != 0 || !brooder_growth_other_day.getText().toString().isEmpty()) && !brooder_growth_date_added.getText().toString().isEmpty() && (!brooder_growth_total_weight.getText().toString().isEmpty() || !brooder_growth_male_weight.getText().toString().isEmpty() || !brooder_growth_female_weight.getText().toString().isEmpty()
                 if((brooder_growth_collection != -1 || !brooder_growth_other_day.getText().toString().isEmpty())  &&  !brooder_growth_male_weight.getText().toString().isEmpty() && !brooder_growth_female_weight.getText().toString().isEmpty() && !brooder_growth_date_added.getText().toString().isEmpty()){
 
-                    /////////////////////////////DATABASE OPERATIONS
-                    Cursor cursor_replacement = myDb.getAllDataFromReplacements();
-                    cursor_replacement.moveToFirst();
 
-                    if(cursor_replacement.getCount() == 0){
-                        Toast.makeText(getContext(),"No data on Replacement Table", Toast.LENGTH_LONG).show();
-                    }else{
-                        do{
 
-                            Replacements replacements = new Replacements(cursor_replacement.getInt(0),cursor_replacement.getString(1), cursor_replacement.getString(2), cursor_replacement.getString(3), cursor_replacement.getString(4), cursor_replacement.getString(5));
-                            arrayListReplacements.add(replacements);
-                        }while (cursor_replacement.moveToNext());
-                    }
-                    ///THEN, GET ALL REPLACEMENT_INVENTORIES SA DATABASE
-                    Cursor curse = myDb.getAllDataFromReplacementInventory();
-                    curse.moveToFirst();
 
-                    if(curse.getCount() == 0){
+                    Cursor cursor_brooder_inventory = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
+                    cursor_brooder_inventory.moveToFirst();
+                    if(cursor_brooder_inventory.getCount() == 0){
                         //show message
-                        Toast.makeText(getContext(),"No data.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"No data.", Toast.LENGTH_SHORT).show();
 
                     }else {
-
                         do {
 
-                            for(int i = 0; i<arrayListReplacements.size();i++){
-                                if(arrayListReplacements.get(i).getId().equals(curse.getInt(1))){
-                                  /*  Replacement_Inventory replace = new Replacement_Inventory(curse.getInt(0),curse.getInt(1), arrayListReplacements.get(i).getReplacement_family_number(),  arrayListReplacements.get(i).getReplacement_line_number(), arrayListReplacements.get(i).getReplacement_generation_number(), curse.getString(2), curse.getString(3),curse.getString(4), curse.getInt(5), curse.getInt(6), curse.getInt(7), arrayListReplacements.get(i).getReplacement_date_added(),curse.getString(8),curse.getString(9));
-                                    arrayList_temp.add(replace);*/
+                            Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                            arrayListBrooderInventory.add(replacement_inventory);
 
-                                }
-                            }
 
-                        } while (curse.moveToNext());
-
+                        } while (cursor_brooder_inventory.moveToNext());
                     }
 
+                    for (int i=0;i<arrayListBrooderInventory.size();i++){
+                        if(arrayListBrooderInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
 
+                            arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
-
-
-                    for(int i =0;i<arrayList_temp.size();i++){
-                        if (arrayList_temp.get(i).getReplacement_inv_pen().equals(replacement_pen)){
-                            arrayList_temp1.add(arrayList_temp.get(i));
                         }
                     }
-              /*      for (int i=0;i<arrayList_temp1.size();i++){
-                        buffer.append(arrayList_temp1.get(i).getId()+"\n");
-                        buffer.append(arrayList_temp1.get(i).getReplacement_inv_replacement_id()+"\n");
-                        buffer.append(arrayList_temp1.get(i).getReplacement_inv_pen()+"\n\n");
-                    }*/
-
 
                     //GETTING TOTAL BROODER INVENTORY COUNT
                     int count_inventory = 0;
+                    int count_male = 0;
+                    int count_female = 0;
 
-                    for(int i=0;i<arrayList_temp1.size();i++){
-                        count_inventory = count_inventory+arrayList_temp1.get(i).getReplacement_total_quantity();
+                    for(int i=0;i<arrayList_temp.size();i++){
+                        count_inventory = count_inventory+arrayList_temp.get(i).getReplacement_total_quantity();
                     }
+
+                    for(int i=0;i<arrayList_temp.size();i++){
+                        count_male = count_male+arrayList_temp.get(i).getReplacement_male_quantity();
+                    }
+
+
+                    for(int i=0;i<arrayList_temp.size();i++){
+                        count_female = count_female+arrayList_temp.get(i).getReplacement_female_quantity();
+                    }
+                    //
+
 
 
 
                     ArrayList<Integer> arrayListBrooder = new ArrayList<>();
-                    for(int i = 0;i<arrayList_temp1.size();i++){
-                        if(arrayListBrooder.contains(arrayList_temp1.get(i).getReplacement_inv_replacement_id())){
+                    for(int i = 0;i<arrayList_temp.size();i++){
+                        if(arrayListBrooder.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
                             //do nothing
                         }else{
-                            arrayListBrooder.add(arrayList_temp1.get(i).getReplacement_inv_replacement_id());
+                            arrayListBrooder.add(arrayList_temp.get(i).getReplacement_inv_replacement_id());
                         }
                     }
 
@@ -261,24 +255,24 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                     //populating inventory_dictionary
                     ArrayList<Integer> arrayList = new ArrayList<>();
 
-                    for (int i=0;i<arrayList_temp1.size();i++){
-                        if(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()) != null && !arrayList.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
+                    for (int i=0;i<arrayList_temp.size();i++){
+                        if(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()) != null && !arrayList.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
                             ArrayList<Float> arrayList2 = new ArrayList<>();
-                            arrayList2.add((float)arrayList_temp1.get(i).getReplacement_total_quantity());
-                            arrayList2.add((float)arrayList_temp1.get(i).getReplacement_total_quantity());
-                            arrayList2.add((float)arrayList_temp1.get(i).getReplacement_total_quantity());
-                            inventory_dictionary.put(arrayList_temp1.get(i).getReplacement_inv_replacement_id(),arrayList2);
-                            arrayList.add(arrayList_temp1.get(i).getReplacement_inv_replacement_id());
-                        }else if(arrayList.contains(arrayList_temp1.get(i).getReplacement_inv_replacement_id())){
+                            arrayList2.add((float)arrayList_temp.get(i).getReplacement_total_quantity());
+                            arrayList2.add((float)arrayList_temp.get(i).getReplacement_male_quantity());
+                            arrayList2.add((float)arrayList_temp.get(i).getReplacement_female_quantity());
+                            inventory_dictionary.put(arrayList_temp.get(i).getReplacement_inv_replacement_id(),arrayList2);
+                            arrayList.add(arrayList_temp.get(i).getReplacement_inv_replacement_id());
+                        }else if(arrayList.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
 
 
                             ArrayList<Float> arrayList3 = new ArrayList<>();
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(0)+arrayList_temp1.get(i).getReplacement_total_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(1)+arrayList_temp1.get(i).getReplacement_total_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(2)+arrayList_temp1.get(i).getReplacement_total_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(0)+arrayList_temp.get(i).getReplacement_total_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(1)+arrayList_temp.get(i).getReplacement_male_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(2)+arrayList_temp.get(i).getReplacement_female_quantity());
 
 
-                            inventory_dictionary.put(arrayList_temp1.get(i).getReplacement_inv_replacement_id(),arrayList3);
+                            inventory_dictionary.put(arrayList_temp.get(i).getReplacement_inv_replacement_id(),arrayList3);
                         }
                     }
                     //buffer.append("inventory_dictionary  "+inventory_dictionary.toString()+"\n\n");
@@ -293,20 +287,20 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
 
                     ///A. COMPUTING FOR THE MULTIPLIER
 
-                    float maleWeight, femaleWeight, totalWeight;
+                    float maleWeight, femaleWeight, totalWeight = 0.0f;
 
-                    totalWeight = Float.parseFloat(brooder_growth_male_weight.getText().toString()) + Float.parseFloat(brooder_growth_female_weight.getText().toString());
-                    maleWeight = Float.parseFloat(brooder_growth_male_weight.getText().toString());
-                    femaleWeight = Float.parseFloat(brooder_growth_female_weight.getText().toString());
 
-            ///////////////di pa gumagana yung sa female at male, kailangan pala kukunin ko pa sa inventory yun
+                        maleWeight = Float.parseFloat(brooder_growth_male_weight.getText().toString());
+                        femaleWeight = Float.parseFloat(brooder_growth_female_weight.getText().toString());
+                        totalWeight = (Float.parseFloat(brooder_growth_male_weight.getText().toString())+ Float.parseFloat(brooder_growth_female_weight.getText().toString()));
+                        //totalWeight = 0.0f;
+
+
+
 
                     float multiplierTotalWeight = totalWeight/count_inventory;
-                    //buffer.append("multiplierTotalWeight "+multiplierTotalWeight);
-                    float multiplierMaleWeight = maleWeight/count_inventory;
-                   // buffer.append("multiplierMaleWeight "+multiplierMaleWeight);
-                    float multiplierFemaleWeight = femaleWeight/count_inventory;
-                   // buffer.append("multiplierFemaleWeight "+multiplierFemaleWeight);
+                    float multiplierMaleWeight = maleWeight/count_male;
+                    float multiplierFemaleWeight = femaleWeight/count_female;
 
                     //float mutiplierRefused = feedRefused/count_inventory;
 
@@ -314,17 +308,17 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                     ///B. REPLACE THE VALUES OF THE KEYS IN inventory_dictionary WITH THEIR COUNT
 
                     ArrayList<Integer> arrayList1 = new ArrayList<>();
-                    for (int i=0;i<arrayList_temp1.size();i++){
-                        if(arrayList1.contains(arrayList_temp1.get(i).getReplacement_inv_replacement_id())){
+                    for (int i=0;i<arrayList_temp.size();i++){
+                        if(arrayList1.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
                             //skip
                         }else{
 
                             ArrayList<Float> multiplier = new ArrayList<>();
-                            multiplier.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(0)*multiplierTotalWeight);
-                            multiplier.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(1)*multiplierMaleWeight);
-                            multiplier.add(inventory_dictionary.get(arrayList_temp1.get(i).getReplacement_inv_replacement_id()).get(2)*multiplierFemaleWeight);
-                            inventory_dictionary.put(arrayList_temp1.get(i).getReplacement_inv_replacement_id(),multiplier);
-                            arrayList1.add(arrayList_temp1.get(i).getReplacement_inv_replacement_id());
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(0)*multiplierTotalWeight);
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(1)*multiplierMaleWeight);
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getReplacement_inv_replacement_id()).get(2)*multiplierFemaleWeight);
+                            inventory_dictionary.put(arrayList_temp.get(i).getReplacement_inv_replacement_id(),multiplier);
+                            arrayList1.add(arrayList_temp.get(i).getReplacement_inv_replacement_id());
                         }
                     }
 
@@ -338,19 +332,19 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                         Float total = entry.getValue().get(0);
                         Float male = entry.getValue().get(1);
                         Float female = entry.getValue().get(2);
-                                              /*        , brooder_growth_brooder brooder_growth_collection_day);  brooder_growth_date_collected);        brooder_growth_male_quantity);        , brooder_growth_male_weight);  brooder_growth_female_quantity);       , brooder_growth_female_weight);     brooder_growth_total_quantity);        brooder_growth_total_weight);      , brooder_growth_deleted_at);
-*/
-                        boolean isInserted = myDb.insertDataReplacementGrowthRecords( key ,brooder_growth_collection, brooder_growth_date_added.getText().toString(),null ,male,null, female,count_inventory, total,null );
-                        if(isInserted){
-                            //continue
-                        }else{
-                            Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
-                            break;
 
+                        for(int i=0;i<arrayList_temp.size();i++){
+                            if (arrayList_temp.get(i).getReplacement_inv_replacement_id().equals(key)){
 
+                                boolean isInserted = myDb.insertDataReplacementGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getReplacement_male_quantity(),male,arrayList_temp.get(i).getReplacement_female_quantity(),female,arrayList_temp.get(i).getReplacement_total_quantity(),female+male,null);
+                                if(!isInserted){
+                                    Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
+                                    //getDialog().dismiss();
+                                }else{
+                                    Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
+                                }
+                            }
                         }
-
-
 
                     }
 
@@ -358,6 +352,7 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                     Intent intent = new Intent(getActivity(), ReplacementGrowthRecordsActivity.class);
                     intent.putExtra("Replacement Pen",replacement_pen);
                     startActivity(intent);
+
 
 
                     getDialog().dismiss();

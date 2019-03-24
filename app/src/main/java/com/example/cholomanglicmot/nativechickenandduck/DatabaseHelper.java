@@ -1167,6 +1167,18 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getDataFromReplacementInventoryWherePenAndID(String tag, String pen){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is ? and REPLACEMENT_INV_PEN_NUMBER is ?", new String[] {tag, pen});
+
+        return res;
+    }
+    public Cursor getAllDataFromReplacementGrowthRecordsWhereGrowthID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_GROWTH_RECORDS+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
     public Cursor getIDFromReplacementInvWhere(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_ID is "+id, null);
@@ -1198,6 +1210,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
     public Cursor getAllDataFromReplacementGrowthRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_GROWTH_RECORDS, null);
@@ -1252,7 +1265,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
 
 
+    public Cursor getAllDataFromPhenoMorphoRecordsWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PHENO_MORPHO_VALUES+ " where id is ?", new String[]{id.toString()});
 
+        return res;
+    }
 
 
 

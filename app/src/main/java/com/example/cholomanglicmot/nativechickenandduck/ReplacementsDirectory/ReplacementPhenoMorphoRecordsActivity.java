@@ -72,8 +72,8 @@ public class ReplacementPhenoMorphoRecordsActivity extends AppCompatActivity {
 
         } else {
             do {
-               /* Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), null,null,null,cursor_inventory.getString(2), cursor_inventory.getString(3), cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), null, cursor_inventory.getString(8), cursor_inventory.getString(9));
-                arrayListReplacementInventory.add(replacement_inventory);*/
+                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_inventory.getInt(0),cursor_inventory.getInt(1), cursor_inventory.getString(2), cursor_inventory.getString(3),cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6),cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
+                arrayListReplacementInventory.add(replacement_inventory);
             } while (cursor_inventory.moveToNext());
         }
         ///GROWTH RECORDS

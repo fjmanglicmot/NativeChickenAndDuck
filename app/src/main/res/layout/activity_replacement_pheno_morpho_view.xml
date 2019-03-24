@@ -67,6 +67,15 @@
                         android:layout_height="match_parent"
                         >
 
+                        <TextView
+                            android:id="@+id/brooder_inventory_batch_date"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Date Collected" />
 
                         <TextView
                             android:id="@+id/brooder_inventory_code"
@@ -79,8 +88,8 @@
                             android:textStyle="bold"
                             />
 
-                        <TextView
-                            android:id="@+id/brooder_inventory_family"
+                       <!-- <TextView
+
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -90,7 +99,7 @@
                             android:text="Gender" />
 
                         <TextView
-                            android:id="@+id/brooder_inventory_line"
+
                             android:layout_width="300dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
@@ -100,24 +109,23 @@
                             android:text="Pheno" />
 
                         <TextView
-                            android:id="@+id/brooder_inventory_gen"
+
                             android:layout_width="150dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Morpho" />
-
+                            android:text="Morpho" />-->
                         <TextView
-                            android:id="@+id/brooder_inventory_batch_date"
+
                             android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:gravity="center"
                             android:textStyle="bold"
-                            android:textSize="12sp"
-                            android:text="Date Collecetedt" />
+                            android:gravity="center"
+                            android:layout_margin="10dp"
+                            android:layout_height="wrap_content"
+                            android:text="More"
+                            />
 
                         <TextView
                             android:id="@+id/brooder_feeding_delete"
