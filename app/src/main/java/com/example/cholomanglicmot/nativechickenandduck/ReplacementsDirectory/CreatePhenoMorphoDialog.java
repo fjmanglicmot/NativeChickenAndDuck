@@ -261,7 +261,7 @@ public class CreatePhenoMorphoDialog extends DialogFragment{
                 }else{
                     Toast.makeText(getContext(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
                 }
-                //getDialog().dismiss();
+                getDialog().dismiss();
             }
         });
 

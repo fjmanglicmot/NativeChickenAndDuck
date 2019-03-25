@@ -56,32 +56,7 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
-//*   public static final String BROODER_INV_COL_0 = "ID";
-//    public static final String BROODER_INV_COL_1 = "BROODER_INV_BROODER_ID";
-//    public static final String BROODER_INV_COL_2 = "BROODER_INV_PEN_NUMBER"; //REFERENCES SA PEN
-//    public static final String BROODER_INV_COL_3 = "BROODER_INV_BROODER_TAG";
-//    public static final String BROODER_INV_COL_4 = "BROODER_INV_BATCHING_DATE";
-//    public static final String BROODER_INV_COL_5 = "BROODER_INV_NUMBER_MALE";
-//    public static final String BROODER_INV_COL_6 = "BROODER_INV_NUMBER_FEMALE";
-//    public static final String BROODER_INV_COL_7 = "BROODER_INV_TOTAL";
-//    public static final String BROODER_INV_COL_8 = "BROODER_INV_LAST_UPDATE";
-//    public static final String BROODER_INV_COL_9 = "BROODER_INV_DELETED_AT";*/
 
-/*        Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory(); //para sa pagstore ng data sa arraylist
-        cursor_brooder_inventory.moveToFirst();
-        if(cursor_brooder_inventory.getCount() == 0){
-            //show message
-            do{
-                Cursor cursor_brooder = myDb.getAllDataFromBrooders();
-                cursor_brooder.moveToFirst();
-                if(cursor_brooder.getCount() != 0){
-                    fam_id = myDb.getFamIDFromBrooders(cursor_brooder_inventory.getInt(1));
-                    famLineGen = myDb.getFamLineGen(fam_id);
-                }
-            }while (cursor_brooder_inventory.moveToNext());
-
-
-        }*/
 
         Cursor cursor = myDb.getDataFromBrooderInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();

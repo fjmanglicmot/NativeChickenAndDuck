@@ -152,12 +152,12 @@ public class CreateReplacements extends AppCompatActivity {
 
         } else {
             do {
-
-                Replacements replacements = new Replacements(cursor_replacement.getInt(0), cursor_replacement.getString(1), cursor_replacement.getString(2), cursor_replacement.getString(3), cursor_replacement.getString(4), cursor_replacement.getString(5));
+/*   Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2),cursor_brooder.getString(3));*/
+                Replacements replacements = new Replacements(cursor_replacement.getInt(0), cursor_replacement.getString(1), cursor_replacement.getString(2), cursor_replacement.getString(3));
                 arrayList3.add(replacements);
 
 
-            } while (cursor_replacement_inventory.moveToNext());
+            } while (cursor_replacement.moveToNext());
         }
 
 

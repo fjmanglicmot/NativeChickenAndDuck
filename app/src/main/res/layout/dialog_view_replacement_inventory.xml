@@ -131,7 +131,14 @@
             android:layout_height="wrap_content"
             android:text="Male count"
             android:textSize="15sp"/>
-
+        <EditText
+            android:id="@+id/edit_male_count"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter new count"
+            android:textSize="15sp"
+            android:inputType="number"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/brooder_male_count"
@@ -158,7 +165,14 @@
             android:text="Female count"
             android:textSize="15sp"/>
 
-
+        <EditText
+            android:id="@+id/edit_female_count"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter new count"
+            android:textSize="15sp"
+            android:inputType="number"
+            android:visibility="gone"/>
         <TextView
             android:id="@+id/brooder_female_count"
             android:layout_width="wrap_content"

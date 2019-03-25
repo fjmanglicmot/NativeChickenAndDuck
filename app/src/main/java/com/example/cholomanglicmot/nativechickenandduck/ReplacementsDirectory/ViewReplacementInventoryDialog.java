@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -21,6 +23,7 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
 
     DatabaseHelper myDb;
     TextView textView, family_number, line_number, generation_number, brooder_male_count, brooder_female_count, brooder_total, brooder_date_added,batching_date;
+    EditText edit_male_count, edit_female_count;
     Button update, save;
     List<String> famLineGen = new ArrayList<>();
 
@@ -37,6 +40,8 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
 
 
         textView = view.findViewById(R.id.textView);
+        edit_female_count = view.findViewById(R.id.edit_female_count);
+        edit_male_count = view.findViewById(R.id.edit_male_count);
         family_number = view.findViewById(R.id.family_number); //galing sa brooder table
         line_number = view.findViewById(R.id.line_number);//galing sa brooder table
         generation_number = view.findViewById(R.id.generation_number);//galing sa brooder table
@@ -51,32 +56,6 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
-//*   public static final String BROODER_INV_COL_0 = "ID";
-//    public static final String BROODER_INV_COL_1 = "BROODER_INV_BROODER_ID";
-//    public static final String BROODER_INV_COL_2 = "BROODER_INV_PEN_NUMBER"; //REFERENCES SA PEN
-//    public static final String BROODER_INV_COL_3 = "BROODER_INV_BROODER_TAG";
-//    public static final String BROODER_INV_COL_4 = "BROODER_INV_BATCHING_DATE";
-//    public static final String BROODER_INV_COL_5 = "BROODER_INV_NUMBER_MALE";
-//    public static final String BROODER_INV_COL_6 = "BROODER_INV_NUMBER_FEMALE";
-//    public static final String BROODER_INV_COL_7 = "BROODER_INV_TOTAL";
-//    public static final String BROODER_INV_COL_8 = "BROODER_INV_LAST_UPDATE";
-//    public static final String BROODER_INV_COL_9 = "BROODER_INV_DELETED_AT";*/
-
-/*        Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory(); //para sa pagstore ng data sa arraylist
-        cursor_brooder_inventory.moveToFirst();
-        if(cursor_brooder_inventory.getCount() == 0){
-            //show message
-            do{
-                Cursor cursor_brooder = myDb.getAllDataFromBrooders();
-                cursor_brooder.moveToFirst();
-                if(cursor_brooder.getCount() != 0){
-                    fam_id = myDb.getFamIDFromBrooders(cursor_brooder_inventory.getInt(1));
-                    famLineGen = myDb.getFamLineGen(fam_id);
-                }
-            }while (cursor_brooder_inventory.moveToNext());
-
-
-        }*/
 
         Cursor cursor = myDb.getDataFromReplacementInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();
@@ -93,7 +72,7 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
 
         }
 
-       /* update.setOnClickListener(new View.OnClickListener() {
+        update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(edit_female_count.getVisibility() == View.GONE){
@@ -118,21 +97,20 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
 
             }
         });
-*/
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              /*  if(edit_female_count.getVisibility() == View.VISIBLE){
-                    boolean isUpdated = myDb.updateMaleFemaleCount(brooder_tag, Integer.parseInt(edit_male_count.getText().toString()),Integer.parseInt(edit_female_count.getText().toString()) );
+                if(edit_female_count.getVisibility() == View.VISIBLE){
+                    boolean isUpdated = myDb.updateMaleFemaleReplacementCount(brooder_tag, Integer.parseInt(edit_male_count.getText().toString()),Integer.parseInt(edit_female_count.getText().toString()) );
                     if(isUpdated == true){
                         Toast.makeText(getContext(), "Updated male and female count", Toast.LENGTH_SHORT).show();
                         getDialog().dismiss();
                     }else{
                         Toast.makeText(getContext(), "Error updating male and female count", Toast.LENGTH_SHORT).show();
                     }
-                }else{*/
+                }else{
                     getDialog().dismiss();
-                //}
+                }
 
             }
         });

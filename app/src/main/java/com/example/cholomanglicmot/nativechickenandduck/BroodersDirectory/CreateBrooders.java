@@ -178,7 +178,7 @@ public class CreateBrooders extends AppCompatActivity {
 
 
 
-            } while (cursor_brooder_inventory.moveToNext());
+            } while (cursor_brooder.moveToNext());
         }
 
 

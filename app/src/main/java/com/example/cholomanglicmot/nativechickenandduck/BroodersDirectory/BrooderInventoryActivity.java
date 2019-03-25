@@ -104,31 +104,6 @@ public class BrooderInventoryActivity extends AppCompatActivity {
             }
         }
 
-     /*   cursor_brooder_inventory2.moveToFirst();
-        if(cursor_brooder_inventory2.getCount() == 0){ //if walang laman yung brooder inventory
-
-            Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
-
-        }else {
-            do {
-
-
-
-              if (brooder_id_dictionary.containsKey(cursor_brooder_inventory2.getInt(1))){
-                  arrayList_brooder_inv_dict_list = brooder_id_dictionary.get(cursor_brooder_inventory2.getInt(1));
-                  Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory2.getInt(0),cursor_brooder_inventory2.getInt(1), cursor_brooder_inventory2.getString(2), cursor_brooder_inventory2.getString(3),cursor_brooder_inventory2.getString(4), cursor_brooder_inventory2.getInt(5), cursor_brooder_inventory2.getInt(6),cursor_brooder_inventory2.getInt(7), cursor_brooder_inventory2.getString(8), cursor_brooder_inventory2.getString(9));
-                  arrayList_brooder_inv_dict_list.add(brooder_inventory);
-              }else{
-                  ArrayList<Brooder_Inventory> arrayList_brooder_inv_dict_list_temp = new ArrayList<Brooder_Inventory>();
-                  Brooder_Inventory brooder_inventory2 = new Brooder_Inventory(cursor_brooder_inventory2.getInt(0),cursor_brooder_inventory2.getInt(1), cursor_brooder_inventory2.getString(2), cursor_brooder_inventory2.getString(3),cursor_brooder_inventory2.getString(4), cursor_brooder_inventory2.getInt(5), cursor_brooder_inventory2.getInt(6),cursor_brooder_inventory2.getInt(7), cursor_brooder_inventory2.getString(8), cursor_brooder_inventory2.getString(9));
-                  arrayList_brooder_inv_dict_list_temp.add(brooder_inventory2);
-                  brooder_id_dictionary.put(cursor_brooder_inventory2.getInt(1),arrayList_brooder_inv_dict_list_temp);
-              }
-
-
-            } while (cursor_brooder_inventory2.moveToNext());
-        }*/
-
 
 
         recycler_adapter = new RecyclerAdapter_Brooder_Inventory(arrayList_temp, brooder_pen);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
