@@ -154,15 +154,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String REPLACEMENT_PHENO_MORPHO_COL_6 = "REPLACEMENT_MORPHO_RECORD";
 
 
-
     public static final String TABLE_BREEDER = "breeder_table";
     public static final String BREEDER_COL_0 = "ID";
     public static final String BREEDER_COL_1 = "BREEDER_FAMILY";
     public static final String BREEDER_COL_2 = "BREEDER_FEMALE_FAMILY";
-    public static final String BREEDER_COL_3 = "BREEDER_LINE";
-    public static final String BREEDER_COL_4 = "BREEDER_GENERATION";
-    public static final String BREEDER_COL_5 = "BREEDER_DATE_ADDED";
-    public static final String BREEDER_COL_6 = "BREEDER_DELETED_AT";
+    public static final String BREEDER_COL_3 = "BREEDER_DATE_ADDED";
+    public static final String BREEDER_COL_4 = "BREEDER_DELETED_AT";
 
     public static final String TABLE_BREEDER_INVENTORIES = "breeder_inventory_table";
     public static final String BREEDER_INV_COL_0 = "ID";
@@ -318,7 +315,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_REPLACEMENT_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_GROWTH_COLLECTION_DAY TEXT, REPLACEMENT_GROWTH_DATE_COLLECTED TEXT, REPLACEMENT_GROWTH_MALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_MALE_WEIGHT INTEGER, REPLACEMENT_GROWTH_FEMALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_FEMALE_WEIGHT INTEGER,REPLACEMENT_GROWTH_TOTAL_QUANTITY INTEGER, REPLACEMENT_GROWTH_TOTAL_WEIGHT INTEGER,REPLACEMENT_GROWTH_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_REPLACEMENT_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_PHENO_MORPHO_INVENTORY_ID INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_PHENO_MORPHO_COLLECTED TEXT, REPLACEMENT_PHENO_MORPHO_SEX TEXT, REPLACEMENT_PHENO_MORPHO_TAG_OR_REGISTRY TEXT, REPLACEMENT_PHENO_RECORD TEXT, REPLACEMENT_MORPHO_RECORD TEXT)");
 
-        db.execSQL("create table " + TABLE_BREEDER +" (ID INTEGER PRIMARY KEY, BREEDER_FAMILY TEXT REFERENCES TABLE_FAMILY(ID), BREEDER_FEMALE_FAMILY REFERENCES TABLE_FAMILY(FAMILY),BREEDER_LINE TEXT, BREEDER_GENERATION TEXT, BREEDER_DATE_ADDED TEXT, BREEDER_DELETED_AT TEXT)");
+
+        db.execSQL("create table " + TABLE_BREEDER +" (ID INTEGER PRIMARY KEY, BREEDER_FAMILY INTEGER, BREEDER_FEMALE_FAMILY INTEGER, BREEDER_DATE_ADDED TEXT, BREEDER_DELETED_AT TEXT, FOREIGN KEY(BREEDER_FAMILY) REFERENCES TABLE_FAMILY(ID), FOREIGN KEY(BREEDER_FEMALE_FAMILY) REFERENCES TABLE_FAMILY(ID))");
         db.execSQL("create table " + TABLE_BREEDER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BREEDER_INV_BREEDER_ID TEXT REFERENCES TABLE_BREEDER(ID), BREEDER_INV_PEN_NUMBER TEXT, BREEDER_INV_BREEDER_TAG TEXT, BREEDER_INV_BATCHING_DATE TEXT, BREEDER_INV_NUMBER_MALE INTEGER, BREEDER_INV_NUMBER_FEMALE INTEGER, BREEDER_INV_TOTAL INTEGER, BREEDER_INV_LAST_UPDATE TEXT, BREEDER_INV_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_BREEDER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_BREEDER_INVENTORIES(ID), BREEDER_FEEDING_DATE_COLLECTED TEXT, BREEDER_FEEDING_AMOUNT_OFFERED TEXT, BREEDER_FEEDING_AMOUNT_REFUSED INTEGER, BREEDER_FEEDING_REMARKS TEXT, BREEDER_FEEDING_DELETED_AT TEXT)");
         db.execSQL("create table " + TABLE_BREEDER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_BREEDER_INVENTORIES(ID), BREEDER_GROWTH_COLLECTION_DAY TEXT, BREEDER_GROWTH_DATE_COLLECTED TEXT, BREEDER_GROWTH_MALE_QUANTITY INTEGER, BREEDER_GROWTH_MALE_WEIGHT INTEGER, BREEDER_GROWTH_FEMALE_QUANTITY INTEGER, BREEDER_GROWTH_FEMALE_WEIGHT INTEGER,BREEDER_GROWTH_TOTAL_QUANTITY INTEGER, BREEDER_GROWTH_TOTAL_WEIGHT INTEGER,BREEDER_GROWTH_DELETED_AT TEXT)");
@@ -501,17 +499,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-    public boolean insertDataBreeder(String brooder_family_number, String brooder_female_family_id ,String brooder_line_number, String brooder_generation_number, String brooder_date_added, String brooder_deleted_at ){
+
+    public boolean insertDataBreeder(Integer brooder_family_number, Integer brooder_female_family_id, String brooder_date_added, String brooder_deleted_at ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(BREEDER_COL_1, brooder_family_number);
         contentValues.put(BREEDER_COL_2, brooder_female_family_id);
-        contentValues.put(BREEDER_COL_3, brooder_line_number);
-        contentValues.put(BREEDER_COL_4, brooder_generation_number);
-        contentValues.put(BREEDER_COL_5, brooder_date_added);
-        contentValues.put(BREEDER_COL_6, brooder_deleted_at);
+        contentValues.put(BREEDER_COL_3, brooder_date_added);
+        contentValues.put(BREEDER_COL_4, brooder_deleted_at);
 
         long result = db.insert(TABLE_BREEDER,null,contentValues);
 
@@ -1033,6 +1030,14 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
     }
 
+    public Cursor getAllDataFromPenWhere(String pen_number){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_NUMBER like ?", new String[]{pen_number});
+        return res;
+    }
+
+
+
 
 
 
@@ -1280,11 +1285,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
 
 
-    public Cursor getIDFromBreedersWhere(String generation, String line, String family){
+    public Cursor getIDFromBreedersWhere(Integer family){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER+ " where BREEDER_FAMILY is "+family+ " and BREEDER_LINE is "+line+" and BREEDER_GENERATION is "+generation, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_BREEDER+ " where BREEDER_FAMILY is ?", new String[]{family.toString()},null);
         return res;
     }
+
     public Cursor getBreedersFromPen(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Layer%'", null);
@@ -1380,7 +1386,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     }
     public Cursor familyChecker(String family, String selected_line, String selected_generation){
 
-        List<String> families = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
         Integer generation = null;
         Integer line = null;
@@ -1420,7 +1425,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     }
     public Cursor replacementFamilyChecker(String family, String selected_line, String selected_generation){
 
-        List<String> families = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
         Integer generation = null;
         Integer line = null;
@@ -1454,6 +1458,45 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         SQLiteDatabase db4 = this.getReadableDatabase();
         Cursor res = db4.rawQuery("select * from " +TABLE_REPLACEMENT + " where REPLACEMENT_FAMILY like ? ",new String[]{family_id.toString()}, null);
+
+        return res;
+
+    }
+    public Cursor breederFamilyChecker(String family, String selected_line, String selected_generation){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer family_id =null;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM "+TABLE_GENERATION+ " WHERE GENERATION_NUMBER LIKE ?", new String[] {selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if(cursor_gen.getCount() != 0){
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM "+TABLE_LINE+ " WHERE LINE_GENERATION LIKE ? AND LINE_NUMBER LIKE ?",new String[]{generation.toString(),selected_line}, null);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM "+TABLE_FAMILY+ " WHERE FAMILY_LINE LIKE ? AND FAMILY_NUMBER LIKE ? ",new String[]{line.toString(), family},null);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            family_id = cursor1.getInt(0);
+        }
+
+        db3.close();
+
+        SQLiteDatabase db4 = this.getReadableDatabase();
+        Cursor res = db4.rawQuery("select * from " +TABLE_BREEDER + " where BREEDER_FAMILY like ? ",new String[]{family_id.toString()}, null);
 
         return res;
 
@@ -1698,23 +1741,88 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         // returning lables
         return brooders;
     }
+    public List<String> getAllDataFromReplacementasList(String selected_family, String selected_line, String selected_generation) {
+        List<String> replacements = new ArrayList<String>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer familiy = null;
+        Integer replacement = 0;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM " + TABLE_GENERATION + " WHERE GENERATION_NUMBER IS ?", new String[]{selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if (cursor_gen.getCount() != 0) {
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM " + TABLE_LINE + " WHERE LINE_GENERATION IS ? AND LINE_NUMBER IS ?", new String[]{generation.toString(), selected_line}, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM " + TABLE_FAMILY + " WHERE FAMILY_LINE IS ? AND FAMILY_NUMBER IS ?", new String[]{line.toString(), selected_family}, null);
+        cursor1.moveToFirst();
+        if (cursor1.getCount() != 0) {
+            familiy = cursor1.getInt(0);
+        }
+        db3.close();
+
+
+        SQLiteDatabase db4 = this.getReadableDatabase();
+        Cursor cursor2 = db4.rawQuery("SELECT ID FROM " + TABLE_REPLACEMENT + " WHERE REPLACEMENT_FAMILY IS ?", new String[]{familiy.toString()}, null);
+        cursor2.moveToFirst();
+        if (cursor2.getCount() != 0) {
+            replacement = cursor2.getInt(0);
+        }
+
+        db4.close();
+
+        SQLiteDatabase db5 = this.getReadableDatabase();
+        Cursor cursor3 = db5.rawQuery("SELECT REPLACEMENT_INV_REPLACEMENT_TAG,REPLACEMENT_INV_PEN_NUMBER, REPLACEMENT_INV_BATCHING_DATE FROM " + TABLE_REPLACEMENT_INVENTORIES + " WHERE REPLACEMENT_INV_REPLACEMENT_ID IS ?", new String[]{replacement.toString()});
+        cursor3.moveToFirst();
+        if (cursor3.getCount() != 0) {
+            do {
+                replacements.add("Replacement: " + cursor3.getString(0) + " | " + "Pen: " + cursor3.getString(1) + " | " + "Batch: " + cursor3.getString(2));
+            } while (cursor3.moveToNext());
+
+        }
+
+        cursor3.close();
+        db5.close();
+
+
+        // returning lables
+        return replacements;
+    }
     public List<String> getAllDataFromPenasList(){
-        String pen = "Layer";
-        List<String> generations = new ArrayList<String>();
+        Integer zero = 0;
+        List<String> pen = new ArrayList<String>();
+/*    public Cursor getIDFromBreederInventoyWhereTag(String tag){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select ID from " +TABLE_BREEDER_INVENTORIES+" where BREEDER_INV_BREEDER_TAG is ?", new String[]{tag});
+
+        return res;
+    }*/
 
         /*SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_TYPE LIKE '%Layer%'", null);
         return res;*/
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from pen_table where PEN_TYPE LIKE '%Layer%' AND PEN_CURRENT_CAPACITY IS ?",new String[]{zero.toString()});
 
-        String selectQuery = ("select * from pen_table where PEN_TYPE LIKE '%Layer%'");
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                generations.add(cursor.getString(1));
+                pen.add(cursor.getString(1));
             } while (cursor.moveToNext());
         }
 
@@ -1722,8 +1830,8 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         cursor.close();
         db.close();
 
-        // returning lables
-        return generations;
+
+        return pen;
     }
     public List<String> getAllDataFromBrooderPenasList(){
         String pen = "Layer";
@@ -1820,6 +1928,16 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         contentValues.put(REPLACEMENT_INV_COL_5, male_count);
         contentValues.put(REPLACEMENT_INV_COL_6, female_count);
         db.update(TABLE_REPLACEMENT_INVENTORIES, contentValues, "REPLACEMENT_INV_REPLACEMENT_TAG = ?", new String[]{ tag });
+        return true;
+    }
+
+    public boolean updateMaleFemaleBreederCount(String tag, Integer male_count, Integer female_count){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BREEDER_INV_COL_3, tag);
+        contentValues.put(BREEDER_INV_COL_5, male_count);
+        contentValues.put(BREEDER_INV_COL_6, female_count);
+        db.update(TABLE_BREEDER_INVENTORIES, contentValues, "BREEDER_INV_BREEDER_TAG = ?", new String[]{ tag });
         return true;
     }
     public boolean updateBrooderInventory(String tag, Integer total){
