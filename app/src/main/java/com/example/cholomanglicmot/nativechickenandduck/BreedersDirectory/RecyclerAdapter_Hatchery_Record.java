@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,14 +49,28 @@ public class RecyclerAdapter_Hatchery_Record extends RecyclerView.Adapter<Recycl
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
 
         final Hatchery_Records hatchery_records = arrayListBrooderFeedingRecords.get(position);
+        final Bundle args = new Bundle();
+        args.putInt("Breeder Inventory ID", hatchery_records.getBreeder_inv_id());
+        args.putInt("Breeder Hatchery ID", hatchery_records.getId());
+        args.putString("Breeder Tag", hatchery_records.getTag());
 
         holder.date_set.setText(hatchery_records.getDate());
-        holder.quantity.setText(hatchery_records.getEggs_set().toString());
+       /* holder.quantity.setText(hatchery_records.getEggs_set().toString());
         holder.age.setText("ID "+hatchery_records.getId().toString());
-        holder.fertile.setText(hatchery_records.getFertile().toString());
+        holder.fertile.setText(hatchery_records.getFertile().toString());*/
         holder.hatched.setText(hatchery_records.getDate_hatched().toString());
-        holder.number_hatched.setText(hatchery_records.getHatched().toString());
-        holder.update.setText(null);
+       // holder.number_hatched.setText(hatchery_records.getHatched().toString());
+        holder.view_record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewBreederHatcheryRecordDialog alertDialog = new ViewBreederHatcheryRecordDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewBreederHatcheryRecordDialog");
+                notifyDataSetChanged();
+            }
+        });
 
         holder.deleted_at.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +89,8 @@ public class RecyclerAdapter_Hatchery_Record extends RecyclerView.Adapter<Recycl
 
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder{
-        TextView date_set,quantity,age,fertile,hatched,number_hatched,update;
+        TextView date_set,quantity,age,fertile,hatched,number_hatched;
+        ImageButton update, view_record;
         ImageButton deleted_at;
 
 
@@ -80,12 +98,12 @@ public class RecyclerAdapter_Hatchery_Record extends RecyclerView.Adapter<Recycl
         RecyclerViewHolder(View view){
             super(view);
             date_set = view.findViewById(R.id.date_set);
-            quantity = view.findViewById(R.id.quantity);
+           /* quantity = view.findViewById(R.id.quantity);
             age = view.findViewById(R.id.age);
-            fertile = view.findViewById(R.id.fertile);
+            fertile = view.findViewById(R.id.fertile);*/
             hatched = view.findViewById(R.id.hatched);
-            number_hatched = view.findViewById(R.id.number_hatched);
-            update = view.findViewById(R.id.update);
+            view_record = view.findViewById(R.id.view_record);
+
             date_set = view.findViewById(R.id.date_set);
 
             deleted_at = view.findViewById(R.id.delete);

@@ -233,7 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String EGG_QUALITY_COL_14  = "EGG_QUALITY_SHELL_THICKNESS_TOP";
     public static final String EGG_QUALITY_COL_15  = "EGG_QUALITY_SHELL_THICKNESS_MIDDLE";
     public static final String EGG_QUALITY_COL_16  = "EGG_QUALITY_SHELL_THICKNESS_BOTTOM";
-
+    public static final String EGG_QUALITY_COL_17  = "EGG_QUALITY_DELETED_AT";
 
 
     public static final String TABLE_HATCHERY_RECORD = "hatchery_record";
@@ -286,7 +286,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 88);
+        super(context, DATABASE_NAME, null, 89);
     }
 
     @Override
@@ -327,7 +327,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-        db.execSQL("create table " + TABLE_EGG_QUALITY +" (ID INTEGER PRIMARY KEY, EGG_QUALITY_BREEDER_INVENTORY_ID REFERENCES TABLE_BREEDER_INVENTORIES(ID), EGG_QUALITY_DATE TEXT, EGG_QUALITY_WEEK TEXT ,EGG_QUALITY_WEIGHT INTEGER, EGG_QUALITY_COLOR TEXT, EGG_QUALITY_SHAPE TEXT, EGG_QUALITY_LENGTH INTEGER, EGG_QUALITY_WIDTH INTEGER, EGG_QUALITY_ALBUMENT_HEIGHT INTEGER, EGG_QUALITY_ALBUMENT_WEIGHT INTEGER, EGG_QUALITY_YOLK_WEIGHT INTEGER, EGG_QUALITY_YOLK_COLOR TEXT, EGG_QUALITY_SHELL_WEIGHT INTEGER,EGG_QUALITY_SHELL_THICKNESS_TOP INTEGER,EGG_QUALITY_SHELL_THICKNESS_MIDDLE INTEGER,EGG_QUALITY_SHELL_THICKNESS_BOTTOM INTEGER)");
+        db.execSQL("create table " + TABLE_EGG_QUALITY +" (ID INTEGER PRIMARY KEY, EGG_QUALITY_BREEDER_INVENTORY_ID REFERENCES TABLE_BREEDER_INVENTORIES(ID), EGG_QUALITY_DATE TEXT, EGG_QUALITY_WEEK TEXT ,EGG_QUALITY_WEIGHT INTEGER, EGG_QUALITY_COLOR TEXT, EGG_QUALITY_SHAPE TEXT, EGG_QUALITY_LENGTH INTEGER, EGG_QUALITY_WIDTH INTEGER, EGG_QUALITY_ALBUMENT_HEIGHT INTEGER, EGG_QUALITY_ALBUMENT_WEIGHT INTEGER, EGG_QUALITY_YOLK_WEIGHT INTEGER, EGG_QUALITY_YOLK_COLOR TEXT, EGG_QUALITY_SHELL_WEIGHT INTEGER,EGG_QUALITY_SHELL_THICKNESS_TOP INTEGER,EGG_QUALITY_SHELL_THICKNESS_MIDDLE INTEGER,EGG_QUALITY_SHELL_THICKNESS_BOTTOM INTEGER, EGG_QUALITY_DELETED_AT TEXT)");
 /*                                                       = "ID";                    "EGG_QUALITY_BREEDER_INVENTORY_ID"; =                                        "EGG_QUALITY_DATE"   "EGG_QUALITY_WEEK"; = ; = "EGG_QUALITY_WEIGHT"; = "EGG_QUALITY_COLOR"; = "EGG_QUALITY_SHAPE";  = "EGG_QUALITY_LENGTH"; =       "EGG_QUALITY_WIDTH"; "         EGG_QUALITY_ALBUMENT_HEIGHT";   "EGG_QUALITY_ALBUMENT_WEIGHT";           "EGG_QUALITY_YOLK_WEIGHT";     "EGG_QUALITY_YOLK_COLOR"    ;EGG_QUALITY_SHELL_WEIGHT"; "EGG_QUALITY_SHELL_THICKNESS_TOP";"EGG_QUALITY_SHELL_THICKNESS_MIDDLE";"EGG_QUALITY_SHELL_THICKNESS_BOTTOM";*/
         db.execSQL("create table " + TABLE_MORTALITY_AND_SALES +" (ID INTEGER PRIMARY KEY, MORT_AND_SALES_DATE TEXT, MORT_AND_SALES_BREEDER_INV_ID INTEGER REFERENCES TABLE_BREEDER_INVENTOIES(ID),MORT_AND_SALES_REPLACEMENT_INV_ID INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), MORT_AND_SALES_BROODER_INV_ID INTEGER REFERENCES TABLE_BROODER_INVENTORIES(ID), MORT_AND_SALES_TYPE TEXT, MORT_AND_SALES_CATEGORY TEXT, MORT_AND_SALES_PRICE INTEGER, MORT_AND_SALES_MALE INTEGER,MORT_AND_SALES_FEMALE INTEGER,  MORT_AND_SALES_TOTAL INTEGER, MORT_AND_SALES_REASON TEXT,MORT_AND_SALES_REMARKS TEXT, MORT_AND_SALES_DELETED_AT TEXT)");
 
@@ -1184,6 +1184,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
     public Cursor getAllDataFromReplacementGrowthRecordsWhereGrowthID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_GROWTH_RECORDS+ " where ID is ?",new String[]{id.toString()});
@@ -1204,7 +1205,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     }
     public Cursor getDataFromReplacementInventoryWhereTag(String tag){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is " + tag, null);
+        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is ?", new String[]{tag});
 
         return res;
     }
@@ -1258,7 +1259,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromReplacementFeedingRecordsWhereFeedingID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select REPLACEMENT_FEEDING_AMOUNT_OFFERED,REPLACEMENT_FEEDING_AMOUNT_REFUSED,REPLACEMENT_FEEDING_REMARKS,REPLACEMENT_FEEDING_DATE_COLLECTED from " +TABLE_REPLACEMENT_FEEDING_RECORDS+ " where ID is ?",new String[]{id.toString()});
 
+        return res;
+    }
     /*pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);*/
 
 /*    public static final String TABLE_PHENO_MORPHO_VALUES = "pheno_morpho_values";
@@ -1320,6 +1326,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
     public Cursor getAllDataFromBreederFeedingRecords(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BREEDER_FEEDING_RECORDS, null);
@@ -1384,6 +1391,48 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromBreederFeedingRecordsWhereFeedingID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select BREEDER_FEEDING_AMOUNT_OFFERED,BREEDER_FEEDING_AMOUNT_REFUSED,BREEDER_FEEDING_REMARKS,BREEDER_FEEDING_DATE_COLLECTED from " +TABLE_BREEDER_FEEDING_RECORDS+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
+
+    public Cursor getAllDataFromBreederEggProdWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_EGG_PRODUCTION+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
+
+    public Cursor getAllDataFromBreederHatcheryWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_HATCHERY_RECORD+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
+    public Cursor getAllDataFromBreederEggQualWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_EGG_QUALITY+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
+    public Cursor getAllDataFromBreederMortSalesWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_MORTALITY_AND_SALES+ " where ID is ?",new String[]{id.toString()});
+
+        return res;
+    }
+
+
+
+
+
+
+
+
+
+
     public Cursor familyChecker(String family, String selected_line, String selected_generation){
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1946,6 +1995,25 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         contentValues.put(BROODER_INV_COL_3, tag);
         contentValues.put(BROODER_INV_COL_7, total);
         db.update(TABLE_BROODER_INVENTORIES, contentValues, "BROODER_INV_BROODER_TAG = ?", new String[]{ tag });
+        return true;
+    }
+
+    public boolean updateReplacementInventoryMaleCountAndTotal(String tag, Integer male_count, Integer total){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REPLACEMENT_INV_COL_3, tag);
+        contentValues.put(REPLACEMENT_INV_COL_5, male_count);
+        contentValues.put(REPLACEMENT_INV_COL_7, total);
+        db.update(TABLE_REPLACEMENT_INVENTORIES, contentValues, "REPLACEMENT_INV_REPLACEMENT_TAG = ?", new String[]{ tag });
+        return true;
+    }
+    public boolean updateReplacementInventoryFemaleCountAndTotal(String tag, Integer female_count, Integer total){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REPLACEMENT_INV_COL_3, tag);
+        contentValues.put(REPLACEMENT_INV_COL_6, female_count);
+        contentValues.put(REPLACEMENT_INV_COL_7, total);
+        db.update(TABLE_REPLACEMENT_INVENTORIES, contentValues, "REPLACEMENT_INV_REPLACEMENT_TAG = ?", new String[]{ tag });
         return true;
     }
 }

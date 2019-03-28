@@ -38,6 +38,7 @@ public class EggProductionRecords extends AppCompatActivity {
     ArrayList<Breeder_Inventory>arrayList_temp = new ArrayList<>();
     ImageButton create_egg_prod;
     TextView replacement_pheno_inv_id;
+    String breeder_tag;
 
 
 
@@ -45,7 +46,7 @@ public class EggProductionRecords extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_egg_production_records);
-        final String breeder_tag;
+
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -54,14 +55,14 @@ public class EggProductionRecords extends AppCompatActivity {
                 breeder_tag= extras.getString("Breeder Tag");
             }
         } else {
-            breeder_tag= (String) savedInstanceState.getSerializable("Breeder Tag");
+            breeder_tag = (String) savedInstanceState.getSerializable("Breeder Tag");
         }
         final Bundle args = new Bundle();
         args.putString("Breeder Tag",breeder_tag);
 
         replacement_pheno_inv_id = findViewById(R.id.replacement_pheno_inv_id);
         create_egg_prod = findViewById(R.id.open_dialog);
-        replacement_pheno_inv_id.setText("Egg Production |"+ breeder_tag);
+        replacement_pheno_inv_id.setText("Egg Production | "+ breeder_tag);
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,8 +92,6 @@ public class EggProductionRecords extends AppCompatActivity {
         ///////////////////////////////DATABASE
 
 
-
-
         ////feeding records
         Cursor cursor_brooder_feeding_records = myDb.getAllDataFromEggProduction();
         cursor_brooder_feeding_records.moveToFirst();
@@ -103,7 +102,7 @@ public class EggProductionRecords extends AppCompatActivity {
         }else {
             do {
 
-                Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), cursor_brooder_feeding_records.getInt(3), cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getString(7), cursor_brooder_feeding_records.getString(8));
+                Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), breeder_tag,cursor_brooder_feeding_records.getInt(3), cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getString(7), cursor_brooder_feeding_records.getString(8));
 
                 arrayListBrooderGrowthRecords.add(egg_production);
 

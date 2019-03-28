@@ -52,61 +52,17 @@
 
 
 
-                        <TextView
-                            android:id="@+id/male"
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textSize="12sp"
-                            android:text="Male" />
 
-                        <TextView
-                            android:id="@+id/female"
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textSize="12sp"
-                            android:text="Female" />
-                    <TextView
-                        android:id="@+id/total"
+                    <ImageButton
+                        android:id="@+id/view_more"
                         android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Total" />
-                    <TextView
-                        android:id="@+id/price"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Price" />
-                    <TextView
-                        android:id="@+id/reason"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Reason" />
-                    <TextView
-                        android:id="@+id/remarks"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="Remarks" />
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_remove_red_eye_black_24dp"
+                        android:background="@null"
+                        />
 
 
 

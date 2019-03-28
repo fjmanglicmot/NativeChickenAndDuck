@@ -4,6 +4,7 @@ public class Egg_Production {
     private Integer id;
     private Integer egg_breeder_inv_id;
     private String date;
+    private String tag;
     private Integer intact;
     private Float weight;
     private Integer broken;
@@ -14,16 +15,25 @@ public class Egg_Production {
     Egg_Production(){
 
     }
-    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, Integer intact, Float weight, Integer broken, Integer rejects, String remarks, String deleted_at){
+    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, String tag, Integer intact, Float weight, Integer broken, Integer rejects, String remarks, String deleted_at){
         this.setId(id);
         this.setEgg_breeder_inv_id(egg_breeder_inv_id);
         this.setDate(date);
+        this.setTag(tag);
         this.setIntact(intact);
         this.setWeight(weight);
         this.setBroken(broken);
         this.setRejects(rejects);
         this.setRemarks(remarks);
         this.setDeleted_at(deleted_at);
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Integer getId() {

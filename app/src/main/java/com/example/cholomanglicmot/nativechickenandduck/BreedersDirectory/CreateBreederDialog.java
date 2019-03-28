@@ -44,6 +44,8 @@ public class CreateBreederDialog extends DialogFragment {
     DatabaseHelper mydb;
     Random random = new Random();
     boolean isSystemOutside;
+    String replacement_tag_2;
+    String  female_replacement_tag_2;
 
     ArrayList<Breeders> arrayListBreeder = new ArrayList<>();
     @Nullable
@@ -337,14 +339,6 @@ public class CreateBreederDialog extends DialogFragment {
                         boolean isInserted = myDb.insertDataBreeder(familyID, null,outside_date_transferred.getText().toString(),null);
                         //kunin yung selected pen tapos kung 0 yung content niya, ay
 
-/*    public static final String TABLE_PEN = "pen_table";
-    public static final String PEN_COL_0 = "ID";
-    public static final String PEN_COL_1 = "PEN_NUMBER";
-    public static final String PEN_COL_2 = "PEN_TYPE";
-    public static final String PEN_COL_3 = "PEN_CURRENT_CAPACITY";
-    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
-    public static final String PEN_COL_5 = "PEN_FARM_ID";
-    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";*/
 
                         Cursor cursor_pen = myDb.getAllDataFromPenWhere(outside_place_to_pen.getSelectedItem().toString());
                         cursor_pen.moveToFirst();
@@ -390,6 +384,51 @@ public class CreateBreederDialog extends DialogFragment {
                         }
                         boolean isInserted = myDb.insertDataBreeder(familyID, female_familyID,date_transferred.getText().toString(),null);
 
+                        String text = replacement_spinner.getSelectedItem().toString();
+                        String replacement_tag_raw = text.split("\\|")[0];
+                        String replacement_tag = replacement_tag_raw.split(":")[1];
+                        Integer maleCount = Integer.parseInt(quantity.getText().toString());
+                        Integer femaleCount = Integer.parseInt(female_quantity.getText().toString());
+                        //dapat may cursor ka na kumukuha ng current value ng total ng brooder_inventory,
+                        //then minus mo yung current total sa new total tas yun yung ipasa mo sa updateBrooderInventory
+                        replacement_tag_2 = replacement_tag.replaceAll("\\s+","");
+
+                        Cursor cursor1 = myDb.getDataFromReplacementInventoryWhereTag(replacement_tag_2);
+
+                        cursor1.moveToFirst();
+
+                        Integer current_male_count = cursor1.getInt(5);
+                        Integer current_male_total = cursor1.getInt(7);
+                        Integer new_male_count = current_male_count - maleCount;
+                        Integer new_male_total = current_male_total - current_male_count;
+
+
+                        boolean isUpdated = myDb.updateReplacementInventoryMaleCountAndTotal(replacement_tag_2, new_male_count, new_male_total);
+
+
+
+
+
+                        String text2 = female_replacement_spinner.getSelectedItem().toString();
+                        String female_replacement_tag_raw = text2.split("\\|")[0];
+                        String female_replacement_tag = female_replacement_tag_raw.split(":")[1];
+
+
+                        female_replacement_tag_2 = female_replacement_tag.replaceAll("\\s+","");
+
+                        Cursor cursor2 = myDb.getDataFromReplacementInventoryWhereTag(female_replacement_tag_2);
+
+                        cursor2.moveToFirst();
+
+                        Integer current_female_count = cursor2.getInt(6);
+                        Integer current_female_total = cursor2.getInt(7);
+                        Integer new_female_count = current_female_count - femaleCount;
+                        Integer new_female_total = current_female_total - current_female_count;
+
+
+                        boolean isUpdatedFemale = myDb.updateReplacementInventoryFemaleCountAndTotal(female_replacement_tag_2,new_female_count, new_female_total);
+
+
 
                         Cursor cursor_pen = myDb.getAllDataFromPenWhere(place_to_pen.getSelectedItem().toString());
                         cursor_pen.moveToFirst();
@@ -409,7 +448,7 @@ public class CreateBreederDialog extends DialogFragment {
                             Toast.makeText(getActivity(),"Breeder added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_line = new Intent(getActivity(), CreateBreeders.class);
                             startActivity(intent_line);
-                            getDialog().dismiss();
+
                         }else{
                             Toast.makeText(getActivity(),"Breeder not added to database", Toast.LENGTH_SHORT).show();
                         }

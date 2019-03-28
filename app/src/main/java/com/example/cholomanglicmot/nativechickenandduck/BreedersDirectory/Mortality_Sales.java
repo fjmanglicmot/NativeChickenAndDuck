@@ -3,12 +3,13 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 public class Mortality_Sales {
     private Integer id;
     private String date;
+    private String tag;
     private Integer breeder_id;
     private Integer replaement_id;
     private Integer brooder_id;
     private String type;
     private String category;
-    private Integer price;
+    private Float price;
     private Integer male_count;
     private Integer female_count;
     private Integer total;
@@ -20,9 +21,10 @@ public class Mortality_Sales {
 
     }
 
-    Mortality_Sales(Integer id, String date, Integer breeder_id, Integer replaement_id, Integer brooder_id, String type, String category, Integer price, Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
+    Mortality_Sales(Integer id, String date, String tag,Integer breeder_id, Integer replaement_id, Integer brooder_id, String type, String category, Float price, Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
         this.setId(id);
         this.setDate(date);
+        this.setTag(tag);
         this.setBreeder_id(breeder_id);
         this.setReplaement_id(replaement_id);
         this.setBrooder_id(brooder_id);
@@ -35,6 +37,14 @@ public class Mortality_Sales {
         this.setReason(reason);
         this.setRemarks(remarks);
         this.setDeleted_at(deleted_at);
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Integer getId() {
@@ -93,11 +103,11 @@ public class Mortality_Sales {
         this.category = category;
     }
 
-    public Integer getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 

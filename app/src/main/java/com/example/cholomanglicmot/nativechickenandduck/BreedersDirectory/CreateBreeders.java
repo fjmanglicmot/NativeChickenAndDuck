@@ -225,7 +225,15 @@ public class CreateBreeders extends AppCompatActivity {
             }else{
 
                 do {
-                    Breeders breeders = new Breeders(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6));
+
+                    /*
+    public static final String TABLE_BREEDER = "breeder_table";
+    public static final String BREEDER_COL_0 = "ID";
+    public static final String BREEDER_COL_1 = "BREEDER_FAMILY";
+    public static final String BREEDER_COL_2 = "BREEDER_FEMALE_FAMILY";
+    public static final String BREEDER_COL_3 = "BREEDER_DATE_ADDED";
+    public static final String BREEDER_COL_4 = "BREEDER_DELETED_AT";*/
+                    Breeders breeders = new Breeders(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4));
                     arrayListBreeders.add(breeders);
                 }while (cursor.moveToNext());
                 /*else {
@@ -249,7 +257,7 @@ public class CreateBreeders extends AppCompatActivity {
                         if(arrayListBreeders.get(i).getId().equals(cursorBreederInv.getInt(1))){
                                                                             /*              Integer id,             Integer brooder_inv_brooder_id, S   tring brooder_inv_pen,      String brooder_inv_brooder_tag,      String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity   brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at, String family, String line, String generation) {
                              */
-                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getString(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9), arrayListBreeders.get(i).getFamily_number(), arrayListBreeders.get(i).getLine_number(), arrayListBreeders.get(i).getGeneration_number());
+                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getString(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9));
                             arrayListBreederInventory2.add(breeder_inventory);
                             /*
                                                                                      BREEDER_INV_COL_0 = "ID";          BREEDER_INV_BREEDER_ID";     "BREEDER_INV_PEN_NUMBER";       "BREEDER_INV_BREEDER_TAG";              "BREEDER_INV_BATCHING_DATE";    = "BREEDER_INV_NUMBER_MALE";     BREEDER_INV_NUMBER_FEMALE";    BREEDER_INV_TOTAL";    "BREEDER_INV_LAST_UPDATE";              "BREEDER_INV_DELETED_AT";*/                        }

@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +50,15 @@ public class RecyclerAdapter_Egg_Quality extends RecyclerView.Adapter<RecyclerAd
 
         final Egg_Quality egg_production = arrayListBrooderFeedingRecords.get(position);
 
+        final Bundle args = new Bundle();
+        args.putInt("Breeder Inventory ID", egg_production.getEgg_breeder_inv_id());
+        args.putInt("Breeder Hatchery ID", egg_production.getId());
+        args.putString("Breeder Tag", egg_production.getTag());
+
+
         holder.date.setText(egg_production.getDate());
         holder.week.setText(egg_production.getWeek().toString());
-        holder.weight.setText(egg_production.getWeight().toString());
+/*        holder.weight.setText(egg_production.getWeight().toString());
         holder.color.setText(egg_production.getColor());
         holder.shape.setText(egg_production.getShape());
         holder.length.setText(egg_production.getLength().toString());
@@ -61,9 +70,19 @@ public class RecyclerAdapter_Egg_Quality extends RecyclerView.Adapter<RecyclerAd
         holder.shell_weight.setText(egg_production.getShell_weight().toString());
         holder.top_shell.setText(egg_production.getShell_thickness_top().toString());
         holder.middle_shell.setText(egg_production.getShell_thickness_middle().toString());
-        holder.bottom_shell.setText(egg_production.getShell_thickness_bottom().toString());
+        holder.bottom_shell.setText(egg_production.getShell_thickness_bottom().toString());*/
 
-
+        holder.view_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewBreederEggQualRecordDialog alertDialog = new ViewBreederEggQualRecordDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewBreederEggQualRecordDialog");
+                notifyDataSetChanged();
+            }
+        });
         holder.deleted_at.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +101,7 @@ public class RecyclerAdapter_Egg_Quality extends RecyclerView.Adapter<RecyclerAd
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder{
         TextView date,week, color, weight, shape, length, width, albumen_height, albumen_weight, yolk_weight,yolk_color, shell_weight, top_shell, middle_shell, bottom_shell,remarks;
-        ImageButton deleted_at;
+        ImageButton deleted_at, view_more;
 
 
 
@@ -90,7 +109,8 @@ public class RecyclerAdapter_Egg_Quality extends RecyclerView.Adapter<RecyclerAd
             super(view);
             date = view.findViewById(R.id.date);
             week = view.findViewById(R.id.week);
-            weight = view.findViewById(R.id.weight);
+
+/*            weight = view.findViewById(R.id.weight);
             color = view.findViewById(R.id.color);
             shape = view.findViewById(R.id.shape);
             length = view.findViewById(R.id.length);
@@ -102,8 +122,8 @@ public class RecyclerAdapter_Egg_Quality extends RecyclerView.Adapter<RecyclerAd
             shell_weight = view.findViewById(R.id.shell_weight);
             top_shell = view.findViewById(R.id.top_shell);
             middle_shell = view.findViewById(R.id.middle_shell);
-            bottom_shell = view.findViewById(R.id.bottom_shell);
-
+            bottom_shell = view.findViewById(R.id.bottom_shell);*/
+            view_more = view.findViewById(R.id.view_more);
             deleted_at = view.findViewById(R.id.delete);
 
 

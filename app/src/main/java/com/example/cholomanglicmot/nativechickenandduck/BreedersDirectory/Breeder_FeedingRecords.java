@@ -5,19 +5,22 @@ public class Breeder_FeedingRecords {
     private Integer id;
     private Integer brooder_feeding_inventory_id;
     private String brooder_feeding_date_collected;
+    private String brooder_feeding_tag;
     private Float brooder_feeding_offered;
     private Float brooder_feeding_refused;
     private String brooder_feeding_remarks;
     private String brooder_feeding_deleted_at;
 
+
     public Breeder_FeedingRecords(){
     }
 
-    public Breeder_FeedingRecords(Integer id, Integer brooder_feeding_inventory_id, String brooder_feeding_date_collected, Float brooder_feeding_offered, Float brooder_feeding_refused, String brooder_feeding_remarks, String brooder_feeding_deleted_at) {
+    public Breeder_FeedingRecords(Integer id, Integer brooder_feeding_inventory_id, String brooder_feeding_date_collected, String brooder_feeding_tag,Float brooder_feeding_offered, Float brooder_feeding_refused, String brooder_feeding_remarks, String brooder_feeding_deleted_at) {
 
         this.setId(id);
         this.setBrooder_feeding_inventory_id(brooder_feeding_inventory_id);
         this.setBrooder_feeding_date_collected(brooder_feeding_date_collected);
+        this.setBrooder_feeding_tag(brooder_feeding_tag);
         this.setBrooder_feeding_offered(brooder_feeding_offered);
         this.setBrooder_feeding_refused(brooder_feeding_refused);
         this.setBrooder_feeding_remarks(brooder_feeding_remarks);
@@ -25,6 +28,13 @@ public class Breeder_FeedingRecords {
     }
 
 
+    public String getBrooder_feeding_tag() {
+        return brooder_feeding_tag;
+    }
+
+    public void setBrooder_feeding_tag(String brooder_feeding_tag) {
+        this.brooder_feeding_tag = brooder_feeding_tag;
+    }
 
     public Integer getId() {
         return id;

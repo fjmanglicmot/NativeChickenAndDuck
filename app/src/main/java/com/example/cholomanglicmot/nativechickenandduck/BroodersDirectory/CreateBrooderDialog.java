@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +21,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+
+import cz.msebera.android.httpclient.Header;
+
+/*import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;*/
 
 public class CreateBrooderDialog extends DialogFragment {
 
@@ -41,11 +50,13 @@ public class CreateBrooderDialog extends DialogFragment {
     private String brooder_pen;
     Brooders_Pen brooders_pen;
     DatabaseHelper myDb;
+    APIHelper APIHelper;
     Random random = new Random();
     ArrayList<Pen> arrayListPen = new ArrayList<>();
     ArrayList<Pen> arrayListPen2 = new ArrayList<>();
 
     ArrayList<Brooders> arrayListBrooders = new ArrayList<>();
+
 
     @Nullable
     @Override
@@ -93,7 +104,7 @@ public class CreateBrooderDialog extends DialogFragment {
 
             }
         });
-
+        APIHelper = new APIHelper();
         myDb = new DatabaseHelper(getContext());
         brooder_estimated_date_of_hatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +169,10 @@ public class CreateBrooderDialog extends DialogFragment {
                     Cursor cursorBrooderChecker = myDb.familyChecker(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
                     cursorBrooderChecker.moveToFirst();
                     //kapag wala pang laman
+
+                    //isInternetAvailable -> API
+                    //else, local saving
+
                     if(cursorBrooderChecker.getCount()==0){
                         Integer familyID = null;
                         Cursor cursor_familyID = myDb.getFamilyID(family_spinner.getSelectedItem().toString(),line_spinner.getSelectedItem().toString(),generation_spinner.getSelectedItem().toString());
@@ -166,8 +181,17 @@ public class CreateBrooderDialog extends DialogFragment {
                             familyID = cursor_familyID.getInt(0);
                         }
                         boolean isInserted = myDb.insertDataBrooder(familyID,brooder_date_added.getText().toString(),null);
+
+                        RequestParams requestParams = new RequestParams();
+                        requestParams.add("BROODER_FAMILY", familyID.toString());
+                        requestParams.add("BROODER_DATE_ADDED", brooder_date_added.getText().toString());
+                        requestParams.add("BROODER_DELETED_AT", "1/1/2019");
+
+                        API_addBrooder(requestParams);
+
+
                         if(isInserted == true){
-                            Toast.makeText(getContext(), "Gujab", Toast.LENGTH_SHORT).show();
+                      //      Toast.makeText(getContext(), "Gujab", Toast.LENGTH_SHORT).show();
                         }
                         //INSERT DATA SA BROODER TABLE
                         Cursor cursor_pen = myDb.getAllDataFromPen();
@@ -204,7 +228,7 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(brooder_total_number.getText().toString())+total,current);
                         if(isPenUpdated == true){
-                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_line = new Intent(getActivity(), CreateBrooders.class);
                             startActivity(intent_line);
 
@@ -246,7 +270,7 @@ public class CreateBrooderDialog extends DialogFragment {
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(brooder_total_number.getText().toString())+total),current);
 
                         if(isPenUpdated == true){
-                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
+                          //  Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
                             Intent intent_line = new Intent(getActivity(), CreateBrooders.class);
                             startActivity(intent_line);
 
@@ -257,7 +281,7 @@ public class CreateBrooderDialog extends DialogFragment {
 
 
                         if(isInventoryInserted == true){
-                            Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
 
                             getDialog().dismiss();
                         }else{
@@ -281,6 +305,27 @@ public class CreateBrooderDialog extends DialogFragment {
 
         return view;
     }
+
+    private void API_addBrooder(RequestParams requestParams){
+        APIHelper.addBrooderFamily("addBrooderFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getContext(), "Successfully added ,mmdr.knrgb", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+                Log.d("addBrooderFamily", "Fail to add data");
+                Toast.makeText(getContext(), "FAIL GAGO", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+
     private void loadSpinnerDataForGeneration() {
         DatabaseHelper db = new DatabaseHelper(getContext());
         List<String> generations = db.getAllDataFromGenerationasList();

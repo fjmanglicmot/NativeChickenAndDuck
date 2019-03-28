@@ -41,7 +41,7 @@
                             android:textSize="12sp"
                             android:text="Week" />
 
-                    <TextView
+                  <!--  <TextView
                         android:id="@+id/weight"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
@@ -153,18 +153,21 @@
                         android:gravity="center"
                         android:textStyle="bold"
                         android:textSize="12sp"
-                        android:text="MT" />
-                    <TextView
-                        android:id="@+id/bottom_shell"
+                        android:text="MT" />-->
+                    <ImageButton
+                        android:id="@+id/view_more"
                         android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="12sp"
-                        android:text="BT" />
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_remove_red_eye_black_24dp"
+                        android:background="@null"
+                        />
 
                         <ImageButton
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
                             android:id="@+id/delete"
                             android:layout_width="50dp"
                             android:layout_height="match_parent"

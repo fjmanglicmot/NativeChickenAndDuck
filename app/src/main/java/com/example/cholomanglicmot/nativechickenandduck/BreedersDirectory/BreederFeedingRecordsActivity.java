@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_Inventory;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
@@ -32,8 +31,8 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
     RecyclerView.Adapter recycler_adapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Breeder_FeedingRecords> arrayListBrooderFeedingRecords = new ArrayList<>();//create constructor first for brooder feeding records
-    ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
-    ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
+    ArrayList<Breeder_Inventory>arrayListBrooderInventory = new ArrayList<>();
+    ArrayList<Breeder_Inventory>arrayList_temp = new ArrayList<>();
     ImageButton create_brooder_feeding_records;
 
     Map<Integer, Integer> inventory_dictionary = new HashMap<Integer, Integer>();
@@ -43,7 +42,7 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_brooder_feeding_records);
+        setContentView(R.layout.activity_breeder_feeding_records);
         final String brooder_pen, breeder_tag;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -90,7 +89,31 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
         ///////////////////////////////DATABASE
 
 
+        Cursor cursor_brooder_inventory = myDb.getAllDataFromBreederInventory(); //para sa pagstore ng data sa arraylist
+        cursor_brooder_inventory.moveToFirst();
+        if(cursor_brooder_inventory.getCount() == 0){
+            //show message
+            Toast.makeText(this,"No data.", Toast.LENGTH_LONG).show();
 
+        }else {
+            do {
+
+                Breeder_Inventory brooder_inventory = new Breeder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                arrayListBrooderInventory.add(brooder_inventory);
+
+
+            } while (cursor_brooder_inventory.moveToNext());
+        }
+
+
+
+        for (int i=0;i<arrayListBrooderInventory.size();i++){
+            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
+
+                arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
+
+            }
+        }
 
                     ////feeding records
         Cursor cursor_brooder_feeding_records = myDb.getAllDataFromBreederFeedingRecords();
@@ -102,8 +125,15 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
         }else {
             do {
 
-                Breeder_FeedingRecords brooderFeedingRecords = new Breeder_FeedingRecords(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), cursor_brooder_feeding_records.getFloat(3),cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getString(5), cursor_brooder_feeding_records.getString(6));
-                arrayListBrooderFeedingRecords.add(brooderFeedingRecords);
+                for(int k=0;k<arrayList_temp.size();k++){
+                    if(arrayList_temp.get(k).getBrooder_inv_brooder_id().equals(cursor_brooder_feeding_records.getInt(1))){
+                        Breeder_FeedingRecords brooderFeedingRecords = new Breeder_FeedingRecords(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), arrayList_temp.get(k).getBrooder_inv_brooder_tag(),cursor_brooder_feeding_records.getFloat(3),cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getString(5), cursor_brooder_feeding_records.getString(6));
+
+                        arrayListBrooderFeedingRecords.add(brooderFeedingRecords);
+
+
+                    }
+                }
 
             } while (cursor_brooder_feeding_records.moveToNext());
         }

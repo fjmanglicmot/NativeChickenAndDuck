@@ -27,7 +27,7 @@ public class ViewMorePhenoMorphoDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_view_replacement_pheno_morph_more, container, false);
-        final Integer pheno_morpho_id = getArguments().getInt("Replacement PhenoMorpho ID");
+        final Integer pheno_morpho_id = getArguments().getInt("PhenoMorpho ID");
 
         myDb = new DatabaseHelper(getContext());
 

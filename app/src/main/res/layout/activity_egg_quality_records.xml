@@ -83,7 +83,7 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                       <!-- <TextView
                             android:id="@+id/brooder_inventory_line"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
                             android:gravity="center"
                             android:text="MT"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold" />-->
 
                         <TextView
 
@@ -210,7 +210,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"
                             android:gravity="center"
-                            android:text="BT"
+                            android:text="View More"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -239,11 +239,14 @@
                 </android.support.v7.widget.RecyclerView>
 
 
-                <LinearLayout
+
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:orientation="horizontal">
+
+
 
 
                     <ImageButton
@@ -258,7 +261,9 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
-                </LinearLayout>
+                </android.support.constraint.ConstraintLayout>
+
+
 
 
             </android.support.v7.widget.CardView>

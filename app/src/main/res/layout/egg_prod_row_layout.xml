@@ -31,7 +31,7 @@
                             android:textStyle="bold"
                             />
 
-                        <TextView
+                    <!--    <TextView
                             android:id="@+id/intact"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Collection Day" />
+                            android:text="Intact" />
 
                         <TextView
                             android:id="@+id/weight"
@@ -49,7 +49,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Inventory Code" />
+                            android:text="Total Weight" />
 
                         <TextView
                             android:id="@+id/average_weight"
@@ -59,7 +59,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="n/a" />
+                            android:text="Average Weight" />
 
                         <TextView
                             android:id="@+id/broken"
@@ -69,7 +69,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Male Weight" />
+                            android:text="Broken" />
 
 
                         <TextView
@@ -80,7 +80,7 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Female Count" />
+                            android:text="Rejected" />
                         <TextView
                             android:id="@+id/remarks"
                             android:layout_width="50dp"
@@ -89,7 +89,15 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Female Weight" />
+                            android:text="Remarks" />-->
+                        <ImageButton
+                            android:id="@+id/view_egg"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_remove_red_eye_black_24dp"
+                            android:background="@null"
+                            />
 
                         <ImageButton
                             android:id="@+id/delete"

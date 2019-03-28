@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -79,8 +80,8 @@ public class MortalityFragment extends Fragment {
                     boolean isInserted = myDb.insertDataMortalityAndSales(date_died.getText().toString(),null,null,null, "breeder", "died", null,Integer.parseInt(male_death.getText().toString()), Integer.parseInt(female_death.getText().toString()),Integer.parseInt(male_death.getText().toString())+Integer.parseInt(female_death.getText().toString()),reason.getSelectedItem().toString(), remarks.getText().toString(), null );
                     if(isInserted == true){
                         Toast.makeText(getActivity(),"Database updated", Toast.LENGTH_SHORT).show();
-                        getActivity().onBackPressed();
-
+                         Intent intent_line = new Intent(getActivity(), MortalityAndSalesRecords.class);
+                         startActivity(intent_line);
                     }else{
                         Toast.makeText(getActivity(),"Error", Toast.LENGTH_SHORT).show();
                     }

@@ -66,7 +66,7 @@ public class RecyclerAdapter_Replacement_PhenoMorphoView extends RecyclerView.Ad
 
         final Replacement_PhenoMorphoView replacement_phenoMorphoView = arrayListReplacementInventory.get(position);
         final Bundle args = new Bundle();
-        args.putInt("Replacement PhenoMorpho ID", replacement_phenoMorphoView.getId());
+        args.putInt("PhenoMorpho ID", replacement_phenoMorphoView.getId());
 
 
 

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="360dp"
+    android:layout_height="380dp"
     android:gravity="center_horizontal"
     android:layout_marginTop="5dp">
 
@@ -74,7 +74,7 @@
 
                 <LinearLayout
                     android:layout_width="290dp"
-                    android:layout_height="124dp"
+                    android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:orientation="vertical">
 
@@ -86,13 +86,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Family: " />
+                            android:text="F: " />
 
                         <TextView
                             android:id="@+id/breeder_family"
                             android:layout_width="match_parent"
                             android:layout_height="20dp"
-                            android:text="0" />
+                            android:text="0000" />
 
                     </LinearLayout>
 
@@ -105,13 +105,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Line: " />
+                            android:text="L: " />
 
                         <TextView
                             android:id="@+id/breeder_line"
                             android:layout_width="match_parent"
                             android:layout_height="20dp"
-                            android:text="0" />
+                            android:text="0000" />
 
                     </LinearLayout>
 
@@ -124,13 +124,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Generation: " />
+                            android:text="G: " />
 
                         <TextView
                             android:id="@+id/breeder_generation"
                             android:layout_width="match_parent"
                             android:layout_height="20dp"
-                            android:text="0" />
+                            android:text="0000" />
 
                     </LinearLayout>
 
@@ -143,7 +143,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Male Count: " />
+                            android:text="Male: " />
 
                         <TextView
                             android:id="@+id/breeder_male_count"
@@ -155,7 +155,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Female Count: " />
+                            android:text="Female: " />
 
                         <TextView
                             android:id="@+id/breeder_female_count"
@@ -172,7 +172,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Batching Date: " />
+                            android:text="B: " />
 
                         <TextView
                             android:id="@+id/breeder_batching_date"
@@ -186,79 +186,221 @@
 
 
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="104dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal">
 
-                <ImageButton
-                    android:id="@+id/add_breeders"
+
+
+
+
+
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>-->
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_marginRight="10dp"
+                android:paddingBottom="15dp"
+
+                >
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
 
-                    android:background="@null"
-                    android:src="@drawable/ic_swap_horiz_black_24dp" />
+                    >
+                    <ImageButton
+                        android:id="@+id/add_breeders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
 
-                <ImageButton
-                    android:id="@+id/open_feeding_records"
+                        android:background="@null"
+                        android:src="@drawable/ic_swap_horiz_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Add"
+                        android:textSize="10dp"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
+                    <ImageButton
+                        android:id="@+id/open_feeding_records"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                    android:background="@null"
-                    android:src="@drawable/ic_restaurant_black_24dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_restaurant_black_24dp"
 
-                    />
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="Feeding"
+                        android:textSize="10dp"/>
+                </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/open_egg_production_records"
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_timeline_black_24dp" />
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
 
-                <ImageButton
-                    android:id="@+id/open_hatchery_records"
+
+                    <ImageButton
+                        android:id="@+id/open_egg_production_records"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:src="@drawable/ic_timeline_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:text="Egg Prod"
+                        android:textSize="10dp"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
 
-                    android:background="@null"
-                    android:src="@drawable/ic_more_vert_black_24dp" />
+                    <ImageButton
+                        android:id="@+id/open_hatchery_records"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                <ImageButton
-                    android:id="@+id/open_egg_quality_records"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_more_vert_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Hatchery"
+                        android:textSize="10dp" />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
 
-                    android:background="@null"
-                    android:src="@drawable/ic_format_list_bulleted_black_24dp" />
+                    <ImageButton
+                        android:id="@+id/open_egg_quality_records"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
 
-                <ImageButton
-                    android:id="@+id/open_pheno_morpho_records"
+                        android:background="@null"
+                        android:src="@drawable/ic_format_list_bulleted_black_24dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Egg Quality"
+                        android:textSize="10dp"/>
+                </LinearLayout>
+                <LinearLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
 
-                    android:background="@null"
-                    android:src="@drawable/ic_remove_red_eye_black_24dp" />
 
-                <ImageButton
-                    android:id="@+id/open_mortality_and_sales"
+
+                    <ImageButton
+                        android:id="@+id/open_pheno_morpho_records"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_remove_red_eye_black_24dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Pheno Morpho"
+                        android:textSize="10dp"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal">
 
-                    android:background="@null"
-                    android:src="@drawable/ic_monetization_on_black_24dp" />
+                    <ImageButton
+                        android:id="@+id/open_mortality_and_sales"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_monetization_on_black_24dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Mort/Sales"
+                        android:textSize="10dp"/>
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
+
 
 
     </android.support.v7.widget.CardView>

@@ -4,6 +4,7 @@ public class Hatchery_Records {
     private Integer id;
     private Integer breeder_inv_id;
     private String date;
+    private String tag;
     private String batching_date;
     private Integer eggs_set;
     private Integer week_lay;
@@ -15,10 +16,11 @@ public class Hatchery_Records {
     Hatchery_Records(){
 
     }
-    Hatchery_Records( Integer id, Integer breeder_inv_id,String date,String batching_date,Integer eggs_set, Integer week_lay, Integer fertile,  Integer hatched, String date_hatched, String deleted_at){
+    Hatchery_Records( Integer id, Integer breeder_inv_id,String date,String tag, String batching_date,Integer eggs_set, Integer week_lay, Integer fertile,  Integer hatched, String date_hatched, String deleted_at){
         this.setId(id);
         this.setBreeder_inv_id(breeder_inv_id);
         this.setDate(date);
+        this.setTag(tag);
         this.setBatching_date(batching_date);
         this.setEggs_set(eggs_set);
         this.setWeek_lay(week_lay);
@@ -28,6 +30,13 @@ public class Hatchery_Records {
         this.setDeleted_at(deleted_at);
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public String getBatching_date() {
         return batching_date;

@@ -38,13 +38,13 @@ public class HatcheryRecords extends AppCompatActivity {
     ArrayList<Breeder_Inventory>arrayList_temp = new ArrayList<>();
     ImageButton create_egg_prod;
     TextView replacement_pheno_inv_id;
+    String breeder_tag;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hatchery_records);
-        final String breeder_tag;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -83,6 +83,8 @@ public class HatcheryRecords extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
+
+
         Cursor cursor_brooder_feeding_records = myDb.getAllDataFromHatcheryRecords();
         cursor_brooder_feeding_records.moveToFirst();
         if(cursor_brooder_feeding_records.getCount() == 0){
@@ -92,7 +94,7 @@ public class HatcheryRecords extends AppCompatActivity {
         }else {
             do {
 
-                Hatchery_Records hatcheryRecords = new Hatchery_Records(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), cursor_brooder_feeding_records.getString(3), cursor_brooder_feeding_records.getInt(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getInt(7), cursor_brooder_feeding_records.getString(8), cursor_brooder_feeding_records.getString(9));
+                Hatchery_Records hatcheryRecords = new Hatchery_Records(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2),breeder_tag ,cursor_brooder_feeding_records.getString(3), cursor_brooder_feeding_records.getInt(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getInt(7), cursor_brooder_feeding_records.getString(8), cursor_brooder_feeding_records.getString(9));
 
                 arrayListBrooderGrowthRecords.add(hatcheryRecords);
 

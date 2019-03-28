@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +35,7 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.brooder_feeding_row_layout,parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.breeder_feeding_row_layout,parent, false);
         context = parent.getContext();
         RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
 
@@ -43,12 +46,24 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
 
-        final Breeder_FeedingRecords brooder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
-        holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());
-       // holder.brooder_feeding_tag.setText(brooder_feedingRecords.); data not from brooder_feedingRecords
-      //  holder.brooder_feeding_offered.setText(brooder_feedingRecords.getBrooder_feeding_offered().toString());
-       // holder.brooder_feeding_refused.setText(brooder_feedingRecords.getBrooder_feeding_refused().toString());
-     //   holder.brooder_feeding_remarks.setText(brooder_feedingRecords.getBrooder_feeding_remarks());
+        final Breeder_FeedingRecords breeder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
+        final Bundle args = new Bundle();
+        args.putInt("Breeder Inventory ID", breeder_feedingRecords.getBrooder_feeding_inventory_id());
+        args.putString("Breeder Tag", breeder_feedingRecords.getBrooder_feeding_tag());
+        args.putInt("Breeder Feeding ID", breeder_feedingRecords.getId());
+        holder.brooder_feeding_date.setText(breeder_feedingRecords.getBrooder_feeding_date_collected());
+
+        holder.brooder_feeding_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewBreederFeedingDialog alertDialog = new ViewBreederFeedingDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewBreederFeedingDialog");
+                notifyDataSetChanged();
+            }
+        });
 
         holder.brooder_feeding_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +90,7 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
         TextView brooder_feeding_remarks;
 
         ImageButton brooder_feeding_delete;
+        ImageButton brooder_feeding_view;
 
         RecyclerViewHolder(View view){
             super(view);
@@ -83,6 +99,7 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
             brooder_feeding_offered = view.findViewById(R.id.brooder_feeding_offered);
          //   brooder_feeding_refused= view.findViewById(R.id.brooder_feeding_refused);
            // brooder_feeding_remarks= view.findViewById(R.id.brooder_feeding_remarks);
+            brooder_feeding_view = view.findViewById(R.id.view_feeding);
             brooder_feeding_delete = view.findViewById(R.id.brooder_feeding_delete);
 
 

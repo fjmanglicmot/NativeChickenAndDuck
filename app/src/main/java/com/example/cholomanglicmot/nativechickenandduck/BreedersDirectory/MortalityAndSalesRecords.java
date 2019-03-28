@@ -94,7 +94,7 @@ public class MortalityAndSalesRecords extends AppCompatActivity {
 
                                                                                             /*nteger id, String date, Integer breeder_id, Integer replaement_id, Integer brooder_id,         String type, S       tring category,       Integer price,      Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
                  */
-                Mortality_Sales mortalityAndSalesRecords = new Mortality_Sales(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5),cursor.getString(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9),cursor.getInt(10),cursor.getString(11),cursor.getString(12), cursor.getString(12));
+                Mortality_Sales mortalityAndSalesRecords = new Mortality_Sales(cursor.getInt(0), cursor.getString(1),breeder_tag, cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5),cursor.getString(6), cursor.getFloat(7), cursor.getInt(8), cursor.getInt(9),cursor.getInt(10),cursor.getString(11),cursor.getString(12), cursor.getString(12));
                 arrayList_temp.add(mortalityAndSalesRecords);
             }while (cursor.moveToNext());
         }

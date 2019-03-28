@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 public class Egg_Quality {
     private Integer id;
+    private String tag;
     private Integer egg_breeder_inv_id;
     private Integer week;
     private String date;
@@ -23,7 +24,9 @@ public class Egg_Quality {
 
     }
 
-    Egg_Quality(   Integer id,Integer egg_breeder_inv_id,
+    Egg_Quality(   Integer id,
+                   String tag,
+                   Integer egg_breeder_inv_id,
                    String date,
                    Integer week,
                    Float weight,
@@ -41,6 +44,7 @@ public class Egg_Quality {
                    Float shell_thickness_bottom
     ){
         this.setId(id);
+        this.setTag(tag);
         this.setEgg_breeder_inv_id(egg_breeder_inv_id);
         this.setDate(date);
         this.setWeek(week);
@@ -57,6 +61,14 @@ public class Egg_Quality {
         this.setShell_thickness_top(shell_thickness_top);
         this.setShell_thickness_middle(shell_thickness_middle);
         this.setShell_thickness_bottom(shell_thickness_bottom);
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Integer getId() {

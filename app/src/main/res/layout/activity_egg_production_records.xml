@@ -79,7 +79,7 @@
                             android:textStyle="bold"
                             />
 
-                        <TextView
+                     <!--   <TextView
                             android:id="@+id/brooder_inventory_family"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
@@ -139,7 +139,17 @@
                             android:gravity="center"
                             android:textStyle="bold"
                             android:textSize="12sp"
-                            android:text="Remarks" />
+                            android:text="Remarks" />-->
+                        <TextView
+
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="View Egg Production" />
+
 
                         <TextView
 
@@ -167,7 +177,8 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-                <LinearLayout
+
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -188,7 +199,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
-                </LinearLayout>
+                </android.support.constraint.ConstraintLayout>
+
 
             </android.support.v7.widget.CardView>
         </HorizontalScrollView>

@@ -52,9 +52,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
 
 
         holder.breeder_number.setText(breeders.getBrooder_inv_brooder_tag());
-        holder.breeder_family.setText(breeders.getFamily());
-        holder.breeder_line.setText(breeders.getLine());
-        holder.breeder_generation.setText(breeders.getGeneration());
+
         holder.breeder_male_count.setText(breeders.getBrooder_male_quantity().toString());
         holder.breeder_female_count.setText(breeders.getBrooder_female_quantity().toString());
         holder.breeder_batching_date.setText(breeders.getBrooder_inv_batching_date());
