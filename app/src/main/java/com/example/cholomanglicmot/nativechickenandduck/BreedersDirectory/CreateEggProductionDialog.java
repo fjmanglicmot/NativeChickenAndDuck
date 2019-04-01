@@ -106,6 +106,7 @@ public class CreateEggProductionDialog extends DialogFragment{
                     if (isInserted == true){
                         Toast.makeText(getContext(),"Egg Production added to database", Toast.LENGTH_LONG).show();
                         Intent intent_line = new Intent(getActivity(), EggProductionRecords.class);
+                        intent_line.putExtra("Breeder Tag", breeder_tag);
                         startActivity(intent_line);
                         getDialog().dismiss();
                     }else{

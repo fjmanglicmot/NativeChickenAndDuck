@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 
 import android.app.DatePickerDialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -39,6 +40,12 @@ public class SalesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_sales, container, false);
+
+        final Integer breeder_id = getArguments().getInt("Breeder ID");
+        final String breeder_tag = getArguments().getString("Breeder Tag");
+
+
+
         myDb = new DatabaseHelper(getContext());
 
         date_sold = view.findViewById(R.id.date_sold);
@@ -77,8 +84,27 @@ public class SalesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!date_sold.getText().toString().isEmpty() && !male_sold.getText().toString().isEmpty() && !female_sold.getText().toString().isEmpty() && !price.getText().toString().isEmpty()){
-                    boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), null,null,null,"breeder","sold", Integer.parseInt(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
-                    if(isInserted == true){
+                    boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), breeder_id,null,null,"breeder","sold", Integer.parseInt(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
+
+
+
+                    Cursor cursor = myDb.getDataFromBreederInvWhereTag(breeder_tag);
+                    cursor.moveToFirst();
+                    Integer male_death_ =  Integer.parseInt(male_sold.getText().toString());
+                    Integer female_death_ = Integer.parseInt(female_sold.getText().toString());
+
+
+                    Integer current_male_count = cursor.getInt(5);
+                    Integer current_female_count = cursor.getInt(6);
+
+
+                    Integer new_male_count = current_male_count - male_death_;
+                    Integer new_female_count = current_female_count - female_death_;
+                    Integer new_total_count = new_male_count + new_female_count;
+                    //then update breeder_inventory database (subtract male and female death from current, update total from breeder_invetory too)
+                    boolean isBreederInvUpdated = myDb.updateMaleFemaleBreederCount(breeder_tag, new_male_count,new_female_count, new_total_count);
+
+                    if(isInserted && isBreederInvUpdated){
                         Toast.makeText(getActivity(),"Sales added to database", Toast.LENGTH_SHORT).show();
                         getActivity().onBackPressed();
                     }

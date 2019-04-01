@@ -60,7 +60,7 @@ public class HatcheryRecords extends AppCompatActivity {
 
         replacement_pheno_inv_id = findViewById(R.id.replacement_pheno_inv_id);
         create_egg_prod = findViewById(R.id.open_dialog);
-        replacement_pheno_inv_id.setText("Hatchery Records |"+ breeder_tag);
+        replacement_pheno_inv_id.setText("Breeder Tag | "+ breeder_tag);
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

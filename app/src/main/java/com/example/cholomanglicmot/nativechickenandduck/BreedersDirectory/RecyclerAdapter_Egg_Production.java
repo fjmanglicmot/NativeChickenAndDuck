@@ -53,6 +53,7 @@ public class RecyclerAdapter_Egg_Production extends RecyclerView.Adapter<Recycle
         args.putInt("Breeder Inventory ID", egg_production.getEgg_breeder_inv_id());
         args.putInt("Breeder Egg Prod ID", egg_production.getId());
         args.putString("Breeder Tag", egg_production.getTag());
+        args.putFloat("Breeder Egg Prod Average Weight", egg_production.getAverage_weight());
         holder.date.setText(egg_production.getDate());
     /*    holder.intact.setText(egg_production.getIntact().toString());
         //holder.average_weight.setText(egg_production.getWeight().toString());

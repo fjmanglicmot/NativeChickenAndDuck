@@ -1,5 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,20 +10,38 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
     DatabaseHelper myDb;
-    TextView date_set, quantity, age_in_weeks, no_of_fertile, date_hatched, no_hatched ,textView;
-
+    TextView date_set, quantity, age_in_weeks, no_of_fertile, date_hatched, no_hatched, textView;
+    LinearLayout switch1, yes;
+    EditText edit_quantity, edit_age_in_weeks, edit_no_of_fertile, edit_date_hatched, edit_no_hatched, edit_date_set;
+    Calendar calendar, calendar2;
     Button update, save;
-
-
+    Switch brooder_switch_other_day;
+    Spinner outside_family_spinner, outside_line_spinner, outside_generation_spinner, pen;
+    boolean isSwitchChecked = false;
 
 
     @Nullable
@@ -33,27 +53,101 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
         final String breeder_tag = getArguments().getString("Breeder Tag");
 
 
-
         myDb = new DatabaseHelper(getContext());
-
-
+        brooder_switch_other_day = view.findViewById(R.id.brooder_switch_other_day);
+        yes = view.findViewById(R.id.yes);
+        switch1 = view.findViewById(R.id.switch1);
         date_set = view.findViewById(R.id.date_set);
         quantity = view.findViewById(R.id.quantity);
-        age_in_weeks = view.findViewById(R.id.age_in_weeks); //galing sa brooder table
-        no_of_fertile = view.findViewById(R.id.no_of_fertile);//galing sa brooder table
-        date_hatched = view.findViewById(R.id.date_hatched);//galing sa brooder table
-        no_hatched = view.findViewById(R.id.no_hatched);//galing sa brooder table
-        textView = view.findViewById(R.id.textView);//galing sa brooder t
-        update = view.findViewById(R.id.update);//galing sa brooder t
+        edit_no_hatched = view.findViewById(R.id.edit_no_hatched);
+        age_in_weeks = view.findViewById(R.id.age_in_weeks);
+        no_of_fertile = view.findViewById(R.id.no_of_fertile);
+        date_hatched = view.findViewById(R.id.date_hatched);
+        no_hatched = view.findViewById(R.id.no_hatched);
+        textView = view.findViewById(R.id.textView);
+        outside_family_spinner = view.findViewById(R.id.outside_family_spinner);
+        outside_line_spinner = view.findViewById(R.id.outside_line_spinner);
+        outside_generation_spinner = view.findViewById(R.id.outside_generation_spinner);
+        pen = view.findViewById(R.id.pen);
+
+
+
+        edit_quantity = view.findViewById(R.id.edit_quantity);
+
+        edit_no_of_fertile = view.findViewById(R.id.edit_no_of_fertile);
+        edit_date_hatched = view.findViewById(R.id.edit_date_hatched);
+        edit_date_set = view.findViewById(R.id.edit_date_set);
+
+
+
+        loadSpinnerDataForPen();
+        loadSpinnerDataForGeneration();
+
+
+        outside_generation_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selected_generation = outside_generation_spinner.getSelectedItem().toString();
+                loadSpinnerDataForLine(selected_generation);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+        outside_line_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selected_generation = outside_generation_spinner.getSelectedItem().toString();
+                String selected_line = outside_line_spinner.getSelectedItem().toString();
+                loadSpinnerDataForFamily(selected_line, selected_generation);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+        brooder_switch_other_day.setChecked(false);
+        brooder_switch_other_day.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    yes.setVisibility(View.VISIBLE);
+                    isSwitchChecked = true;
+                } else {
+                    yes.setVisibility(View.GONE);
+                    isSwitchChecked = false;
+                }
+            }
+        });
+
+
         save = view.findViewById(R.id.save);
 
 
         textView.setText(breeder_tag);
         Cursor cursor = myDb.getAllDataFromBreederHatcheryWhereID(hatchery_id);
         cursor.moveToFirst();
-        if(cursor.getCount() != 0){
+        if (cursor.getCount() != 0) {
+
             Integer egg_set = cursor.getInt(4);
-            Float total_egg_weight_ = cursor.getFloat(4);
             Integer weeks = cursor.getInt(5);
             Integer fertile = cursor.getInt(6);
             Integer hatched = cursor.getInt(7);
@@ -65,18 +159,145 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
             no_of_fertile.setText(fertile.toString());
             no_hatched.setText(hatched.toString());
             date_hatched.setText(cursor.getString(8));
-
-
-
         }
 
+        edit_date_set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+                DatePickerDialog mDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        selectedMonth++;
+                        edit_date_set.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        calendar.set(selectedYear, selectedMonth, selectedDay);
+                    }
+                }, year, month, day);
+                mDatePicker.show();
+
+            }
+        });
+        edit_date_hatched.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendar2 = Calendar.getInstance();
+                int year = calendar2.get(Calendar.YEAR);
+                int month = calendar2.get(Calendar.MONTH);
+                int day = calendar2.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog mDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        selectedMonth++;
+                        edit_date_hatched.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        calendar2.set(selectedYear, selectedMonth, selectedDay);
+                    }
+                }, year, month, day);
+                mDatePicker.show();
+
+            }
+        });
+
+
+        update = view.findViewById(R.id.update);
+        //if wala pang lama yung date hatched, dapat visible yung update button, else -> "gone"
+        if (!date_hatched.getText().toString().isEmpty()) {
+            update.setVisibility(View.GONE);
+        }
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (edit_quantity.getVisibility() == View.GONE) { //if unclicked
+                    switch1.setVisibility(View.VISIBLE);
+                    edit_date_set.setVisibility(View.VISIBLE);
+                    edit_quantity.setVisibility(View.VISIBLE);
+                    edit_date_hatched.setVisibility(View.VISIBLE);
+                    edit_no_of_fertile.setVisibility(View.VISIBLE);
+                    edit_no_hatched.setVisibility(View.VISIBLE);
+
+                    edit_date_set.setText(date_set.getText().toString());
+                    edit_quantity.setText(quantity.getText().toString());
+                    edit_date_hatched.setText(date_hatched.getText().toString());
+                    edit_no_of_fertile.setText(no_of_fertile.getText().toString());
+                    edit_no_hatched.setText(no_hatched.getText().toString());
+
+
+                    date_set.setVisibility(View.GONE);
+                    quantity.setVisibility(View.GONE);
+                    date_hatched.setVisibility(View.GONE);
+                    no_of_fertile.setVisibility(View.GONE);
+                    no_hatched.setVisibility(View.GONE);
+                    update.setText("CANCEL");
+
+                } else {
+                    switch1.setVisibility(View.GONE);
+                    edit_date_set.setVisibility(View.GONE);
+                    edit_quantity.setVisibility(View.GONE);
+                    edit_date_hatched.setVisibility(View.GONE);
+                    edit_no_of_fertile.setVisibility(View.GONE);
+                    edit_no_hatched.setVisibility(View.GONE);
+
+                    edit_date_set.setText(date_set.getText().toString());
+                    edit_quantity.setText(quantity.getText().toString());
+                    edit_date_hatched.setText(date_hatched.getText().toString());
+                    edit_no_of_fertile.setText(no_of_fertile.getText().toString());
+                    edit_no_hatched.setText(no_hatched.getText().toString());
+
+                    date_set.setVisibility(View.VISIBLE);
+
+                    quantity.setVisibility(View.VISIBLE);
+                    date_hatched.setVisibility(View.VISIBLE);
+                    no_of_fertile.setVisibility(View.VISIBLE);
+                    no_hatched.setVisibility(View.VISIBLE);
+                    update.setText("UPDATE");
+
+                }
+            }
+        });
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                getDialog().dismiss();
+
+                if (edit_quantity.getVisibility() == View.VISIBLE) {
+                    long age_weeks_long;
+                    int age_weeks = 0;
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        Date date1 = format.parse(edit_date_set.getText().toString());
+                        try {
+                            Date date2 = format.parse(edit_date_hatched.getText().toString());
+                            long diff = date2.getTime() - date1.getTime();
+                            age_weeks_long = (diff / (1000 * 60 * 60 * 24 * 7));
+                            age_weeks = (int) age_weeks_long;
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    boolean isUpdated = myDb.updateHatcheryRecord(hatchery_id, edit_date_set.getText().toString(), null, Integer.parseInt(edit_quantity.getText().toString()), age_weeks, Integer.parseInt(edit_no_of_fertile.getText().toString()), Integer.parseInt(edit_no_hatched.getText().toString()), edit_date_hatched.getText().toString());
+                    if (isUpdated == true) {
+                        Intent intent = new Intent(getActivity(), HatcheryRecords.class);
+                        intent.putExtra("Breeder Tag", breeder_tag);
+                        startActivity(intent);
+
+                        Toast.makeText(getContext(), "Updated hatchery record", Toast.LENGTH_SHORT).show();
+                        getDialog().dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Error updating hatchery record", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    getDialog().dismiss();
+
+                }
 
 
             }
@@ -84,5 +305,42 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
 
         return view;
+    }
+
+    private void loadSpinnerDataForGeneration() {
+
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        List<String> generations = db.getAllDataFromGenerationasList();
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, generations);
+
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        outside_generation_spinner.setAdapter(dataAdapter);
+    }
+
+    public void loadSpinnerDataForLine(String selected_generation) {
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        List<String> lines = db.getAllDataFromLineasList(selected_generation);
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, lines);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        outside_line_spinner.setAdapter(dataAdapter2);
+    }
+
+    public void loadSpinnerDataForFamily(String selected_line, String selected_generation) {
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        List<String> lines = db.getAllDataFromFamilyasList(selected_line, selected_generation);
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, lines);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        outside_family_spinner.setAdapter(dataAdapter2);
+    }
+    private void loadSpinnerDataForPen() {
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        List<String> generations = db.getAllDataFromPenasList();
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, generations);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        pen.setAdapter(dataAdapter);
+
     }
 }

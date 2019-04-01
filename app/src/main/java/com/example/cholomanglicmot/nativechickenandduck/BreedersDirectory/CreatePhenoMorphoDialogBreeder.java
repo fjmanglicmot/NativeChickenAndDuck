@@ -243,8 +243,9 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
                     CreateMorphoDialogBreeder alertDialog = new CreateMorphoDialogBreeder();
                     alertDialog.setArguments(args);
                     alertDialog.show(fm, "CreateReplacementDialog");
+                    getDialog().dismiss();
 
-                   // Toast.makeText(getContext(), pheno, Toast.LENGTH_LONG).show();
+
 
 
 
@@ -263,7 +264,7 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
                 }else{
                     Toast.makeText(getContext(), "Please fill any empty fields", Toast.LENGTH_SHORT).show();
                 }
-                //getDialog().dismiss();
+
             }
         });
 

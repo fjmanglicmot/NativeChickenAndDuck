@@ -82,18 +82,10 @@ public class AddBreederDialog extends DialogFragment {
                         current_male_count = cursor.getInt(5);
                         current_female_count = cursor.getInt(6);
                     }
-                    /*    public static final String TABLE_BREEDER_INVENTORIES = "breeder_inventory_table";
-    public static final String BREEDER_INV_COL_0 = "ID";
-    public static final String BREEDER_INV_COL_1 = "BREEDER_INV_BREEDER_ID";
-    public static final String BREEDER_INV_COL_2 = "BREEDER_INV_PEN_NUMBER";
-    public static final String BREEDER_INV_COL_3 = "BREEDER_INV_BREEDER_TAG";
-    public static final String BREEDER_INV_COL_4 = "BREEDER_INV_BATCHING_DATE";
-    public static final String BREEDER_INV_COL_5 = "BREEDER_INV_NUMBER_MALE";
-    public static final String BREEDER_INV_COL_6 = "BREEDER_INV_NUMBER_FEMALE";
-    public static final String BREEDER_INV_COL_7 = "BREEDER_INV_TOTAL";
-    public static final String BREEDER_INV_COL_8 = "BREEDER_INV_LAST_UPDATE";
-    public static final String BREEDER_INV_COL_9 = "BREEDER_INV_DELETED_AT";*/
-                    boolean isUpdated = myDb.updateMaleFemaleBreederCount(breeder_tag, (Integer.parseInt(male_quantity.getText().toString())+ current_male_count), (Integer.parseInt(female_quantity.getText().toString())+current_female_count));
+                    Integer new_male_count = Integer.parseInt(male_quantity.getText().toString())+ current_male_count;
+                    Integer new_female_count = Integer.parseInt(female_quantity.getText().toString())+ current_female_count;
+                    Integer new_total_count = new_female_count+new_male_count;
+                    boolean isUpdated = myDb.updateMaleFemaleBreederCount(breeder_tag, new_male_count, new_female_count,new_total_count);
                     if(isUpdated == true){
                         Toast.makeText(getActivity(), "Succesfully added to "+breeder_tag, Toast.LENGTH_SHORT).show();
                         Intent intent_line = new Intent(getContext(), CreateBreeders.class);

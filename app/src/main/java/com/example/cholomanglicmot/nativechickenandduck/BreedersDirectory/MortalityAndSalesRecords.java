@@ -46,18 +46,23 @@ public class MortalityAndSalesRecords extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mortality_and_sales);
         final String breeder_tag;
+        final Integer breeder_id;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
                 breeder_tag= null;
+                breeder_id=null;
             } else {
                 breeder_tag= extras.getString("Breeder Tag");
+                breeder_id=extras.getInt("Breeder ID");
             }
         } else {
             breeder_tag= (String) savedInstanceState.getSerializable("Breeder Tag");
+            breeder_id = (Integer) savedInstanceState.getSerializable("Breeder ID");
         }
         final Bundle args = new Bundle();
         args.putString("Breeder Tag",breeder_tag);
+//        args.putInt("Breeder ID", breeder_id);
         replacement_pheno_inv_id = findViewById(R.id.replacement_pheno_inv_id);
         replacement_pheno_inv_id.setText("Mortality and Sales | " + breeder_tag);
         mToolbar = findViewById(R.id.nav_action);

@@ -62,7 +62,7 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
         args.putString("breeder pen number",brooder_pen);
         args.putString("Breeder Tag", breeder_tag);
         brooder_pen_textView = findViewById(R.id.brooder_pen);
-        brooder_pen_textView.setText("Breeder Pen " +breeder_tag);
+        brooder_pen_textView.setText("Breeder Tag | " +breeder_tag);
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

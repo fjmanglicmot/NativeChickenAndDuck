@@ -3,6 +3,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ import java.util.Calendar;
  */
 public class MortalityFragment extends Fragment {
     private Button account_submit_button;
-    private TextView profile_id;
+    private TextView profile_id, text;
     private EditText date_died, male_death, female_death, remarks ;
     Spinner reason;
     DatabaseHelper myDb;
@@ -42,7 +43,12 @@ public class MortalityFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mort, container, false);
+        final Integer breeder_id = getArguments().getInt("Breeder ID");
+        final String breeder_tag = getArguments().getString("Breeder Tag");
         myDb = new DatabaseHelper(getContext());
+
+
+
 
         date_died = view.findViewById(R.id.date_died);
         male_death = view.findViewById(R.id.male_death);
@@ -77,8 +83,28 @@ public class MortalityFragment extends Fragment {
             public void onClick(View view) {
 
                 if(!date_died.getText().toString().isEmpty() && !male_death.getText().toString().isEmpty() && !female_death.getText().toString().isEmpty() && !reason.getSelectedItem().toString().isEmpty()){
-                    boolean isInserted = myDb.insertDataMortalityAndSales(date_died.getText().toString(),null,null,null, "breeder", "died", null,Integer.parseInt(male_death.getText().toString()), Integer.parseInt(female_death.getText().toString()),Integer.parseInt(male_death.getText().toString())+Integer.parseInt(female_death.getText().toString()),reason.getSelectedItem().toString(), remarks.getText().toString(), null );
-                    if(isInserted == true){
+                    boolean isInserted = myDb.insertDataMortalityAndSales(date_died.getText().toString(),breeder_id,null,null, "breeder", "died", null,Integer.parseInt(male_death.getText().toString()), Integer.parseInt(female_death.getText().toString()),Integer.parseInt(male_death.getText().toString())+Integer.parseInt(female_death.getText().toString()),reason.getSelectedItem().toString(), remarks.getText().toString(), null );
+
+
+                    Cursor cursor = myDb.getDataFromBreederInvWhereTag(breeder_tag);
+                    cursor.moveToFirst();
+                    Integer male_death_ =  Integer.parseInt(male_death.getText().toString());
+                    Integer female_death_ = Integer.parseInt(female_death.getText().toString());
+
+
+                    Integer current_male_count = cursor.getInt(5);
+                    Integer current_female_count = cursor.getInt(6);
+
+
+                    Integer new_male_count = current_male_count - male_death_;
+                    Integer new_female_count = current_female_count - female_death_;
+                    Integer new_total_count = new_male_count + new_female_count;
+                    //then update breeder_inventory database (subtract male and female death from current, update total from breeder_invetory too)
+                    boolean isBreederInvUpdated = myDb.updateMaleFemaleBreederCount(breeder_tag, new_male_count,new_female_count, new_total_count);
+
+
+
+                    if(isInserted == true && isBreederInvUpdated == true){
                         Toast.makeText(getActivity(),"Database updated", Toast.LENGTH_SHORT).show();
                          Intent intent_line = new Intent(getActivity(), MortalityAndSalesRecords.class);
                          startActivity(intent_line);

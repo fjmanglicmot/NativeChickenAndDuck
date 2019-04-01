@@ -41,7 +41,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_breeder_feeding_records, container, false);
         myDb = new DatabaseHelper(getContext());
         final String breeder_pen = getArguments().getString("breeder pen number");
@@ -220,6 +220,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
                     Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getActivity(), BreederFeedingRecordsActivity.class);
                     intent.putExtra("Breeder Pen",breeder_pen);
+                    intent.putExtra("Breeder Tag", breeder_tag);
                     startActivity(intent);
 
 
@@ -235,7 +236,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
                         startActivity(intent);
                     }*/
 
-                    getDialog().dismiss();
+
                 }else{
                     Toast.makeText(getContext(),"Please fill any empty fields", Toast.LENGTH_LONG).show();
                 }

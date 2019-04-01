@@ -31,6 +31,8 @@ public class ViewBreederEggProdDialog extends DialogFragment {
         final Integer breeder_inventory_idID = getArguments().getInt("Breeder Inventory ID");
         final Integer egg_prod_id = getArguments().getInt("Breeder Egg Prod ID");
         final String breeder_tag = getArguments().getString("Breeder Tag");
+        final Float breeder_egg_prod_average_weight = getArguments().getFloat("Breeder Egg Prod Average Weight");
+
 
 
 
@@ -61,6 +63,7 @@ public class ViewBreederEggProdDialog extends DialogFragment {
 */
 
         textView.setText(breeder_tag);
+        average_weight.setText(breeder_egg_prod_average_weight.toString());
         Cursor cursor = myDb.getAllDataFromBreederEggProdWhereID(egg_prod_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){

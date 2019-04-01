@@ -7,6 +7,7 @@ public class Egg_Production {
     private String tag;
     private Integer intact;
     private Float weight;
+    private Float average_weight;
     private Integer broken;
     private Integer rejects;
     private String remarks;
@@ -15,17 +16,26 @@ public class Egg_Production {
     Egg_Production(){
 
     }
-    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, String tag, Integer intact, Float weight, Integer broken, Integer rejects, String remarks, String deleted_at){
+    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, String tag, Integer intact, Float weight,Float average_weight, Integer broken, Integer rejects, String remarks, String deleted_at){
         this.setId(id);
         this.setEgg_breeder_inv_id(egg_breeder_inv_id);
         this.setDate(date);
         this.setTag(tag);
         this.setIntact(intact);
         this.setWeight(weight);
+        this.setAverage_weight(average_weight);
         this.setBroken(broken);
         this.setRejects(rejects);
         this.setRemarks(remarks);
         this.setDeleted_at(deleted_at);
+    }
+
+    public Float getAverage_weight() {
+        return average_weight;
+    }
+
+    public void setAverage_weight(Float average_weight) {
+        this.average_weight = average_weight;
     }
 
     public String getTag() {

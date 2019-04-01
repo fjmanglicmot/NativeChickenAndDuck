@@ -55,6 +55,8 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
 
         holder.breeder_male_count.setText(breeders.getBrooder_male_quantity().toString());
         holder.breeder_female_count.setText(breeders.getBrooder_female_quantity().toString());
+        holder.breeder_total_count.setText(breeders.getBrooder_total_quantity().toString());
+
         holder.breeder_batching_date.setText(breeders.getBrooder_inv_batching_date());
 
         holder.add_breeders.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +129,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
                 Intent intent_replacement_pheno_morpho_records = new Intent(context, MortalityAndSalesRecords.class);
                 intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
                 intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                intent_replacement_pheno_morpho_records.putExtra("Breeder ID",breeders.getBrooder_inv_brooder_id());
                 context.startActivity(intent_replacement_pheno_morpho_records);
             }
         });
@@ -147,6 +150,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
         TextView breeder_generation;
         TextView breeder_male_count;
         TextView breeder_female_count;
+        TextView breeder_total_count;
         TextView breeder_batching_date;
 
         ImageButton add_breeders;
@@ -165,6 +169,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
             breeder_generation =  view.findViewById(R.id.breeder_generation);
             breeder_male_count =  view.findViewById(R.id.breeder_male_count);
             breeder_female_count =  view.findViewById(R.id.breeder_female_count);
+            breeder_total_count =  view.findViewById(R.id.breeder_total_count);
             breeder_batching_date =  view.findViewById(R.id.breeder_batching_date);
             add_breeders =  view.findViewById(R.id.add_breeders);
             open_feeding_records =  view.findViewById(R.id.open_feeding_records);

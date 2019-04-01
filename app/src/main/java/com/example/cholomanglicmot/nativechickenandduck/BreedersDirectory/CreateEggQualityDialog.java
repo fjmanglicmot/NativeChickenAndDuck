@@ -173,8 +173,9 @@ public class CreateEggQualityDialog extends DialogFragment{
                     if (isInserted == true){
                         Toast.makeText(getContext(),"Egg Quality added to database", Toast.LENGTH_LONG).show();
                         Intent intent_line = new Intent(getActivity(), EggQualityRecords.class);
+                        intent_line.putExtra("Breeder Tag", breeder_tag);
                         startActivity(intent_line);
-                        getDialog().dismiss();
+
                     }else{
                         Toast.makeText(getContext(),"Error adding to database", Toast.LENGTH_LONG).show();
                     }

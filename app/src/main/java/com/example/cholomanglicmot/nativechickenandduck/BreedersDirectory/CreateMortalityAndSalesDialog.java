@@ -42,6 +42,7 @@ public class CreateMortalityAndSalesDialog extends DialogFragment{
     MortalityFragment mortFragment;
     EggsSalesFragment eggsSalesFragment;
     SalesFragment salesFragment;
+    final Bundle args = new Bundle();
 
 
 
@@ -50,7 +51,10 @@ public class CreateMortalityAndSalesDialog extends DialogFragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_mortality_and_sales_records, container, false);
         myDb = new DatabaseHelper(getContext());
+        final Integer breeder_id = getArguments().getInt("Breeder ID");
         final String breeder_tag = getArguments().getString("Breeder Tag");
+        args.putInt("Breeder ID", breeder_id);
+        args.putString("Breeder Tag", breeder_tag);
 
 
 
@@ -106,8 +110,15 @@ public class CreateMortalityAndSalesDialog extends DialogFragment{
         builder.setMessage(message);
         builder.show();
     }
+    /*   FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                ViewBreederFeedingDialog alertDialog = new ViewBreederFeedingDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "ViewBreederFeedingDialog");
+                notifyDataSetChanged();*/
     private void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+        fragment.setArguments(args);
         fragmentTransaction.replace(R.id.mort_frame, fragment);
         fragmentTransaction.commit();
     }

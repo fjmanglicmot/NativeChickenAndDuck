@@ -47,7 +47,7 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
         replacement_inv_tag = getArguments().getString("Replacement Tag");
 
         replacement_tag = view.findViewById(R.id.replacement_tag);
-        replacement_tag.setText(pheno_record);
+        replacement_tag.setText(replacement_inv_tag);
 
 
 

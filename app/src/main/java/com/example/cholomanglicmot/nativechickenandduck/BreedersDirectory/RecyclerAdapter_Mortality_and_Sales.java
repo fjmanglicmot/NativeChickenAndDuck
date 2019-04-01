@@ -46,6 +46,7 @@ public class RecyclerAdapter_Mortality_and_Sales extends RecyclerView.Adapter<Re
         final Bundle args = new Bundle();
         //args.putInt("Breeder Inventory ID", mortality_sales.());
         args.putInt("Breeder Mort and Sales ID", mortality_sales.getId());
+
         args.putString("Breeder Tag", mortality_sales.getTag());
 
         holder.date.setText(mortality_sales.getDate());

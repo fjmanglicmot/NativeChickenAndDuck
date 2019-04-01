@@ -102,7 +102,22 @@ public class EggProductionRecords extends AppCompatActivity {
         }else {
             do {
 
-                Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), breeder_tag,cursor_brooder_feeding_records.getInt(3), cursor_brooder_feeding_records.getFloat(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getString(7), cursor_brooder_feeding_records.getString(8));
+                /*v
+    public static final String TABLE_EGG_PRODUCTION = "egg_production";
+    public static final String EGG_PRODUCTION_COL_0 = "ID";
+    public static final String EGG_PRODUCTION_COL_1  = "EGG_PRODUCTION_BREEDER_INVENTORY_ID";
+    public static final String EGG_PRODUCTION_COL_2  = "EGG_PRODUCTION_DATE";
+    public static final String EGG_PRODUCTION_COL_3  = "EGG_PRODUCTION_EGGS_INTACT";
+    public static final String EGG_PRODUCTION_COL_4  = "EGG_PRODUCTION_EGG_WEIGHT";
+    public static final String EGG_PRODUCTION_COL_5  = "EGG_PRODUCTION_TOTAL_BROKEN";
+    public static final String EGG_PRODUCTION_COL_6  = "EGG_PRODUCTION_TOTAL_REJECTS";
+    public static final String EGG_PRODUCTION_COL_7 = "EGG_PRODUCTION_REMARKS";
+    public static final String EGG_PRODUCTION_COL_8  = "EGG_PRODUCTION_DELETED_AT";
+*/
+                Float total_weight = cursor_brooder_feeding_records.getFloat(4);
+                Integer total_intact = cursor_brooder_feeding_records.getInt(3);
+                Float average_weight = total_weight/total_intact;
+                Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), breeder_tag,cursor_brooder_feeding_records.getInt(3), cursor_brooder_feeding_records.getFloat(4), average_weight,cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getString(7), cursor_brooder_feeding_records.getString(8));
 
                 arrayListBrooderGrowthRecords.add(egg_production);
 
