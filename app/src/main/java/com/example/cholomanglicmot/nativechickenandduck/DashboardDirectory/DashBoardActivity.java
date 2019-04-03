@@ -18,6 +18,7 @@ import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Create
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
 import com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory.MainActivity;
+import com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory.CreateGenerationsAndLines;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.CreatePen;
 import com.example.cholomanglicmot.nativechickenandduck.ProjectAdapter;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -61,8 +62,8 @@ public class DashBoardActivity extends AppCompatActivity {
 
                 switch(string2){
                     case "Dashboard":
-                        Intent intent_main = new Intent(DashBoardActivity.this, MainActivity.class);
-                        startActivity(intent_main);
+                        finish();
+                        startActivity(getIntent());
                         break;
 
                     case "Pens":
@@ -70,8 +71,8 @@ public class DashBoardActivity extends AppCompatActivity {
                         startActivity(intent_create_pens);
                         break;
                     case "Generations and Lines":
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent_main = new Intent(DashBoardActivity.this, CreateGenerationsAndLines.class);
+                        startActivity(intent_main);
                         break;
                     case "Families":
                         Intent intent_families = new Intent(DashBoardActivity.this, CreateFamilies.class);
@@ -89,12 +90,8 @@ public class DashBoardActivity extends AppCompatActivity {
                         Intent intent_replacements = new Intent(DashBoardActivity.this, CreateReplacements.class);
                         startActivity(intent_replacements);
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
-
                     case "Reports":
                         break;
-
                     case "Farm Settings":
                         Intent intent_settings = new Intent(DashBoardActivity.this, MainActivity.class);
                         startActivity(intent_settings);

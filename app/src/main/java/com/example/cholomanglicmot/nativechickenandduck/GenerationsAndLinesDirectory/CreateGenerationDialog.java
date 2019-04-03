@@ -1,5 +1,6 @@
 package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +16,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateGenerationDialog extends DialogFragment {
 
@@ -31,13 +37,14 @@ public class CreateGenerationDialog extends DialogFragment {
     private Button mActionOk;
     DatabaseHelper myDb;
     String generation_number;
+    Context context;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_generation, container, false);
         mActionOk = view.findViewById(R.id.action_ok);
         mInput_generation_number = view.findViewById(R.id.generation_no);
-
+        context = getActivity().getApplicationContext();
         // find the radiobutton by returned id
 
 
@@ -68,20 +75,30 @@ public class CreateGenerationDialog extends DialogFragment {
                             break;
 
                     }
-/*    /*    public static final String GENERATION_COL_0 = "ID";
-    public static final String GENERATION_COL_1 = "farm_id";
-    public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
-    public static final String GENERATION_COL_3 = "numerical_generation";
-    public static final String GENERATION_COL_4 = "GENERATION_STATUS";
-    public static final String GENERATION_COL_5 = "GENERATION_CULL";*/
 
-/*        contentValues.put(GENERATION_COL_2, generation_number);
-        contentValues.put(GENERATION_COL_3, numerical_gen);
-        contentValues.put(GENERATION_COL_4, is_active);
-*/
-                    boolean isInserted = myDb.insertDataGeneration(generation_number, Integer.parseInt(mInput_generation_number.getText().toString()), "Active");
+
+                    ////sample farm_id pero dapat kukunin mo to sa database
+                    Integer farm_id = 7;
+                    Integer is_active = 1;
+                    //insert to local database
+                    boolean isInserted = myDb.insertDataGeneration(farm_id, generation_number, Integer.parseInt(mInput_generation_number.getText().toString()), is_active);
+
+
+                    //insert to web database
+
+                    //GET farm_id from database
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("farm_id", farm_id.toString());
+                    requestParams.add("number", generation_number);
+                    requestParams.add("numerical_generation", mInput_generation_number.getText().toString());
+                    requestParams.add("is_active", is_active.toString());
+                    requestParams.add("deleted_at", null);
+
+                    API_addGeneration(requestParams);
+
                     if(isInserted == true){
-                        Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
                         Intent intent_generation = new Intent(getActivity(), CreateGenerationsAndLines.class);
                         startActivity(intent_generation);
 
@@ -103,5 +120,24 @@ public class CreateGenerationDialog extends DialogFragment {
         return view;
     }
 
+    private void API_addGeneration(RequestParams requestParams){
+        APIHelper.addGeneration("addGeneration", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully added Generation to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Generation to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 
 }

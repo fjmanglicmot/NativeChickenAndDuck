@@ -35,7 +35,16 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_view_replacement_inventory, container, false);
         final String brooder_tag = getArguments().getString("Replacement Tag");
         final String brooder_pen = getArguments().getString("Replacement Pen");
+        final Integer brooder_id = getArguments().getInt("Replacement ID");
         myDb = new DatabaseHelper(getContext());
+
+        Integer fam_id = myDb.getFamIDFromReplacements(brooder_id);
+        String famLineGen = myDb.getFamLineGen(fam_id);
+        String delims = " ";
+        String[] tokens = famLineGen.split(delims);
+        String fam = tokens[0];
+        String line = tokens[1];
+        String gen = tokens[2];
 
 
 
@@ -56,15 +65,17 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
+        family_number.setText(fam);
+        line_number.setText(line);
+        generation_number.setText(gen);
+
 
         Cursor cursor = myDb.getDataFromReplacementInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
-            textView.setText(cursor.getString(3));
+
             batching_date.setText(cursor.getString(4));
-//            family_number.setText(famLineGen.get(0));
-            //line_number.setText(famLineGen.get(1));
-           // generation_number.setText(famLineGen.get(2));
+
 
             brooder_male_count.setText(cursor.getString(5));
             brooder_female_count.setText(cursor.getString(6));

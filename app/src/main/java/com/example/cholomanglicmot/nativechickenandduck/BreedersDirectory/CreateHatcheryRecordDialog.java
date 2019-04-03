@@ -130,7 +130,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date_eggs_set.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date_eggs_set.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -152,7 +152,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date_eggs_hatched.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date_eggs_hatched.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar2.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -248,7 +248,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
                     long age_weeks_long;
                     int age_weeks = 0;
-                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
                     try {
                         Date date1 = format.parse(date_eggs_set.getText().toString());
                         try {
@@ -377,7 +377,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
 
                                 if(isPenUpdated && isInventoryInserted){
-                                    //  Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
+                                    Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
                                     Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
                                     intent_line.putExtra("Breeder Tag", breeder_tag);
                                     startActivity(intent_line);

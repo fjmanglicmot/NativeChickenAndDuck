@@ -89,11 +89,8 @@ public class CreateFamilyDialog extends DialogFragment {
                                 break;
 
                         }
-                        boolean isInserted = myDb.insertDataFamily(family,line_id);
-                       /* Cursor cursor1 = myDb.getDataFromLineWhereID(line_id);
-                        cursor1.moveToFirst();
-                        buffer.append(cursor1.getString(1)+"\n");
-                        showMessage("YO", buffer.toString());*/
+
+                        boolean isInserted = myDb.insertDataFamily(family,1,line_id);
 
                         if(isInserted == true){
                             Toast.makeText(getActivity(),"Family added to database", Toast.LENGTH_SHORT).show();

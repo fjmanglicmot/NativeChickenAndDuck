@@ -23,13 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
+import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
@@ -42,7 +45,10 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
     Switch brooder_switch_other_day;
     Spinner outside_family_spinner, outside_line_spinner, outside_generation_spinner, pen;
     boolean isSwitchChecked = false;
-
+    Random random = new Random();
+    private String brooder_pen;
+    ArrayList<Pen> arrayListPen = new ArrayList<>();
+    ArrayList<Pen> arrayListPen2 = new ArrayList<>();
 
     @Nullable
     @Override
@@ -112,6 +118,18 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
             }
         });
 
+        pen.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selected_generation = pen.getSelectedItem().toString();
+                //loadSpinnerDataForLine(selected_generation);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
 
 
@@ -282,7 +300,137 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+///////////////////////////////
 
+                    if(isSwitchChecked) {
+                        if (!edit_no_of_fertile.getText().toString().equals(0) && !edit_no_hatched.getText().toString().equals(0) && !edit_date_hatched.getText().toString().isEmpty() && !outside_generation_spinner.getSelectedItem().toString().isEmpty() && !outside_line_spinner.getSelectedItem().toString().isEmpty() && !outside_family_spinner.getSelectedItem().toString().isEmpty() && !pen.getSelectedItem().toString().isEmpty()) {
+                            int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
+                            //add in the system
+                            ///////////////////////////////////test
+                            brooder_pen = pen.getSelectedItem().toString();
+                            Cursor cursorBrooderChecker = myDb.familyChecker(outside_family_spinner.getSelectedItem().toString(), outside_line_spinner.getSelectedItem().toString(), outside_generation_spinner.getSelectedItem().toString());
+                            cursorBrooderChecker.moveToFirst();
+                            //kapag wala pang laman
+
+                            //isInternetAvailable -> API
+                            //else, local saving
+                            brooder_pen = pen.getSelectedItem().toString();
+                            if (cursorBrooderChecker.getCount() == 0) {
+                                Integer familyID = null;
+                                Cursor cursor_familyID = myDb.getFamilyID(outside_family_spinner.getSelectedItem().toString(), outside_line_spinner.getSelectedItem().toString(), outside_generation_spinner.getSelectedItem().toString());
+                                cursor_familyID.moveToFirst();
+                                if (cursor_familyID.getCount() != 0) {
+                                    familyID = cursor_familyID.getInt(0);
+                                }
+                                boolean isInserted = myDb.insertDataBrooder(familyID, edit_date_hatched.getText().toString(), null);
+
+                              /*  RequestParams requestParams = new RequestParams();
+                                requestParams.add("BROODER_FAMILY", familyID.toString());
+                                requestParams.add("BROODER_DATE_ADDED", brooder_date_added.getText().toString());
+                                requestParams.add("BROODER_DELETED_AT", "1/1/2019");
+
+                                API_addBrooder(requestParams);
+*/
+
+
+                                Cursor cursor_pen = myDb.getAllDataFromPen();
+                                cursor_pen.moveToFirst();
+                                if (cursor_pen.getCount() == 0) {
+                                } else {
+                                    do {
+                                        if (cursor_pen != null) {
+                                            Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                            arrayListPen.add(pen);
+                                        }
+                                    } while (cursor_pen.moveToNext());
+                                }
+                                for (int i = 0; i < arrayListPen.size(); i++) {
+                                    if (arrayListPen.get(i).getPen_number().equals(brooder_pen)) {
+                                        arrayListPen2.add(arrayListPen.get(i));
+                                    }
+                                }
+
+                                int total = arrayListPen2.get(0).getPen_inventory();
+                                int current = arrayListPen2.get(0).getPen_capacity();
+
+                                //GET ID OF INSERTED BROODER
+
+                                Cursor cursor1 = myDb.getIDFromBroodersWhere(familyID);
+                                cursor1.moveToFirst();
+
+
+                                Integer id = cursor1.getInt(0);
+
+                                // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
+
+                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(edit_no_hatched.getText().toString()) + total, current);
+                                if (isPenUpdated && isInventoryInserted && isInserted) {
+                                    Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
+                                    Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
+                                    intent_line.putExtra("Breeder Tag", breeder_tag);
+                                    startActivity(intent_line);
+
+
+                                } else {
+                                    Toast.makeText(getActivity(), "Error in adding to the database", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } else { //KUNG MAY LAMAN YUNG DATABASE BASED SA VALUES KANINA
+
+                                Cursor cursor_pen = myDb.getAllDataFromPen();
+                                cursor_pen.moveToFirst();
+                                if (cursor_pen.getCount() == 0) {
+                                    //
+                                } else {
+                                    do {
+                                        if (cursor_pen != null) {
+                                            Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                            arrayListPen.add(pen);
+
+                                        }
+
+                                    } while (cursor_pen.moveToNext());
+                                }
+
+
+                                for (int i = 0; i < arrayListPen.size(); i++) {
+                                    if (arrayListPen.get(i).getPen_number().equals(brooder_pen)) {
+                                        arrayListPen2.add(arrayListPen.get(i));
+                                    }
+                                }
+
+                                int total = arrayListPen2.get(0).getPen_inventory();
+                                int current = arrayListPen2.get(0).getPen_capacity();
+
+
+                                int brooder_id = cursorBrooderChecker.getInt(0);
+                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(edit_no_hatched.getText().toString()) + total), current);
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id, brooder_pen, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
+
+
+                                if (isPenUpdated && isInventoryInserted) {
+                                    Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
+                                    Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
+                                    intent_line.putExtra("Breeder Tag", breeder_tag);
+                                    startActivity(intent_line);
+
+                                } else {
+                                    Toast.makeText(getActivity(), "Brooder not added to database", Toast.LENGTH_SHORT).show();
+                                }
+                                //   boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+
+
+                            }
+
+
+                            ///////////////////////////////////endOfTest
+                        } else {
+                            Toast.makeText(getContext(), "Fill all forms to include brooder in the system", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+//////////////////////////////
                     boolean isUpdated = myDb.updateHatcheryRecord(hatchery_id, edit_date_set.getText().toString(), null, Integer.parseInt(edit_quantity.getText().toString()), age_weeks, Integer.parseInt(edit_no_of_fertile.getText().toString()), Integer.parseInt(edit_no_hatched.getText().toString()), edit_date_hatched.getText().toString());
                     if (isUpdated == true) {
                         Intent intent = new Intent(getActivity(), HatcheryRecords.class);
@@ -335,12 +483,18 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
         outside_family_spinner.setAdapter(dataAdapter2);
     }
     private void loadSpinnerDataForPen() {
+
         DatabaseHelper db = new DatabaseHelper(getContext());
-        List<String> generations = db.getAllDataFromPenasList();
+
+        List<String> generations = db.getAllDataFromBrooderPenasList();
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, generations);
+
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         pen.setAdapter(dataAdapter);
+
 
     }
 }

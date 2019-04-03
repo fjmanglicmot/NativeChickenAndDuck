@@ -65,17 +65,17 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
         final Bundle args = new Bundle();
         args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
         args.putString("Brooder Pen", brooder_inventory.getBrooder_inv_pen());
+        args.putInt("Brooder ID", brooder_inventory.getBrooder_inv_brooder_id());
 
 
 
 
 
-        //final Brooders brooders = arrayListBrooder2.get(0);
+
+
             holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_tag());
 
-          /*  holder.brooder_inventory_family.setText(brooders_temp.getBrooder_family_number()); //BAKA NAMAN PWEDE KUNIN SA BROODER
-            holder.brooder_inventory_line.setText(brooders_temp.getBrooder_line_number());
-            holder.brooder_inventory_gen.setText(brooders_temp.getBrooder_generation_number());*/
+
 
             holder.brooder_inventory_batch_date.setText(brooder_inventory.getBrooder_inv_batching_date());
             holder.brooder_view_inventory.setOnClickListener(new View.OnClickListener() {

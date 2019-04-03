@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +117,7 @@ public class CreateBrooderDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_estimated_date_of_hatch.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_estimated_date_of_hatch.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -138,7 +137,7 @@ public class CreateBrooderDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_date_added.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_date_added.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar2.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -183,9 +182,9 @@ public class CreateBrooderDialog extends DialogFragment {
                         boolean isInserted = myDb.insertDataBrooder(familyID,brooder_date_added.getText().toString(),null);
 
                         RequestParams requestParams = new RequestParams();
-                        requestParams.add("BROODER_FAMILY", familyID.toString());
-                        requestParams.add("BROODER_DATE_ADDED", brooder_date_added.getText().toString());
-                        requestParams.add("BROODER_DELETED_AT", "1/1/2019");
+                        requestParams.add("family_id", familyID.toString());
+                        requestParams.add("date_added", brooder_date_added.getText().toString());
+                        requestParams.add("deleted_at", null);
 
                         API_addBrooder(requestParams);
 
@@ -223,11 +222,10 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         Integer id = cursor.getInt(0);
 
-                       // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                         boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(brooder_total_number.getText().toString())+total,current);
-                        if(isPenUpdated == true){
+                        if(isPenUpdated && isInventoryInserted){
                            // Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_line = new Intent(getActivity(), CreateBrooders.class);
                             startActivity(intent_line);
@@ -275,8 +273,7 @@ public class CreateBrooderDialog extends DialogFragment {
                             startActivity(intent_line);
 
                         }
-                     //   boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_date_added.getText().toString(), null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
 
 
@@ -310,13 +307,13 @@ public class CreateBrooderDialog extends DialogFragment {
         APIHelper.addBrooderFamily("addBrooderFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
-                Toast.makeText(getContext(), "Successfully added ,mmdr.knrgb", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
-                Log.d("addBrooderFamily", "Fail to add data");
-                Toast.makeText(getContext(), "FAIL GAGO", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override

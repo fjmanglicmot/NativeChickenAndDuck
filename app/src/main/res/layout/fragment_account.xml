@@ -12,11 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="top">
         <android.support.v7.widget.CardView
             android:layout_width="300dp"
             android:layout_height="70dp"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp">
 
@@ -29,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:text="@string/farm_id"
+                    android:text="Farm Code"
                     android:textSize="17sp" />
 
             </LinearLayout>
@@ -52,10 +51,6 @@
                     android:textSize="29sp"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
 
             </LinearLayout>
 
@@ -64,85 +59,122 @@
         <LinearLayout
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_marginTop="15dp"
             android:layout_gravity="center_horizontal"
             >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_format_list_bulleted_black_24dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 >
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Farm Name: "
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/farm_name"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Sample Farm"
+                    android:background="@android:color/transparent"
+                    android:textSize="14sp" />
+                <EditText
+                    android:id="@+id/edit_farm_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/breed"
                     android:layout_marginLeft="5dp"/>
 
-                <EditText
+                <TextView
+                    android:textStyle="bold"
                     android:id="@+id/profile_breed"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:editable="false"
-                    android:inputType="none"
                     android:text="BP"
                     android:background="@android:color/transparent"
                     android:textSize="14sp" />
             </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_file_upload_black_24dp" />
-
             <LinearLayout
-                android:layout_marginTop="-5dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="@string/upload" />
+                    android:text="Address: "
+                    android:layout_marginLeft="5dp"/>
 
-                <EditText
-                    android:layout_width="129dp"
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/farm_address"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
+                    android:text="Calinog Campus, Brgy. Simsiman, Calinog, Iloilo"
                     android:background="@android:color/transparent"
-                    android:hint="Upload profile photo"
-                    android:inputType="none"
-                    android:editable="false"
                     android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/button4"
-                    android:layout_width="31dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/ic_folder_open_black_24dp"
-                    />
+                <EditText
+                    android:id="@+id/edit_farm_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
 
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Batching Week: "
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/farm_batching_week"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Every 1 week(s)"
+                    android:background="@android:color/transparent"
+                    android:textSize="14sp" />
+                <EditText
+                    android:id="@+id/edit_batching_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+            </LinearLayout>
         </LinearLayout>
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -153,15 +185,15 @@
         android:orientation="vertical"
         android:layout_gravity="bottom"
 >
+
         <Button
             android:id="@+id/account_submit_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/turmeric"
-            android:text="@string/submit"
-            android:textColor="@color/white"
-            />
+            android:text="Edit"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

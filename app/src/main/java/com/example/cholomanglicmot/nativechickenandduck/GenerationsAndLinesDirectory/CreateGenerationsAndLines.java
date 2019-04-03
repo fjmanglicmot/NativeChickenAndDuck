@@ -1,6 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -58,6 +60,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
     Map<String, ArrayList<String>> line_dictionary = new HashMap<String, ArrayList<String>>();
     ArrayList<String> list = new ArrayList<String>();
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,6 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-
 
 
 
@@ -178,7 +180,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
                 switch(string2){
                     case "Dashboard":
-                        Intent intent_main = new Intent(CreateGenerationsAndLines.this, MainActivity.class);
+                        Intent intent_main = new Intent(CreateGenerationsAndLines.this, DashBoardActivity.class);
                         startActivity(intent_main);
                         break;
 
@@ -206,14 +208,13 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                         Intent intent_replacements = new Intent(CreateGenerationsAndLines.this, CreateReplacements.class);
                         startActivity(intent_replacements);
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
 
                     case "Reports":
                         break;
 
                     case "Farm Settings":
-
+                        Intent intent = new Intent(CreateGenerationsAndLines.this, MainActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 return false;

@@ -67,6 +67,12 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
         final Bundle args = new Bundle();
         args.putString("Replacement Tag", replacement_inventory.getReplacement_inv_replacement_tag());
         args.putString("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
+        args.putInt("Replacement ID", replacement_inventory.getReplacement_inv_replacement_id());
+
+
+
+
+
 
         holder.replacement_inventory_code.setText(replacement_inventory.getReplacement_inv_replacement_tag());
      /*   holder.replacement_inventory_family.setText(replacement_inventory.getReplacement_inv_family_number());

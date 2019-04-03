@@ -1,7 +1,6 @@
 package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 public class AccountFragment extends Fragment {
     private Button account_submit_button;
     private TextView profile_id;
-    private EditText profile_breed;
+    private EditText edit_farm_name, edit_farm_address, edit_batching_date;
     DatabaseHelper myDb;
 
     public AccountFragment() {
@@ -37,22 +36,24 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         myDb = new DatabaseHelper(getContext());
 
-        profile_id = view.findViewById(R.id.profile_id);
-        profile_breed = view.findViewById(R.id.profile_breed);
         account_submit_button = (Button) view.findViewById(R.id.account_submit_button);
+        edit_farm_name = view.findViewById(R.id.edit_farm_name);
+        edit_farm_address = view.findViewById(R.id.edit_farm_address);
+        edit_batching_date = view.findViewById(R.id.edit_batching_date);
 
 
-        Cursor cursor = myDb.getAllData();
+       /* Cursor cursor = myDb.getAllData();
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             profile_id.setText(cursor.getString(0));
             profile_breed.setHint(cursor.getString(1));
         }
-
+*/
 
         account_submit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Toast.makeText(getActivity(),"Database updated", Toast.LENGTH_SHORT).show();
             }
         });

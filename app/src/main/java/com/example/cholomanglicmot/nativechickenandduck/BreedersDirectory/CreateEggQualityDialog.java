@@ -89,7 +89,7 @@ public class CreateEggQualityDialog extends DialogFragment{
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);

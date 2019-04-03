@@ -119,36 +119,6 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
 
 
 
-/*
-        int count_inventory =0;
-
-        for(int i=0;i<arrayList_temp.size();i++){
-            count_inventory = count_inventory+arrayList_temp.get(i).getBrooder_total_quantity();
-        }
-
-        ArrayList<Integer>arrayListBrooder = new ArrayList<>();
-        for(int i = 0;i<arrayList_temp.size();i++){
-            if(arrayListBrooder.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
-                //do nothing
-            }else{
-                arrayListBrooder.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
-            }
-        }
-
-        for(int i = 0;i<arrayListBrooder.size();i++){ //initialize to zero yung values
-            inventory_dictionary.put(arrayListBrooder.get(i),0); //pero yung key ay ok na
-        }
-
-        //gets the total of each brooder inventory
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        for (int i=0;i<arrayList_temp.size();i++){
-            if(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()) != null && !arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
-                inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),arrayList_temp.get(i).getBrooder_total_quantity());
-                arrayList.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
-            }else if(arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
-                inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id())+arrayList_temp.get(i).getBrooder_total_quantity());
-            }
-        }*/
 
         ////growth records
 
@@ -176,14 +146,6 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
             } while (cursor_brooder_growth_records.moveToNext());
         }
 
-
-
-
-             /*   for(int i = 0;i<arrayList_temp.size();i++){
-                    buffer.append("arrayList_temp inv id "+arrayList_temp.get(i).getBrooder_inv_brooder_id().toString()+"\n\n");
-                }*/
-
-           // showMessage("count_inventory", buffer.toString());
 
 
 

@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -153,7 +154,7 @@ public class CreateBreeders extends AppCompatActivity {
 
                 switch(string2){
                     case "Dashboard":
-                        Intent intent_main = new Intent(CreateBreeders.this, MainActivity.class);
+                        Intent intent_main = new Intent(CreateBreeders.this, DashBoardActivity.class);
                         startActivity(intent_main);
                         break;
                     case "Pens":
@@ -180,14 +181,13 @@ public class CreateBreeders extends AppCompatActivity {
                         Intent intent_replacements = new Intent(CreateBreeders.this, CreateReplacements.class);
                         startActivity(intent_replacements);
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
 
                     case "Reports":
                         break;
 
                     case "Farm Settings":
-
+                        Intent intent = new Intent(CreateBreeders.this, MainActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 return false;

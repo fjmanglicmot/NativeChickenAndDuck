@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -92,7 +93,7 @@ public class CreateReplacements extends AppCompatActivity {
 
                 switch (string2) {
                     case "Dashboard":
-                        Intent intent_main = new Intent(CreateReplacements.this, MainActivity.class);
+                        Intent intent_main = new Intent(CreateReplacements.this, DashBoardActivity.class);
                         startActivity(intent_main);
                         break;
                     case "Pens":
@@ -119,14 +120,12 @@ public class CreateReplacements extends AppCompatActivity {
                         finish();
                         startActivity(getIntent());
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
-
-                    case "Reports":
+                     case "Reports":
                         break;
 
                     case "Farm Settings":
-
+                        Intent intent = new Intent(CreateReplacements.this, MainActivity.class);
+                        startActivity(intent);
                         break;
                 }
                 return false;
@@ -173,21 +172,6 @@ public class CreateReplacements extends AppCompatActivity {
                 arrayList.add(replacement_pen);
             } while (cursor_replacement_pen.moveToNext());
 
-           /* cursor_replacement_inventory.moveToFirst();
-            if (cursor_replacement_inventory.getCount() == 0) {
-                //show message
-                Toast.makeText(this, "No data.", Toast.LENGTH_LONG).show();
-
-            } else {
-                do {
-
-                    Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_replacement_inventory.getInt(0), cursor_replacement_inventory.getInt(1), cursor_replacement_inventory.getString(2), cursor_replacement_inventory.getString(3), cursor_replacement_inventory.getString(4), cursor_replacement_inventory.getInt(5), cursor_replacement_inventory.getInt(6), cursor_replacement_inventory.getInt(7), cursor_replacement_inventory.getString(8), cursor_replacement_inventory.getString(9));
-                    arrayList2.add(replacement_inventory);
-
-
-                } while (cursor_replacement_inventory.moveToNext());
-            }
-*/
 
             recycler_adapter = new RecyclerAdapter_Replacement_Pen(arrayList,arrayList2,arrayList3);//arrayList = brooder_pen, arrayListInventory = replacement_inventory, arrayListReplacements = brooders
             recyclerView.setAdapter(recycler_adapter);

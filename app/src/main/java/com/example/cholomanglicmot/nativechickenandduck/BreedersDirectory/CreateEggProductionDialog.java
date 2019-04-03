@@ -61,7 +61,7 @@ public class CreateEggProductionDialog extends DialogFragment{
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date_collected.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date_collected.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);

@@ -23,12 +23,14 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
+import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class CreateBreederDialog extends DialogFragment {
 
@@ -44,8 +46,12 @@ public class CreateBreederDialog extends DialogFragment {
     DatabaseHelper mydb;
     Random random = new Random();
     boolean isSystemOutside;
-    String replacement_tag_2;
+    String replacement_tag_2, replacement_pen_2, female_replacement_pen_2;
     String  female_replacement_tag_2;
+    ArrayList<Pen> arrayListPen_2= new ArrayList();
+    ArrayList<Pen> arrayListPen_3= new ArrayList();
+    ArrayList<Pen> arrayListPen_4= new ArrayList();
+    ArrayList<Pen> arrayListPen_5= new ArrayList();
 
     ArrayList<Breeders> arrayListBreeder = new ArrayList<>();
     @Nullable
@@ -254,7 +260,7 @@ public class CreateBreederDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        estimated_date_of_hatch.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        estimated_date_of_hatch.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -277,7 +283,7 @@ public class CreateBreederDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        outside_date_transferred.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        outside_date_transferred.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar2.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -303,7 +309,7 @@ public class CreateBreederDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date_transferred.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date_transferred.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar3.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -384,42 +390,93 @@ public class CreateBreederDialog extends DialogFragment {
                         }
                         boolean isInserted = myDb.insertDataBreeder(familyID, female_familyID,date_transferred.getText().toString(),null);
 
+
+                        //put string operations here
                         String text = replacement_spinner.getSelectedItem().toString();
-                        String replacement_tag_raw = text.split("\\|")[0];
-                        String replacement_tag = replacement_tag_raw.split(":")[1];
+                        String[] tokens = text.split(Pattern.quote(" | "));
+                        String replacement_tag_raw = tokens[0];
+
+                        String delims_2 = ": ";
+                        String[] replacement_info = replacement_tag_raw.split(delims_2);
+                        replacement_tag_2 = replacement_info[1];
+
+
+
+
+
+
+
                         Integer maleCount = Integer.parseInt(quantity.getText().toString());
                         Integer femaleCount = Integer.parseInt(female_quantity.getText().toString());
-                        //dapat may cursor ka na kumukuha ng current value ng total ng brooder_inventory,
-                        //then minus mo yung current total sa new total tas yun yung ipasa mo sa updateBrooderInventory
-                        replacement_tag_2 = replacement_tag.replaceAll("\\s+","");
+
 
                         Cursor cursor1 = myDb.getDataFromReplacementInventoryWhereTag(replacement_tag_2);
 
                         cursor1.moveToFirst();
-
+                        replacement_pen_2 = cursor1.getString(2);
                         Integer current_male_count = cursor1.getInt(5);
                         Integer current_male_total = cursor1.getInt(7);
+
                         Integer new_male_count = current_male_count - maleCount;
                         Integer new_male_total = current_male_total - current_male_count;
 
 
+
+                        //update the current male and female count of the replacement inventory
                         boolean isUpdated = myDb.updateReplacementInventoryMaleCountAndTotal(replacement_tag_2, new_male_count, new_male_total);
 
 
 
 
+                        //update Pen where the replacement inventory was transferred from
+                        Cursor cursor3 = myDb.getAllDataFromPen();
+                        cursor3.moveToFirst();
+                        if(cursor3.getCount() == 0){
+                        }else{
+                            do{
+                                if(cursor3 != null){
+                                    Pen pen = new Pen(cursor3.getString(1), cursor3.getString(2), cursor3.getInt(3), cursor3.getInt(4));
+                                    arrayListPen_2.add(pen);
+                                }
+                            }while (cursor3.moveToNext());
+                        }
+                        for (int i = 0; i<arrayListPen_2.size();i++){
+                            if(arrayListPen_2.get(i).getPen_number().equals(replacement_pen_2)){
+                                arrayListPen_3.add(arrayListPen_2.get(i));
+                            }
+                        }
 
+                        int current_2 = arrayListPen_3.get(0).getPen_inventory();
+                        int total_2 = arrayListPen_3.get(0).getPen_capacity();
+
+                        //UPDATE PEN (BAWASAN YUNG YUNG BROODER PEN KUNG SAN GALING YUNG BROODER INVENTORY
+                        boolean isBrooderPenUpdated = myDb.updatePen(replacement_pen_2, "Grower",  current_2-maleCount, total_2);
+
+
+
+
+
+
+
+
+
+                        ////////FOR FEMALE REPLACEMENT
+
+
+                        //put string operations for female breeder here
                         String text2 = female_replacement_spinner.getSelectedItem().toString();
-                        String female_replacement_tag_raw = text2.split("\\|")[0];
-                        String female_replacement_tag = female_replacement_tag_raw.split(":")[1];
+                        String[] tokens_2 = text2.split(Pattern.quote(" | "));
+                        String female_replacement_tag_raw = tokens_2[0];
+
+                        String[] female_replacement_info = female_replacement_tag_raw.split(delims_2);
+                        female_replacement_tag_2 = female_replacement_info[1];
 
 
-                        female_replacement_tag_2 = female_replacement_tag.replaceAll("\\s+","");
 
                         Cursor cursor2 = myDb.getDataFromReplacementInventoryWhereTag(female_replacement_tag_2);
 
                         cursor2.moveToFirst();
-
+                        female_replacement_pen_2 = cursor2.getString(2);
                         Integer current_female_count = cursor2.getInt(6);
                         Integer current_female_total = cursor2.getInt(7);
                         Integer new_female_count = current_female_count - femaleCount;
@@ -427,6 +484,31 @@ public class CreateBreederDialog extends DialogFragment {
 
 
                         boolean isUpdatedFemale = myDb.updateReplacementInventoryFemaleCountAndTotal(female_replacement_tag_2,new_female_count, new_female_total);
+
+                        Cursor cursor4 = myDb.getAllDataFromPen();
+                        cursor4.moveToFirst();
+                        if(cursor4.getCount() == 0){
+                        }else{
+                            do{
+                                if(cursor4 != null){
+                                    Pen pen = new Pen(cursor4.getString(1), cursor4.getString(2), cursor4.getInt(3), cursor4.getInt(4));
+                                    arrayListPen_4.add(pen);
+                                }
+                            }while (cursor4.moveToNext());
+                        }
+                        for (int i = 0; i<arrayListPen_4.size();i++){
+                            if(arrayListPen_4.get(i).getPen_number().equals(female_replacement_pen_2)){
+                                arrayListPen_5.add(arrayListPen_4.get(i));
+                            }
+                        }
+
+                        int current_3 = arrayListPen_5.get(0).getPen_inventory();
+                        int total_3 = arrayListPen_5.get(0).getPen_capacity();
+
+                        //UPDATE PEN (BAWASAN YUNG YUNG BROODER PEN KUNG SAN GALING YUNG BROODER INVENTORY
+                        boolean isBrooderPenUpdated_2 = myDb.updatePen(female_replacement_pen_2, "Grower",  current_3-maleCount, total_3);
+
+
 
 
 
@@ -527,7 +609,7 @@ public class CreateBreederDialog extends DialogFragment {
 
     public void loadSpinnerDataForWithinReplacement(String selected_family, String selected_line, String selected_generation){
         DatabaseHelper db = new DatabaseHelper(getContext());
-        List<String> lines = db.getAllDataFromReplacementasList(selected_family,selected_line, selected_generation);
+        List<String> lines = db.getAllDataFromMaleReplacementasList(selected_family,selected_line, selected_generation);
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, lines);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         replacement_spinner.setAdapter(dataAdapter2);
@@ -565,7 +647,7 @@ public class CreateBreederDialog extends DialogFragment {
 
     public void loadSpinnerDataForFemaleWithinReplacement(String selected_family, String selected_line, String selected_generation){
         DatabaseHelper db = new DatabaseHelper(getContext());
-        List<String> lines = db.getAllDataFromReplacementasList(selected_family,selected_line, selected_generation);
+        List<String> lines = db.getAllDataFromFemaleReplacementasList(selected_family,selected_line, selected_generation);
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, lines);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         female_replacement_spinner.setAdapter(dataAdapter2);

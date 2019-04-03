@@ -22,7 +22,7 @@ import java.util.List;
 public class ViewBrooderInventoryDialog extends DialogFragment {
 
     DatabaseHelper myDb;
-    TextView textView, family_number, line_number, generation_number, brooder_male_count, brooder_female_count, brooder_total, brooder_date_added,batching_date;
+    TextView textView, family_number, line_number, generation_number, brooder_male_count, brooder_female_count, brooder_total, brooder_date_added,batching_date ;
     EditText edit_male_count, edit_female_count;
     Button update, save;
     List<String> famLineGen = new ArrayList<>();
@@ -35,7 +35,17 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_view_brooder_inventory, container, false);
         final String brooder_tag = getArguments().getString("Brooder Tag");
         final String brooder_pen = getArguments().getString("Brooder Pen");
+        final Integer brooder_id = getArguments().getInt("Brooder ID");
+
         myDb = new DatabaseHelper(getContext());
+
+        Integer fam_id = myDb.getFamIDFromBrooders(brooder_id);
+        String famLineGen = myDb.getFamLineGen(fam_id);
+        String delims = " ";
+        String[] tokens = famLineGen.split(delims);
+        String fam = tokens[0];
+        String line = tokens[1];
+        String gen = tokens[2];
 
 
 
@@ -56,16 +66,17 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
+        family_number.setText(fam);
+        line_number.setText(line);
+        generation_number.setText(gen);
 
 
         Cursor cursor = myDb.getDataFromBrooderInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
-            textView.setText(cursor.getString(3));
+            //textView.setText(cursor.getString(3));
             batching_date.setText(cursor.getString(4));
-//            family_number.setText(famLineGen.get(0));
-            //line_number.setText(famLineGen.get(1));
-           // generation_number.setText(famLineGen.get(2));
+
 
             brooder_male_count.setText(cursor.getString(5));
             brooder_female_count.setText(cursor.getString(6));

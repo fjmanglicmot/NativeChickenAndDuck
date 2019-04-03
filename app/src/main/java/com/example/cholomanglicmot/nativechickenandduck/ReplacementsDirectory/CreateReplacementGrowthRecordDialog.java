@@ -129,7 +129,7 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_growth_date_added.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_growth_date_added.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);

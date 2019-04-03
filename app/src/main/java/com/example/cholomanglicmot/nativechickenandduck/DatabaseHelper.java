@@ -16,6 +16,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper db;
 
     public static final String DATABASE_NAME = "Project.db";
+
+
+
+
     public static final String TABLE_PROFILE = "profile_table";
     public static final String COL_1 = "ID";
     public static final String COL_2 = "BREED";
@@ -25,6 +29,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_6 = "BARANGAY";
     public static final String COL_7 = "PHONE";
     public static final String COL_8 = "EMAIL";
+
+    public static final String TABLE_ROLES = "roles";
+    public static final String ROLE_COL_1 = "ID";
+    public static final String ROLE_COL_2 = "ROLE";
+
+    public static final String TABLE_ROLE_USERS = "role_users";
+    public static final String ROLE_USER_COL_1 = "USER_ID";
+    public static final String ROLE_USER_COL_2 = "ROLE_ID";
+
+
+    public static final String TABLE_FARMS = "farms";
+    public static final String FARM_COL_1 = "ID";
+    public static final String FARM_COL_2 = "NAME";
+    public static final String FARM_COL_3 = "CODE";
+    public static final String FARM_COL_4 = "ADDRESS";
+    public static final String FARM_COL_5 = "BATCHING_WEEK";
+    public static final String FARM_COL_6 = "BREEDABLE_ID";
+
+    public static final String TABLE_USERS = "users";
+    public static final String USER_COL_1 = "ID";
+    public static final String USER_COL_2 = "NAME";
+    public static final String USER_COL_3 = "EMAIL";
+    public static final String USER_COL_4 = "PICTURE";
+    public static final String USER_COL_5 = "LAST_ACTIVE";
+    public static final String USER_COL_6 = "FARM_ID";
+    public static final String USER_COL_7 = "ROLE_ID";
+    public static final String USER_COL_8 = "REMEMBER_TOKEN";
+    public static final String USER_COL_9 = "DELETED_AT";
+
 
     public static final String TABLE_PEN = "pen_table";
     public static final String PEN_COL_0 = "ID";
@@ -49,13 +82,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_LINE = "line_table";
     public static final String LINE_COL_0 = "ID";
     public static final String LINE_COL_1 = "LINE_NUMBER";
-    public static final String LINE_COL_2 = "LINE_GENERATION";
+    public static final String LINE_COL_2 = "is_active";
+    public static final String LINE_COL_3 = "LINE_GENERATION";
+    public static final String LINE_COL_4 = "deleted_at";
 
 
     public static final String TABLE_FAMILY = "family_table";
     public static final String FAMILY_COL_0 = "ID";
     public static final String FAMILY_COL_1 = "FAMILY_NUMBER";
-    public static final String FAMILY_COL_2 = "FAMILY_LINE";
+    public static final String FAMILY_COL_2 = "is_active";
+    public static final String FAMILY_COL_3 = "FAMILY_LINE";
+    public static final String FAMILY_COL_4 = "deleted_at";
+
+
 
 
 
@@ -286,7 +325,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 89);
+        super(context, DATABASE_NAME, null, 91);
     }
 
     @Override
@@ -296,46 +335,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //ANG ILAGAY MONG REFERENCE AY YUNG COLUMN NA ID
         db.execSQL("create table " + TABLE_PROFILE +" (ID TEXT PRIMARY KEY,BREED TEXT,REGION TEXT,PROVINCE TEXT,TOWN TEXT,BARANGAY TEXT,PHONE TEXT,EMAIL TEXT)");
         db.execSQL("create table " + TABLE_PEN +" (ID INTEGER PRIMARY KEY, PEN_NUMBER TEXT, PEN_TYPE TEXT,PEN_CURRENT_CAPACITY INTEGER,PEN_TOTAL_CAPACITY INTEGER)");
-        db.execSQL("create table " + TABLE_GENERATION +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, GENERATION_NUMBER TEXT, numerical_generation INTEGER ,is_active TEXT, deleted_at TEXT)");
+        db.execSQL("create table " + TABLE_GENERATION +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, GENERATION_NUMBER TEXT, numerical_generation INTEGER ,is_active INTEGER, deleted_at TEXT, FOREIGN KEY (farm_id) REFERENCES TABLE_FARMS(ID))");
 
-                              /* "generation_table";    "ID";                        "farm_id";     "GENERATION_NUMBER";     "numerical_generation";    "GENERATION_STATUS";     "deleted_at";    */
-        db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, LINE_GENERATION INTEGER, FOREIGN KEY (LINE_GENERATION) REFERENCES TABLE_GENERATION(ID))");
-        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, FAMILY_LINE INTEGER, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID) )");
+
+        db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, is_active INTEGER, LINE_GENERATION INTEGER, deleted_at TEXT, FOREIGN KEY (LINE_GENERATION) REFERENCES TABLE_GENERATION(ID))");
+
+        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, is_ative INTEGER, FAMILY_LINE INTEGER, deleted_at TEXT, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID) )");
 
 
 
         db.execSQL("create table " + TABLE_BROODER +" (ID INTEGER PRIMARY KEY, BROODER_FAMILY INTEGER, BROODER_DATE_ADDED TEXT, BROODER_DELETED_AT TEXT, FOREIGN KEY (BROODER_FAMILY) REFERENCES TABLE_FAMILY(ID))");
-        db.execSQL("create table " + TABLE_BROODER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BROODER_INV_BROODER_ID TEXT REFERENCES TABLE_BROODER(ID), BROODER_INV_PEN_NUMBER TEXT, BROODER_INV_BROODER_TAG TEXT, BROODER_INV_BATCHING_DATE TEXT, BROODER_INV_NUMBER_MALE INTEGER, BROODER_INV_NUMBER_FEMALE INTEGER, BROODER_INV_TOTAL INTEGER, BROODER_INV_LAST_UPDATE TEXT, BROODER_INV_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_BROODER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_FEEDING_DATE_COLLECTED TEXT, BROODER_FEEDING_AMOUNT_OFFERED TEXT, BROODER_FEEDING_AMOUNT_REFUSED INTEGER, BROODER_FEEDING_REMARKS TEXT, BROODER_FEEDING_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_BROODER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_BROODER_INVENTORIES(ID), BROODER_GROWTH_COLLECTION_DAY TEXT, BROODER_GROWTH_DATE_COLLECTED TEXT, BROODER_GROWTH_MALE_QUANTITY INTEGER, BROODER_GROWTH_MALE_WEIGHT INTEGER, BROODER_GROWTH_FEMALE_QUANTITY INTEGER, BROODER_GROWTH_FEMALE_WEIGHT INTEGER,BROODER_GROWTH_TOTAL_QUANTITY INTEGER, BROODER_GROWTH_TOTAL_WEIGHT INTEGER,BROODER_GROWTH_DELETED_AT TEXT)");
+        db.execSQL("create table " + TABLE_BROODER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BROODER_INV_BROODER_ID INTEGER, BROODER_INV_PEN_NUMBER TEXT, BROODER_INV_BROODER_TAG TEXT, BROODER_INV_BATCHING_DATE TEXT, BROODER_INV_NUMBER_MALE INTEGER, BROODER_INV_NUMBER_FEMALE INTEGER, BROODER_INV_TOTAL INTEGER, BROODER_INV_LAST_UPDATE TEXT, BROODER_INV_DELETED_AT TEXT, FOREIGN KEY (BROODER_INV_BROODER_ID) REFERENCES TABLE_BROODER(ID))");
+        db.execSQL("create table " + TABLE_BROODER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_FEEDING_INVENTORY_ID INTEGER, BROODER_FEEDING_DATE_COLLECTED TEXT, BROODER_FEEDING_AMOUNT_OFFERED TEXT, BROODER_FEEDING_AMOUNT_REFUSED INTEGER, BROODER_FEEDING_REMARKS TEXT, BROODER_FEEDING_DELETED_AT TEXT, FOREIGN KEY (BROODER_FEEDING_INVENTORY_ID) REFERENCES TABLE_BROODER_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_BROODER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_GROWTH_INVENTORY_ID INTEGER, BROODER_GROWTH_COLLECTION_DAY TEXT, BROODER_GROWTH_DATE_COLLECTED TEXT, BROODER_GROWTH_MALE_QUANTITY INTEGER, BROODER_GROWTH_MALE_WEIGHT INTEGER, BROODER_GROWTH_FEMALE_QUANTITY INTEGER, BROODER_GROWTH_FEMALE_WEIGHT INTEGER,BROODER_GROWTH_TOTAL_QUANTITY INTEGER, BROODER_GROWTH_TOTAL_WEIGHT INTEGER,BROODER_GROWTH_DELETED_AT TEXT, FOREIGN KEY (BROODER_GROWTH_INVENTORY_ID) REFERENCES TABLE_BROODER_INVENTORIES(ID))");
 
         db.execSQL("create table " + TABLE_REPLACEMENT +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FAMILY INTEGER, REPLACEMENT_DATE_ADDED TEXT, REPLACEMENT_DELETED_AT TEXT, FOREIGN KEY (REPLACEMENT_FAMILY) REFERENCES TABLE_FAMILY(ID))");
-        db.execSQL("create table " + TABLE_REPLACEMENT_INVENTORIES +" (ID INTEGER PRIMARY KEY,REPLACEMENT_INV_REPLACEMENT_ID TEXT REFERENCES TABLE_REPLACEMENT(ID), REPLACEMENT_INV_PEN_NUMBER TEXT, REPLACEMENT_INV_REPLACEMENT_TAG TEXT, REPLACEMENT_INV_BATCHING_DATE TEXT, REPLACEMENT_INV_NUMBER_MALE INTEGER, REPLACEMENT_INV_NUMBER_FEMALE INTEGER, REPLACEMENT_INV_TOTAL INTEGER, REPLACEMENT_INV_LAST_UPDATE TEXT, REPLACEMENT_INV_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_REPLACEMENT_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_FEEDING_DATE_COLLECTED TEXT, REPLACEMENT_FEEDING_AMOUNT_OFFERED TEXT, REPLACEMENT_FEEDING_AMOUNT_REFUSED INTEGER, REPLACEMENT_FEEDING_REMARKS TEXT, REPLACEMENT_FEEDING_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_REPLACEMENT_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_GROWTH_COLLECTION_DAY TEXT, REPLACEMENT_GROWTH_DATE_COLLECTED TEXT, REPLACEMENT_GROWTH_MALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_MALE_WEIGHT INTEGER, REPLACEMENT_GROWTH_FEMALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_FEMALE_WEIGHT INTEGER,REPLACEMENT_GROWTH_TOTAL_QUANTITY INTEGER, REPLACEMENT_GROWTH_TOTAL_WEIGHT INTEGER,REPLACEMENT_GROWTH_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_REPLACEMENT_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_PHENO_MORPHO_INVENTORY_ID INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), REPLACEMENT_PHENO_MORPHO_COLLECTED TEXT, REPLACEMENT_PHENO_MORPHO_SEX TEXT, REPLACEMENT_PHENO_MORPHO_TAG_OR_REGISTRY TEXT, REPLACEMENT_PHENO_RECORD TEXT, REPLACEMENT_MORPHO_RECORD TEXT)");
+        db.execSQL("create table " + TABLE_REPLACEMENT_INVENTORIES +" (ID INTEGER PRIMARY KEY,REPLACEMENT_INV_REPLACEMENT_ID INTEGER, REPLACEMENT_INV_PEN_NUMBER TEXT, REPLACEMENT_INV_REPLACEMENT_TAG TEXT, REPLACEMENT_INV_BATCHING_DATE TEXT, REPLACEMENT_INV_NUMBER_MALE INTEGER, REPLACEMENT_INV_NUMBER_FEMALE INTEGER, REPLACEMENT_INV_TOTAL INTEGER, REPLACEMENT_INV_LAST_UPDATE TEXT, REPLACEMENT_INV_DELETED_AT TEXT, FOREIGN KEY(REPLACEMENT_INV_REPLACEMENT_ID) REFERENCES TABLE_REPLACEMENT(ID))");
+        db.execSQL("create table " + TABLE_REPLACEMENT_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_FEEDING_INVENTORY_ID INTEGER , REPLACEMENT_FEEDING_DATE_COLLECTED TEXT, REPLACEMENT_FEEDING_AMOUNT_OFFERED TEXT, REPLACEMENT_FEEDING_AMOUNT_REFUSED INTEGER, REPLACEMENT_FEEDING_REMARKS TEXT, REPLACEMENT_FEEDING_DELETED_AT TEXT, FOREIGN KEY (REPLACEMENT_FEEDING_INVENTORY_ID) REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_REPLACEMENT_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, REPLACEMENT_GROWTH_INVENTORY_ID INTEGER, REPLACEMENT_GROWTH_COLLECTION_DAY TEXT, REPLACEMENT_GROWTH_DATE_COLLECTED TEXT, REPLACEMENT_GROWTH_MALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_MALE_WEIGHT INTEGER, REPLACEMENT_GROWTH_FEMALE_QUANTITY INTEGER, REPLACEMENT_GROWTH_FEMALE_WEIGHT INTEGER,REPLACEMENT_GROWTH_TOTAL_QUANTITY INTEGER, REPLACEMENT_GROWTH_TOTAL_WEIGHT INTEGER,REPLACEMENT_GROWTH_DELETED_AT TEXT, FOREIGN KEY (REPLACEMENT_GROWTH_INVENTORY_ID) REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID))");
 
 
         db.execSQL("create table " + TABLE_BREEDER +" (ID INTEGER PRIMARY KEY, BREEDER_FAMILY INTEGER, BREEDER_FEMALE_FAMILY INTEGER, BREEDER_DATE_ADDED TEXT, BREEDER_DELETED_AT TEXT, FOREIGN KEY(BREEDER_FAMILY) REFERENCES TABLE_FAMILY(ID), FOREIGN KEY(BREEDER_FEMALE_FAMILY) REFERENCES TABLE_FAMILY(ID))");
-        db.execSQL("create table " + TABLE_BREEDER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BREEDER_INV_BREEDER_ID TEXT REFERENCES TABLE_BREEDER(ID), BREEDER_INV_PEN_NUMBER TEXT, BREEDER_INV_BREEDER_TAG TEXT, BREEDER_INV_BATCHING_DATE TEXT, BREEDER_INV_NUMBER_MALE INTEGER, BREEDER_INV_NUMBER_FEMALE INTEGER, BREEDER_INV_TOTAL INTEGER, BREEDER_INV_LAST_UPDATE TEXT, BREEDER_INV_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_BREEDER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_FEEDING_INVENTORY_ID TEXT REFERENCES TABLE_BREEDER_INVENTORIES(ID), BREEDER_FEEDING_DATE_COLLECTED TEXT, BREEDER_FEEDING_AMOUNT_OFFERED TEXT, BREEDER_FEEDING_AMOUNT_REFUSED INTEGER, BREEDER_FEEDING_REMARKS TEXT, BREEDER_FEEDING_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_BREEDER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_GROWTH_INVENTORY_ID TEXT REFERENCES TABLE_BREEDER_INVENTORIES(ID), BREEDER_GROWTH_COLLECTION_DAY TEXT, BREEDER_GROWTH_DATE_COLLECTED TEXT, BREEDER_GROWTH_MALE_QUANTITY INTEGER, BREEDER_GROWTH_MALE_WEIGHT INTEGER, BREEDER_GROWTH_FEMALE_QUANTITY INTEGER, BREEDER_GROWTH_FEMALE_WEIGHT INTEGER,BREEDER_GROWTH_TOTAL_QUANTITY INTEGER, BREEDER_GROWTH_TOTAL_WEIGHT INTEGER,BREEDER_GROWTH_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_PHENO_MORPHO_INVENTORY_ID INTEGER, BREEDER_PHENO_MORPHO_COLLECTED TEXT, BREEDER_PHENO_MORPHO_SEX TEXT, BREEDER_PHENO_MORPHO_TAG_OR_REGISTRY TEXT, BREEDER_PHENO_RECORD TEXT, BREEDER_MORPHO_RECORD TEXT)");
+        db.execSQL("create table " + TABLE_BREEDER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BREEDER_INV_BREEDER_ID INTEGER, BREEDER_INV_PEN_NUMBER TEXT, BREEDER_INV_BREEDER_TAG TEXT, BREEDER_INV_BATCHING_DATE TEXT, BREEDER_INV_NUMBER_MALE INTEGER, BREEDER_INV_NUMBER_FEMALE INTEGER, BREEDER_INV_TOTAL INTEGER, BREEDER_INV_LAST_UPDATE TEXT, BREEDER_INV_DELETED_AT TEXT, FOREIGN KEY (BREEDER_INV_BREEDER_ID) REFERENCES TABLE_BREEDER(ID))");
+        db.execSQL("create table " + TABLE_BREEDER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_FEEDING_INVENTORY_ID INTEGER, BREEDER_FEEDING_DATE_COLLECTED TEXT, BREEDER_FEEDING_AMOUNT_OFFERED TEXT, BREEDER_FEEDING_AMOUNT_REFUSED INTEGER, BREEDER_FEEDING_REMARKS TEXT, BREEDER_FEEDING_DELETED_AT TEXT, FOREIGN KEY (BREEDER_FEEDING_INVENTORY_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID) )");
+        db.execSQL("create table " + TABLE_BREEDER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BREEDER_GROWTH_INVENTORY_ID INTEGER, BREEDER_GROWTH_COLLECTION_DAY TEXT, BREEDER_GROWTH_DATE_COLLECTED TEXT, BREEDER_GROWTH_MALE_QUANTITY INTEGER, BREEDER_GROWTH_MALE_WEIGHT INTEGER, BREEDER_GROWTH_FEMALE_QUANTITY INTEGER, BREEDER_GROWTH_FEMALE_WEIGHT INTEGER,BREEDER_GROWTH_TOTAL_QUANTITY INTEGER, BREEDER_GROWTH_TOTAL_WEIGHT INTEGER,BREEDER_GROWTH_DELETED_AT TEXT, FOREIGN KEY (BREEDER_GROWTH_INVENTORY_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_EGG_PRODUCTION +" (ID INTEGER PRIMARY KEY, EGG_PRODUCTION_BREEDER_INVENTORY_ID INTEGER, EGG_PRODUCTION_DATE TEXT, EGG_PRODUCTION_EGGS_INTACT INTEGER, EGG_PRODUCTION_EGG_WEIGHT INTEGER, EGG_PRODUCTION_TOTAL_BROKEN INTEGER, EGG_PRODUCTION_TOTAL_REJECTS INTEGER, EGG_PRODUCTION_REMARKS TEXT, EGG_PRODUCTION_DELETED_AT TEXT, FOREIGN KEY (EGG_PRODUCTION_BREEDER_INVENTORY_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_HATCHERY_RECORD +" (ID INTEGER PRIMARY KEY, HATCHERY_BREEDER_INVENTORY_ID INTEGER, HATCHERY_DATE TEXT, HATCHERY__BATCHING_DATE TEXT, HATCHERY_EGGS_SET INTEGER, HATCHERY_WEEK_LAY INTEGER, HATCHERY_FERTILE INTEGER, HATCHERY_HATCHED INTEGER, HATCHERY_DATE_HATCHED TEXT, HATCHERY_DELETED_AT TEXT, FOREIGN KEY (HATCHERY_BREEDER_INVENTORY_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_EGG_QUALITY +" (ID INTEGER PRIMARY KEY, EGG_QUALITY_BREEDER_INVENTORY_ID INTEGER, EGG_QUALITY_DATE TEXT, EGG_QUALITY_WEEK TEXT ,EGG_QUALITY_WEIGHT INTEGER, EGG_QUALITY_COLOR TEXT, EGG_QUALITY_SHAPE TEXT, EGG_QUALITY_LENGTH INTEGER, EGG_QUALITY_WIDTH INTEGER, EGG_QUALITY_ALBUMENT_HEIGHT INTEGER, EGG_QUALITY_ALBUMENT_WEIGHT INTEGER, EGG_QUALITY_YOLK_WEIGHT INTEGER, EGG_QUALITY_YOLK_COLOR TEXT, EGG_QUALITY_SHELL_WEIGHT INTEGER,EGG_QUALITY_SHELL_THICKNESS_TOP INTEGER,EGG_QUALITY_SHELL_THICKNESS_MIDDLE INTEGER,EGG_QUALITY_SHELL_THICKNESS_BOTTOM INTEGER, EGG_QUALITY_DELETED_AT TEXT, FOREIGN KEY (EGG_QUALITY_BREEDER_INVENTORY_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID))");
+        db.execSQL("create table " + TABLE_MORTALITY_AND_SALES +" (ID INTEGER PRIMARY KEY, MORT_AND_SALES_DATE TEXT, MORT_AND_SALES_BREEDER_INV_ID INTEGER, MORT_AND_SALES_REPLACEMENT_INV_ID INTEGER, MORT_AND_SALES_BROODER_INV_ID INTEGER, MORT_AND_SALES_TYPE TEXT, MORT_AND_SALES_CATEGORY TEXT, MORT_AND_SALES_PRICE INTEGER, MORT_AND_SALES_MALE INTEGER,MORT_AND_SALES_FEMALE INTEGER,  MORT_AND_SALES_TOTAL INTEGER, MORT_AND_SALES_REASON TEXT,MORT_AND_SALES_REMARKS TEXT, MORT_AND_SALES_DELETED_AT TEXT, FOREIGN KEY (MORT_AND_SALES_BREEDER_INV_ID) REFERENCES TABLE_BREEDER_INVENTORIES(ID), FOREIGN KEY (MORT_AND_SALES_REPLACEMENT_INV_ID) REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), FOREIGN KEY (MORT_AND_SALES_BROODER_INV_ID) REFERENCES TABLE_BROODER_INVENTORIES(ID))");
 
-        db.execSQL("create table " + TABLE_EGG_PRODUCTION +" (ID INTEGER PRIMARY KEY, EGG_PRODUCTION_BREEDER_INVENTORY_ID INTEGER REFERENCES TABLE_BREEDER_INVENTORIES(ID), EGG_PRODUCTION_DATE TEXT, EGG_PRODUCTION_EGGS_INTACT INTEGER, EGG_PRODUCTION_EGG_WEIGHT INTEGER, EGG_PRODUCTION_TOTAL_BROKEN INTEGER, EGG_PRODUCTION_TOTAL_REJECTS INTEGER, EGG_PRODUCTION_REMARKS TEXT, EGG_PRODUCTION_DELETED_AT TEXT)");
-        db.execSQL("create table " + TABLE_HATCHERY_RECORD +" (ID INTEGER PRIMARY KEY, HATCHERY_BREEDER_INVENTORY_ID INTEGER REFERENCES TABLE_BREEDER_INVENTORIES(ID), HATCHERY_DATE TEXT, HATCHERY__BATCHING_DATE TEXT, HATCHERY_EGGS_SET INTEGER, HATCHERY_WEEK_LAY INTEGER, HATCHERY_FERTILE INTEGER, HATCHERY_HATCHED INTEGER, HATCHERY_DATE_HATCHED TEXT, HATCHERY_DELETED_AT TEXT)");
-
-
-
-        db.execSQL("create table " + TABLE_EGG_QUALITY +" (ID INTEGER PRIMARY KEY, EGG_QUALITY_BREEDER_INVENTORY_ID REFERENCES TABLE_BREEDER_INVENTORIES(ID), EGG_QUALITY_DATE TEXT, EGG_QUALITY_WEEK TEXT ,EGG_QUALITY_WEIGHT INTEGER, EGG_QUALITY_COLOR TEXT, EGG_QUALITY_SHAPE TEXT, EGG_QUALITY_LENGTH INTEGER, EGG_QUALITY_WIDTH INTEGER, EGG_QUALITY_ALBUMENT_HEIGHT INTEGER, EGG_QUALITY_ALBUMENT_WEIGHT INTEGER, EGG_QUALITY_YOLK_WEIGHT INTEGER, EGG_QUALITY_YOLK_COLOR TEXT, EGG_QUALITY_SHELL_WEIGHT INTEGER,EGG_QUALITY_SHELL_THICKNESS_TOP INTEGER,EGG_QUALITY_SHELL_THICKNESS_MIDDLE INTEGER,EGG_QUALITY_SHELL_THICKNESS_BOTTOM INTEGER, EGG_QUALITY_DELETED_AT TEXT)");
-/*                                                       = "ID";                    "EGG_QUALITY_BREEDER_INVENTORY_ID"; =                                        "EGG_QUALITY_DATE"   "EGG_QUALITY_WEEK"; = ; = "EGG_QUALITY_WEIGHT"; = "EGG_QUALITY_COLOR"; = "EGG_QUALITY_SHAPE";  = "EGG_QUALITY_LENGTH"; =       "EGG_QUALITY_WIDTH"; "         EGG_QUALITY_ALBUMENT_HEIGHT";   "EGG_QUALITY_ALBUMENT_WEIGHT";           "EGG_QUALITY_YOLK_WEIGHT";     "EGG_QUALITY_YOLK_COLOR"    ;EGG_QUALITY_SHELL_WEIGHT"; "EGG_QUALITY_SHELL_THICKNESS_TOP";"EGG_QUALITY_SHELL_THICKNESS_MIDDLE";"EGG_QUALITY_SHELL_THICKNESS_BOTTOM";*/
-        db.execSQL("create table " + TABLE_MORTALITY_AND_SALES +" (ID INTEGER PRIMARY KEY, MORT_AND_SALES_DATE TEXT, MORT_AND_SALES_BREEDER_INV_ID INTEGER REFERENCES TABLE_BREEDER_INVENTOIES(ID),MORT_AND_SALES_REPLACEMENT_INV_ID INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), MORT_AND_SALES_BROODER_INV_ID INTEGER REFERENCES TABLE_BROODER_INVENTORIES(ID), MORT_AND_SALES_TYPE TEXT, MORT_AND_SALES_CATEGORY TEXT, MORT_AND_SALES_PRICE INTEGER, MORT_AND_SALES_MALE INTEGER,MORT_AND_SALES_FEMALE INTEGER,  MORT_AND_SALES_TOTAL INTEGER, MORT_AND_SALES_REASON TEXT,MORT_AND_SALES_REMARKS TEXT, MORT_AND_SALES_DELETED_AT TEXT)");
-
-                                                                                                                                                                                   /*        "ID";"MORT_AND_SALES_DATE";"MORT_AND_SALES_BREEDER_INV_ID";"MORT_AND_SALES_REPLACEMENT_INV_ID";"MORT_AND_SALES_BROODER_INV_ID";                                                                    "MORT_AND_SALES_TYPE";"MORT_AND_SALES_CATEGORY"; "      MORT_AND_SALES_PRICE";"MORT_AND_SALES_MALE";"               MORT_AND_SALES_FEMALE";"MORT_AND_SALES_TOTAL"; "MORT_AND_SALES_REASON";"MORT_AND_SALES_REMARKS";"MORT_AND_SALES_DELETED_AT";
-    */
         db.execSQL("create table "+ TABLE_PHENO_MORPHO_VALUES + "(id INTEGER PRIMARY KEY, gender TEXT, tag TEXT , phenotypic TEXT, morphometric TEXT, date_collected TEXT, deleted_at TEXT)");
 
-        db.execSQL("create table "+ TABLE_PHENO_MORPHOS + "(id INTEGER PRIMARY KEY, replacement_inventory INTEGER REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID), breeder_inventory INTEGER REFERENCES TABLE_BREEDER_INVENTORIES(ID), values_id INTEGER REFERENCES TABLE_PHENO_MORPHO_VALUES(id), deleted_at TEXT    )");
+        db.execSQL("create table "+ TABLE_PHENO_MORPHOS + "(id INTEGER PRIMARY KEY, replacement_inventory INTEGER, breeder_inventory INTEGER REFERENCES TABLE_BREEDER_INVENTORIES(ID), values_id INTEGER REFERENCES TABLE_PHENO_MORPHO_VALUES(id), deleted_at TEXT, FOREIGN KEY (replacement_inventory) REFERENCES TABLE_REPLACEMENT_INVENTORIES(ID))");
+
+
+
+        db.execSQL("create table "+ TABLE_FARMS + "(ID INTEGER PRIMARY KEY, NAME TEXT, CODE INTEGER, ADDRESS TEXT, BATCHIG_WEEK TEXT, BREEDABLE_ID INTEGER )");
+
+
+        db.execSQL("create table "+ TABLE_ROLES + "(ID INTEGER PRIMARY KEY, ROLE TEXT )");
+
+        db.execSQL("create table "+ TABLE_ROLE_USERS + "(USER_ID INTEGER, ROLE_ID INTEGER, FOREIGN KEY (ROLE_ID) REFERENCES TABLE_ROLES(ID))");
+
 
     }
     @Override
@@ -359,13 +400,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_REPLACEMENT_INVENTORIES);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_REPLACEMENT_FEEDING_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_REPLACEMENT_GROWTH_RECORDS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_REPLACEMENT_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS);
 
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_BREEDER);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_BREEDER_INVENTORIES);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_BREEDER_FEEDING_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_BREEDER_GROWTH_RECORDS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_BREEDER_PHENOTYPIC_AND_MORPHOMETRIC_RECORDS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_EGG_PRODUCTION);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_EGG_QUALITY);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_HATCHERY_RECORD);
@@ -374,6 +413,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_MORTALITY_AND_SALES);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_PHENO_MORPHOS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_PHENO_MORPHO_VALUES);
+
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_FARMS);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ROLES);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ROLE_USERS);
 
 
 
@@ -398,22 +441,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 //--------------------
 
-    /*    public static final String GENERATION_COL_0 = "ID";
+/*    public static final String TABLE_GENERATION = "generation_table";
+    public static final String GENERATION_COL_0 = "ID";
     public static final String GENERATION_COL_1 = "farm_id";
     public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
     public static final String GENERATION_COL_3 = "numerical_generation";
-    public static final String GENERATION_COL_4 = "GENERATION_STATUS";
-    public static final String GENERATION_COL_5 = "GENERATION_CULL";*/
+    public static final String GENERATION_COL_4 = "is_active";
+    public static final String GENERATION_COL_5 = "deleted_at";*/
 
-    /*   boolean isInserted = myDb.insertDataGeneration(generation_number, Integer.parseInt(mInput_generation_number.getText().toString()), "Active");*/
-    public boolean insertDataGeneration(String generation_number, Integer numerical_gen, String is_active){
+
+
+    public boolean insertDataGeneration(Integer farm_id, String generation_number, Integer numerical_gen, Integer is_active){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GENERATION_COL_1, 0);
+        contentValues.put(GENERATION_COL_1, farm_id);
         contentValues.put(GENERATION_COL_2, generation_number);
         contentValues.put(GENERATION_COL_3, numerical_gen);
         contentValues.put(GENERATION_COL_4, is_active);
-        contentValues.put(GENERATION_COL_5, "0/0/0");
+
 
 
         long result = db.insert(TABLE_GENERATION,null,contentValues);
@@ -426,13 +471,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //--------------------
-    public boolean insertDataLine(String line_number, Integer line_generation_number ){
+
+
+    public boolean insertDataLine(String line_number, Integer is_active, Integer line_generation_number ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(LINE_COL_1, line_number);
-        contentValues.put(LINE_COL_2, line_generation_number);
-
+        contentValues.put(LINE_COL_2, is_active);
+        contentValues.put(LINE_COL_3, line_generation_number);
 
 
         long result = db.insert(TABLE_LINE,null,contentValues);
@@ -443,13 +490,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-    public boolean insertDataFamily(String family_number, Integer family_line_number ){
+
+
+    public boolean insertDataFamily(String family_number, Integer is_active, Integer family_line_number ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(FAMILY_COL_1, family_number);
-        contentValues.put(FAMILY_COL_2, family_line_number);
-
+        contentValues.put(FAMILY_COL_2, is_active);
+        contentValues.put(FAMILY_COL_3, family_line_number);
 
 
 
@@ -1024,6 +1073,8 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
     }
 
+
+
     public Cursor getAllDataFromPen(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
@@ -1133,6 +1184,16 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         }
         return fam_id;
     }
+    public Integer getFamIDFromReplacements(Integer id){
+        Integer fam_id = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select REPLACEMENT_FAMILY from " +TABLE_REPLACEMENT+ " where ID is ?",new String[]{id.toString()});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            fam_id = res.getInt(0);
+        }
+        return fam_id;
+    }
 
 
 
@@ -1172,12 +1233,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-    public Cursor getAllDataFromReplacementsWhere(String replacement_generation, String replacemet_line, String replacement_family){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT + " where REPLACEMENT_GENERATION is "+replacement_generation+ " and REPLACEMENT_LINE is "+replacemet_line+" and REPLACEMENT_FAMILY is "+replacement_family, null);
 
-        return res;
-    }
     public Cursor getDataFromReplacementInventoryWherePenAndID(String tag, String pen){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_TAG is ? and REPLACEMENT_INV_PEN_NUMBER is ?", new String[] {tag, pen});
@@ -1188,12 +1244,6 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
     public Cursor getAllDataFromReplacementGrowthRecordsWhereGrowthID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_GROWTH_RECORDS+ " where ID is ?",new String[]{id.toString()});
-
-        return res;
-    }
-    public Cursor getIDFromReplacementInvWhere(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_REPLACEMENT_INVENTORIES + " where REPLACEMENT_INV_REPLACEMENT_ID is "+id, null);
 
         return res;
     }
@@ -1550,34 +1600,35 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
 
     }
-    public List<String> getFamLineGen(Integer family_id){
+    public String getFamLineGen(Integer family_id){
         SQLiteDatabase db = this.getReadableDatabase();
+        StringBuffer buffer = new StringBuffer();
         List<String> famLineGen = new ArrayList<>();
         Integer line_id = null;
         Integer gen_id = null;
 
 
-        Cursor fam = db.rawQuery("select FAMILY_LINE, FAMILY_NUMBER from " +TABLE_FAMILY + " where ID like ? ",new String[]{family_id.toString()}, null);
+        Cursor fam = db.rawQuery("select FAMILY_LINE, FAMILY_NUMBER from " +TABLE_FAMILY + " where ID is ? ",new String[]{family_id.toString()}, null);
         fam.moveToFirst();
         if(fam.getCount() != 0){
             line_id = fam.getInt(0);
-            famLineGen.add(fam.getString(1));
+            buffer.append(fam.getString(1) + " ");
         }
 
-        Cursor line = db.rawQuery("select LINE_GENERATION, LINE_NUMBER from " +TABLE_LINE + " where ID like ? ",new String[]{line_id.toString()}, null);
+        Cursor line = db.rawQuery("select LINE_GENERATION, LINE_NUMBER from " +TABLE_LINE + " where ID is ? ",new String[]{line_id.toString()}, null);
         line.moveToFirst();
         if(line.getCount() != 0){
             gen_id = line.getInt(0);
-            famLineGen.add(line.getString(1));
+            buffer.append(line.getString(1)+ " ");
         }
 
-        Cursor gen = db.rawQuery("select GENERATION_NUMBER from " +TABLE_GENERATION + " where ID like ? ",new String[]{gen_id.toString()}, null);
+        Cursor gen = db.rawQuery("select GENERATION_NUMBER from " +TABLE_GENERATION + " where ID is ? ",new String[]{gen_id.toString()}, null);
         gen.moveToFirst();
         if(gen.getCount() != 0){
-            famLineGen.add(gen.getString(0));
+            buffer.append(gen.getString(0));
         }
 
-        return famLineGen;
+        return buffer.toString();
     }
     public Cursor getFamilyID(String family, String selected_line, String selected_generation){
 
@@ -1790,8 +1841,9 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         // returning lables
         return brooders;
     }
-    public List<String> getAllDataFromReplacementasList(String selected_family, String selected_line, String selected_generation) {
+    public List<String> getAllDataFromMaleReplacementasList(String selected_family, String selected_line, String selected_generation) {
         List<String> replacements = new ArrayList<String>();
+        Integer zero = 0;
         SQLiteDatabase db = this.getReadableDatabase();
         Integer generation = null;
         Integer line = null;
@@ -1834,11 +1886,72 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         db4.close();
 
         SQLiteDatabase db5 = this.getReadableDatabase();
-        Cursor cursor3 = db5.rawQuery("SELECT REPLACEMENT_INV_REPLACEMENT_TAG,REPLACEMENT_INV_PEN_NUMBER, REPLACEMENT_INV_BATCHING_DATE FROM " + TABLE_REPLACEMENT_INVENTORIES + " WHERE REPLACEMENT_INV_REPLACEMENT_ID IS ?", new String[]{replacement.toString()});
+        Cursor cursor3 = db5.rawQuery("SELECT REPLACEMENT_INV_REPLACEMENT_TAG,REPLACEMENT_INV_NUMBER_MALE, REPLACEMENT_INV_NUMBER_FEMALE FROM " + TABLE_REPLACEMENT_INVENTORIES + " WHERE REPLACEMENT_INV_REPLACEMENT_ID IS ? AND NOT REPLACEMENT_INV_NUMBER_MALE IS ?", new String[]{replacement.toString(), zero.toString()});
         cursor3.moveToFirst();
         if (cursor3.getCount() != 0) {
             do {
-                replacements.add("Replacement: " + cursor3.getString(0) + " | " + "Pen: " + cursor3.getString(1) + " | " + "Batch: " + cursor3.getString(2));
+                replacements.add("Tag: " + cursor3.getString(0) + " | " + "Male: " + cursor3.getInt(1) + " | " + "Female: " + cursor3.getInt(2));
+            } while (cursor3.moveToNext());
+
+        }
+
+        cursor3.close();
+        db5.close();
+
+
+        // returning lables
+        return replacements;
+    }
+    public List<String> getAllDataFromFemaleReplacementasList(String selected_family, String selected_line, String selected_generation) {
+        List<String> replacements = new ArrayList<String>();
+        Integer zero = 0;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer generation = null;
+        Integer line = null;
+        Integer familiy = null;
+        Integer replacement = 0;
+
+        //get generation id based on selected generation
+        Cursor cursor_gen = db.rawQuery("SELECT ID FROM " + TABLE_GENERATION + " WHERE GENERATION_NUMBER IS ?", new String[]{selected_generation}, null);
+        cursor_gen.moveToFirst();
+        if (cursor_gen.getCount() != 0) {
+            generation = cursor_gen.getInt(0);
+
+        }
+        db.close();
+
+        SQLiteDatabase db2 = this.getReadableDatabase();
+        Cursor cursor = db2.rawQuery("SELECT ID FROM " + TABLE_LINE + " WHERE LINE_GENERATION IS ? AND LINE_NUMBER IS ?", new String[]{generation.toString(), selected_line}, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            line = cursor.getInt(0);
+        }
+        db2.close();
+
+        SQLiteDatabase db3 = this.getReadableDatabase();
+        Cursor cursor1 = db3.rawQuery("SELECT ID FROM " + TABLE_FAMILY + " WHERE FAMILY_LINE IS ? AND FAMILY_NUMBER IS ?", new String[]{line.toString(), selected_family}, null);
+        cursor1.moveToFirst();
+        if (cursor1.getCount() != 0) {
+            familiy = cursor1.getInt(0);
+        }
+        db3.close();
+
+
+        SQLiteDatabase db4 = this.getReadableDatabase();
+        Cursor cursor2 = db4.rawQuery("SELECT ID FROM " + TABLE_REPLACEMENT + " WHERE REPLACEMENT_FAMILY IS ?", new String[]{familiy.toString()}, null);
+        cursor2.moveToFirst();
+        if (cursor2.getCount() != 0) {
+            replacement = cursor2.getInt(0);
+        }
+
+        db4.close();
+
+        SQLiteDatabase db5 = this.getReadableDatabase();
+        Cursor cursor3 = db5.rawQuery("SELECT REPLACEMENT_INV_REPLACEMENT_TAG,REPLACEMENT_INV_NUMBER_MALE, REPLACEMENT_INV_NUMBER_FEMALE FROM " + TABLE_REPLACEMENT_INVENTORIES + " WHERE REPLACEMENT_INV_REPLACEMENT_ID IS ? AND NOT REPLACEMENT_INV_NUMBER_FEMALE IS ?", new String[]{replacement.toString(), zero.toString()});
+        cursor3.moveToFirst();
+        if (cursor3.getCount() != 0) {
+            do {
+                replacements.add("Tag: " + cursor3.getString(0) + " | " + "Male: " + cursor3.getInt(1) + " | " + "Female: " + cursor3.getInt(2));
             } while (cursor3.moveToNext());
 
         }

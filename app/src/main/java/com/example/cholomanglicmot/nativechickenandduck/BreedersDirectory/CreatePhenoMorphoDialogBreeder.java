@@ -169,7 +169,7 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        pheno_date.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        pheno_date.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);

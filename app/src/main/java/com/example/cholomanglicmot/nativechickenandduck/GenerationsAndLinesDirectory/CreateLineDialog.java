@@ -1,6 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,10 +17,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateLineDialog extends DialogFragment {
 
@@ -30,7 +36,7 @@ public class CreateLineDialog extends DialogFragment {
     DatabaseHelper myDb;
     public RecyclerAdapter_Generation adapter;
     StringBuffer buffer;
-
+    Context context;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,6 +44,7 @@ public class CreateLineDialog extends DialogFragment {
         mActionOk = view.findViewById(R.id.action_ok);
         line_number = view.findViewById(R.id.line_number);
         spinner = (Spinner) view.findViewById(R.id.line_spinner);
+        context = getActivity().getApplicationContext();
 
 
         // find the radiobutton by returned id
@@ -75,7 +82,26 @@ public class CreateLineDialog extends DialogFragment {
                                 break;
 
                         }
-                        boolean isInserted = myDb.insertDataLine(line,generation_id);
+
+                        /*      ContentValues contentValues = new ContentValues();
+        contentValues.put(LINE_COL_1, line_number);
+        contentValues.put(LINE_COL_2, is_active);
+        contentValues.put(LINE_COL_3, line_generation_number);
+*/
+                        boolean isInserted = myDb.insertDataLine(line,1,generation_id);
+
+
+                        //add to web server
+                        Integer is_active = 1;
+                        RequestParams requestParams = new RequestParams();
+                        requestParams.add("number", line);
+                        requestParams.add("is_active", is_active.toString());
+                        requestParams.add("generation_id", generation_id.toString());
+                        requestParams.add("deleted_at", null);
+
+                        API_addLine(requestParams);
+
+
                         if(isInserted == true){
                             Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_line = new Intent(getActivity(), CreateGenerationsAndLines.class);
@@ -100,6 +126,25 @@ public class CreateLineDialog extends DialogFragment {
         });
 
         return view;
+    }
+    private void API_addLine(RequestParams requestParams){
+        APIHelper.addLine("addLine", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully added Line to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Line to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     private void loadSpinnerData() {
         // database handler

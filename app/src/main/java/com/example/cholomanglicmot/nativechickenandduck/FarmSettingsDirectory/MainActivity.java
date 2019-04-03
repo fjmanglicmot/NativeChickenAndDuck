@@ -2,7 +2,6 @@ package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -81,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        show_data_button = findViewById(R.id.show_data_button);
+       // show_data_button = findViewById(R.id.show_data_button);
 
-        show_data_button.setOnClickListener(new View.OnClickListener() {
+  /*      show_data_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Cursor res = myDb.getAllData();
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 showMessage("Data", buffer.toString());
             }
-        });
+        });*/
 
       /*  Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -221,13 +220,13 @@ public class MainActivity extends AppCompatActivity {
                         setFragment(accountFragment);
                         return true;
 
-                    case R.id.nav_address:
+                   /* case R.id.nav_address:
                         setFragment(addressFragment);
                         return true;
 
                     case R.id.nav_contacts:
                         setFragment(contactsFragment);
-                        return true;
+                        return true;*/
 
                     default:
                         return false;
