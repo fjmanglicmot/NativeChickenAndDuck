@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -92,14 +94,17 @@ public class CreateLineDialog extends DialogFragment {
 
 
                         //add to web server
-                        Integer is_active = 1;
-                        RequestParams requestParams = new RequestParams();
-                        requestParams.add("number", line);
-                        requestParams.add("is_active", is_active.toString());
-                        requestParams.add("generation_id", generation_id.toString());
-                        requestParams.add("deleted_at", null);
+                        if(isNetworkAvailable()){
+                            Integer is_active = 1;
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("number", line);
+                            requestParams.add("is_active", is_active.toString());
+                            requestParams.add("generation_id", generation_id.toString());
+                            requestParams.add("deleted_at", null);
 
-                        API_addLine(requestParams);
+                            API_addLine(requestParams);
+                        }
+
 
 
                         if(isInserted == true){
@@ -145,6 +150,12 @@ public class CreateLineDialog extends DialogFragment {
                 return null;
             }
         });
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     private void loadSpinnerData() {
         // database handler

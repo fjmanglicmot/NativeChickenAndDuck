@@ -85,18 +85,26 @@
       android:orientation="vertical"
       android:paddingBottom="40dp">
 
-<!--    <com.google.android.gms.common.SignInButton
-        android:id="@+id/google_login"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:onClick="onButtonClick">
 
-    </com.google.android.gms.common.SignInButton>-->
-      <Button
-          android:id="@+id/button3"
-          android:layout_width="239dp"
-          android:layout_height="52dp"
-          android:background="@drawable/googlesignin"
-          android:onClick="onButtonClick" />
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:visibility="invisible"/>
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    
+
+
+<!--    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Sign Out"/>-->
   </LinearLayout>
 </LinearLayout>

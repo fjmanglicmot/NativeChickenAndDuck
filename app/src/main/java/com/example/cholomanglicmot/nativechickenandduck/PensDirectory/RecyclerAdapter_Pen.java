@@ -3,12 +3,15 @@ package com.example.cholomanglicmot.nativechickenandduck.PensDirectory;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
@@ -26,6 +29,7 @@ public class RecyclerAdapter_Pen extends RecyclerView.Adapter<RecyclerAdapter_Pe
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.pen_row_layout,parent, false);
         RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
+        context = parent.getContext();
         return recyclerViewHolder;
 
     }
@@ -45,14 +49,17 @@ public class RecyclerAdapter_Pen extends RecyclerView.Adapter<RecyclerAdapter_Pe
         holder.pen_capacity.setText(pen.getPen_capacity().toString());
 
         holder.edit_pen.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View view) {
-               /* FragmentActivity activity = (FragmentActivity)(context);
+                FragmentActivity activity = (FragmentActivity)(context);
                 FragmentManager fm = activity.getSupportFragmentManager();
                 EditPenDialog alertDialog = new EditPenDialog();
                 alertDialog.setArguments(args);
                 alertDialog.show(fm, "EditPenDialog");
-                notifyDataSetChanged();*/
+                notifyDataSetChanged();
+               // Toast.makeText(context, "yo", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -3,7 +3,9 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
@@ -28,10 +31,15 @@ import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.CreatePen;
 import com.example.cholomanglicmot.nativechickenandduck.ProjectAdapter;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+//import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CreateBreeders extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -59,6 +67,32 @@ public class CreateBreeders extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_breeders);
+
+
+        ////////////
+        FirebaseAuth mAuth;
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = (TextView)hView.findViewById(R.id.textView8);
+        TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
+        CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
+        nav_user.setText(name);
+    //    Picasso.get().load(photo).into(circleImageView);
+        nav_email.setText(email);
+        ///////////////////
+
         Exp_list = findViewById(R.id.exp_list);
         Project_category = DataProvider.getInfo();
         Project_list =  new ArrayList<String>(Project_category.keySet());

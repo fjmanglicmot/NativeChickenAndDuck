@@ -61,11 +61,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_PEN = "pen_table";
     public static final String PEN_COL_0 = "ID";
-    public static final String PEN_COL_1 = "PEN_NUMBER";
-    public static final String PEN_COL_2 = "PEN_TYPE";
-    public static final String PEN_COL_3 = "PEN_CURRENT_CAPACITY";
+    public static final String PEN_COL_1 = "farm_id";
+    public static final String PEN_COL_2 = "PEN_NUMBER";
+    public static final String PEN_COL_3 = "PEN_TYPE";
     public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
-    public static final String PEN_COL_5 = "PEN_FARM_ID";
+    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
     public static final String PEN_COL_6 = "PEN_IS_ACTIVE";
 
 
@@ -325,7 +325,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 91);
+        super(context, DATABASE_NAME, null, 93 );
     }
 
     @Override
@@ -334,13 +334,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //NOTES SA DATABASE
         //ANG ILAGAY MONG REFERENCE AY YUNG COLUMN NA ID
         db.execSQL("create table " + TABLE_PROFILE +" (ID TEXT PRIMARY KEY,BREED TEXT,REGION TEXT,PROVINCE TEXT,TOWN TEXT,BARANGAY TEXT,PHONE TEXT,EMAIL TEXT)");
-        db.execSQL("create table " + TABLE_PEN +" (ID INTEGER PRIMARY KEY, PEN_NUMBER TEXT, PEN_TYPE TEXT,PEN_CURRENT_CAPACITY INTEGER,PEN_TOTAL_CAPACITY INTEGER)");
+
+        db.execSQL("create table " + TABLE_PEN +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, PEN_NUMBER TEXT, PEN_TYPE TEXT,PEN_TOTAL_CAPACITY INTEGER,PEN_CURRENT_CAPACITY INTEGER, PEN_IS_ACTIVE INTEGER)");
         db.execSQL("create table " + TABLE_GENERATION +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, GENERATION_NUMBER TEXT, numerical_generation INTEGER ,is_active INTEGER, deleted_at TEXT, FOREIGN KEY (farm_id) REFERENCES TABLE_FARMS(ID))");
 
 
         db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, is_active INTEGER, LINE_GENERATION INTEGER, deleted_at TEXT, FOREIGN KEY (LINE_GENERATION) REFERENCES TABLE_GENERATION(ID))");
 
-        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, is_ative INTEGER, FAMILY_LINE INTEGER, deleted_at TEXT, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID) )");
+        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, is_active INTEGER, FAMILY_LINE INTEGER, deleted_at TEXT, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID))");
+
 
 
 
@@ -376,6 +378,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table "+ TABLE_ROLES + "(ID INTEGER PRIMARY KEY, ROLE TEXT )");
 
         db.execSQL("create table "+ TABLE_ROLE_USERS + "(USER_ID INTEGER, ROLE_ID INTEGER, FOREIGN KEY (ROLE_ID) REFERENCES TABLE_ROLES(ID))");
+        db.execSQL("create table "+ TABLE_USERS + "(ID INTEGER PRIMARY KEY, NAME TEXT, EMAIL TEXT, PICTURE TEXT, LAST_ACTIVE TEXT, FARM_ID INTEGER, ROLE_ID INTEGER, REMEMBER_TOKEN TEXT, DELETED_AT TEXT, FOREIGN KEY(FARM_ID) REFERENCES TABLE_FARMS(ID))");
+
 
 
     }
@@ -417,6 +421,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_FARMS);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_ROLES);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_ROLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_USERS);
 
 
 
@@ -424,13 +429,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //----------------
-    public boolean insertDataPen(String pen_number, String pen_type, Integer pen_current_capacity, Integer pen_total_capacity){
+/*    public static final String TABLE_PEN = "pen_table";
+    public static final String PEN_COL_0 = "ID";
+    public static final String PEN_COL_1 = "farm_id";
+    public static final String PEN_COL_2 = "PEN_NUMBER";
+    public static final String PEN_COL_3 = "PEN_TYPE";
+    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
+    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
+    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";*/
+    public boolean insertDataPen(Integer farm_id, String pen_number, String pen_type, Integer pen_total_capacity, Integer pen_current_capacity, Integer is_active){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(PEN_COL_1, pen_number);
-        contentValues.put(PEN_COL_2, pen_type);
-        contentValues.put(PEN_COL_3, pen_current_capacity);
+        contentValues.put(PEN_COL_1, farm_id);
+        contentValues.put(PEN_COL_2, pen_number);
+        contentValues.put(PEN_COL_3, pen_type);
         contentValues.put(PEN_COL_4, pen_total_capacity);
+        contentValues.put(PEN_COL_5, pen_current_capacity);
+        contentValues.put(PEN_COL_6, is_active);
         long result = db.insert(TABLE_PEN,null,contentValues);
         if (result == -1)
             return  false;
@@ -490,8 +505,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-
-
+/*    public static final String TABLE_FAMILY = "family_table";
+    public static final String FAMILY_COL_0 = "ID";
+    public static final String FAMILY_COL_1 = "FAMILY_NUMBER";
+    public static final String FAMILY_COL_2 = "is_active";
+    public static final String FAMILY_COL_3 = "FAMILY_LINE";
+    public static final String FAMILY_COL_4 = "deleted_at";
+*/
     public boolean insertDataFamily(String family_number, Integer is_active, Integer family_line_number ){
         SQLiteDatabase db = this.getWritableDatabase();
 

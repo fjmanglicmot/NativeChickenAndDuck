@@ -1,6 +1,9 @@
 package com.example.cholomanglicmot.nativechickenandduck.PensDirectory;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +17,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreatePenDialog extends DialogFragment {
 
@@ -27,6 +35,7 @@ public class CreatePenDialog extends DialogFragment {
     private EditText mInput_pen_capacity;
     private Button mActionOk;
     DatabaseHelper myDb;
+    Context context;
 
     @Nullable
     @Override
@@ -35,6 +44,7 @@ public class CreatePenDialog extends DialogFragment {
         mActionOk = view.findViewById(R.id.action_ok);
         mInput_pen_number = view.findViewById(R.id.generation_no);
         mInput_pen_capacity = view.findViewById(R.id.capacity);
+        context = getActivity().getApplicationContext();
       //  mInput_pen_inventory = view.findViewById(R.id.inventory);
         radioGroup = (RadioGroup) view.findViewById(R.id.radio_group_collection_day);
         radioButton = view.findViewById(R.id.radioButton);
@@ -60,6 +70,9 @@ public class CreatePenDialog extends DialogFragment {
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+
 
                 int selectedId = radioGroup.getCheckedRadioButtonId();
                 String selected_pen_type = "None Selected";
@@ -92,8 +105,27 @@ public class CreatePenDialog extends DialogFragment {
 
 
                 if(!mInput_pen_number.getText().toString().isEmpty() && !mInput_pen_capacity.getText().toString().isEmpty() && radioGroup.getCheckedRadioButtonId() != -1 ){
+                    Integer farm_id = 7;
+                    Integer is_active = 1;
+                    Integer zero = 0;
+                    boolean isInserted = myDb.insertDataPen(farm_id,pen_number, selected_pen_type,0,Integer.parseInt(mInput_pen_capacity.getText().toString()), is_active);
 
-                    boolean isInserted = myDb.insertDataPen(pen_number, selected_pen_type,0,Integer.parseInt(mInput_pen_capacity.getText().toString()));
+
+
+                    if(isNetworkAvailable()){
+
+                        RequestParams requestParams = new RequestParams();
+                        requestParams.add("farm_id", farm_id.toString());
+                        requestParams.add("number", pen_number);
+                        requestParams.add("type", selected_pen_type);
+                        requestParams.add("total_capacity", zero.toString());
+                        requestParams.add("current_capacity", mInput_pen_capacity.toString());
+                        requestParams.add("is_active", is_active.toString());
+
+                        API_addPen(requestParams);
+                    }
+
+
                     if(isInserted == true){
                         Toast.makeText(getActivity(),"Pen added to database", Toast.LENGTH_SHORT).show();
                         Intent intent_breeder_generation = new Intent(getActivity(), CreatePen.class);
@@ -114,5 +146,31 @@ public class CreatePenDialog extends DialogFragment {
         });
 
         return view;
+    }
+
+    private void API_addPen(RequestParams requestParams){
+        APIHelper.addPen("addPen", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully added pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

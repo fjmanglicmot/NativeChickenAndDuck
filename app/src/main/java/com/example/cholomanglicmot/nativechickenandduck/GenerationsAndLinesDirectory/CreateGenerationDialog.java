@@ -2,6 +2,8 @@ package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDire
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,6 +51,7 @@ public class CreateGenerationDialog extends DialogFragment {
 
 
 
+
         myDb = new DatabaseHelper(getContext());
 
 
@@ -87,15 +90,20 @@ public class CreateGenerationDialog extends DialogFragment {
                     //insert to web database
 
                     //GET farm_id from database
+                    //check for internet connection
+                    /**/
+                    boolean isNetworkAvailable = isNetworkAvailable();
+                    if(isNetworkAvailable){
+                        RequestParams requestParams = new RequestParams();
+                        requestParams.add("farm_id", farm_id.toString());
+                        requestParams.add("number", generation_number);
+                        requestParams.add("numerical_generation", mInput_generation_number.getText().toString());
+                        requestParams.add("is_active", is_active.toString());
+                        requestParams.add("deleted_at", null);
 
-                    RequestParams requestParams = new RequestParams();
-                    requestParams.add("farm_id", farm_id.toString());
-                    requestParams.add("number", generation_number);
-                    requestParams.add("numerical_generation", mInput_generation_number.getText().toString());
-                    requestParams.add("is_active", is_active.toString());
-                    requestParams.add("deleted_at", null);
+                        API_addGeneration(requestParams);
+                    }
 
-                    API_addGeneration(requestParams);
 
                     if(isInserted == true){
                      //   Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
@@ -104,7 +112,7 @@ public class CreateGenerationDialog extends DialogFragment {
 
                         getDialog().dismiss();
                     }else{
-                        Toast.makeText(getActivity(),"Generation not added to database", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getActivity(),"Generation not added to database", Toast.LENGTH_SHORT).show();
                     }
                     getDialog().dismiss();
                 }else{
@@ -119,7 +127,12 @@ public class CreateGenerationDialog extends DialogFragment {
 
         return view;
     }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     private void API_addGeneration(RequestParams requestParams){
         APIHelper.addGeneration("addGeneration", requestParams, new BaseJsonHttpResponseHandler<Object>() {
             @Override

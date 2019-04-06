@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,10 +20,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateFamilyDialog extends DialogFragment {
 
@@ -30,6 +38,7 @@ public class CreateFamilyDialog extends DialogFragment {
     private Button mActionOk;
     DatabaseHelper myDb;
     StringBuffer buffer = new StringBuffer();
+    Context context;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,6 +46,8 @@ public class CreateFamilyDialog extends DialogFragment {
         mActionOk = view.findViewById(R.id.action_ok);
         family_number = view.findViewById(R.id.brooder_feeding_offered);
         generation_spinner = (Spinner) view.findViewById(R.id.generation_spinner);
+        context = getActivity().getApplicationContext();
+
         line_spinner = view.findViewById(R.id.line_spinner);
         // find the radiobutton by returned id
        // spinner.setOnItemSelectedListener(this);
@@ -89,10 +100,28 @@ public class CreateFamilyDialog extends DialogFragment {
                                 break;
 
                         }
-
+                        //insert to local
                         boolean isInserted = myDb.insertDataFamily(family,1,line_id);
 
-                        if(isInserted == true){
+
+                        //insert to web
+                        if(isNetworkAvailable()){
+                            Integer is_active = 1;
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("number", family);
+                            requestParams.add("is_active", is_active.toString());
+                            requestParams.add("line_id", line_id.toString());
+                            requestParams.add("deleted_at", null);
+
+                            API_addFamily(requestParams);
+                        }
+
+
+
+
+
+
+                        if(isInserted){
                             Toast.makeText(getActivity(),"Family added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_family = new Intent(getActivity(), CreateFamilies.class);
                             startActivity(intent_family);
@@ -114,6 +143,31 @@ public class CreateFamilyDialog extends DialogFragment {
         });
 
         return view;
+    }
+    private void API_addFamily(RequestParams requestParams){
+        APIHelper.addFamily("addFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully added Family to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Family to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     private void loadSpinnerDataForGeneration() {
         // database handler
