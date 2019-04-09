@@ -101,7 +101,9 @@ public class CreateFamilyDialog extends DialogFragment {
 
                         }
                         //insert to local
+
                         boolean isInserted = myDb.insertDataFamily(family,1,line_id);
+                       // boolean isInserted = myDb.insertDataFamily(null,null,null);
 
 
                         //insert to web

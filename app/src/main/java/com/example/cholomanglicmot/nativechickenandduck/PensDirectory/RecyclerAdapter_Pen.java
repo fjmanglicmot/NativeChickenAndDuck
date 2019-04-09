@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
@@ -42,11 +41,12 @@ public class RecyclerAdapter_Pen extends RecyclerView.Adapter<RecyclerAdapter_Pe
 
         final Bundle args = new Bundle();
         args.putString("Pen", pen.getPen_number());
+        args.putInt("Pen ID", pen.getId());
 
         holder.pen_number.setText(pen.getPen_number());
         holder.pen_type.setText(pen.getPen_type());
-        holder.pen_inventory.setText(pen.getPen_inventory().toString());
-        holder.pen_capacity.setText(pen.getPen_capacity().toString());
+        holder.pen_inventory.setText(pen.getPen_capacity().toString());
+        holder.pen_capacity.setText(pen.getPen_inventory().toString());
 
         holder.edit_pen.setOnClickListener(new View.OnClickListener() {
 

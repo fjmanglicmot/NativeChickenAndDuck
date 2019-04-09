@@ -47,6 +47,7 @@ public class CreateBrooderDialog extends DialogFragment {
     private Calendar calendar,calendar2;
     private Context context;
     private String brooder_pen;
+    Integer brooder_pen_id;
     Brooders_Pen brooders_pen;
     DatabaseHelper myDb;
     APIHelper APIHelper;
@@ -152,7 +153,11 @@ public class CreateBrooderDialog extends DialogFragment {
 
 
 
-
+        Cursor cursor = myDb.getAllDataFromPenWhere(brooder_pen);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            brooder_pen_id = cursor.getInt(0);
+        }
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,7 +204,7 @@ public class CreateBrooderDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor_pen != null){
-                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                     arrayListPen.add(pen);
                                 }
                             }while (cursor_pen.moveToNext());
@@ -219,10 +224,9 @@ public class CreateBrooderDialog extends DialogFragment {
                         cursor.moveToFirst();
 
 
-
                         Integer id = cursor.getInt(0);
 
-                         boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                         boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen_id, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(brooder_total_number.getText().toString())+total,current);
                         if(isPenUpdated && isInventoryInserted){
@@ -244,7 +248,7 @@ public class CreateBrooderDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor_pen != null){
-                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                     arrayListPen.add(pen);
 
                                 }
@@ -273,7 +277,7 @@ public class CreateBrooderDialog extends DialogFragment {
                             startActivity(intent_line);
 
                         }
-                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+                        boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen_id, "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(family_spinner.getSelectedItem().toString())+m, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
 
 
 

@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.PensDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -20,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
@@ -33,13 +37,17 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.squareup.picasso.Picasso;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+//import com.squareup.picasso.Picasso;
 
 public class CreatePen extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -48,7 +56,8 @@ public class CreatePen extends AppCompatActivity {
     private ImageButton create_pen;
     private Button show_data_button;
     private Button delete_pen_table;
-
+    String farm_id;
+    ArrayList<Pen> arrayList_pen;
 
     LinkedHashMap<String, List<String>> Project_category;
     List<String> Project_list;
@@ -225,27 +234,129 @@ public class CreatePen extends AppCompatActivity {
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Create Pens");
-        Cursor cursor = myDb.getAllDataFromPen();
 
-//-----DATABASE
-        if(cursor.getCount() == 0){
-            //show message
-            Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
-            return;
+
+
+
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if(isNetworkAvailable){
+            //if internet is available, load data from web database
+
+
+
+
+            API_getFarmID(email);
+
+
+
         }else{
 
+//-----DATABASE
+            Cursor cursor = myDb.getAllDataFromPen();
+
             cursor.moveToFirst();
-            do {
-                Pen pen = new Pen(cursor.getString(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
-                arrayList.add(pen);
-            }while (cursor.moveToNext());
+            if(cursor.getCount() == 0){
+                //show message
+                Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
 
-            recycler_adapter = new RecyclerAdapter_Pen(arrayList);
-            recyclerView.setAdapter(recycler_adapter);
-            recycler_adapter.notifyDataSetChanged();
+            }else{
 
+                do {
+/*    public static final String TABLE_PEN = "pen_table";
+    public static final String PEN_COL_0 = "ID";
+    public static final String PEN_COL_1 = "farm_id";
+    public static final String PEN_COL_2 = "PEN_NUMBER";
+    public static final String PEN_COL_3 = "PEN_TYPE";
+    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
+    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
+    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";
+*/
+                                /*  public Pen (Integer id, String pen_number,  String pen_type,        Integer pen_inventory,Integer pen_capacity, Integer farm_id, Integer is_active){  */
+                    Pen pen = new Pen(cursor.getInt(0),cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(1), cursor.getInt(6));
+                    arrayList.add(pen);
+                }while (cursor.moveToNext());
+
+                recycler_adapter = new RecyclerAdapter_Pen(arrayList);
+                recyclerView.setAdapter(recycler_adapter);
+                recycler_adapter.notifyDataSetChanged();
+
+            }
         }
 
+
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getPen(String farm_id){
+        APIHelper.getPen("getPen/"+farm_id, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONPen jsonPen = gson.fromJson(rawJsonResponse, JSONPen.class);
+                arrayList_pen = jsonPen.getData();
+
+                for (int i = 0; i < arrayList_pen.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor1 = myDb.getAllDataFromPenWhereID(arrayList_pen.get(i).getId());
+                    cursor1.moveToFirst();
+
+                    if (cursor1.getCount() == 0) {
+                       // API_getLine(arrayList_pen.get(i).getId().toString());
+                        //edit insertDataGeneration function, dapat kasama yung primary key "id" kapag nilalagay sa database
+                        boolean isInserted = myDb.insertDataPenWithID(arrayList_pen.get(i).getId(), arrayList_pen.get(i).getFarm_id(), arrayList_pen.get(i).getPen_number(), arrayList_pen.get(i).getPen_type(), arrayList_pen.get(i).getPen_inventory(),arrayList_pen.get(i).getPen_capacity(), arrayList_pen.get(i).getIs_active());
+                    }
+
+                }
+                recycler_adapter = new RecyclerAdapter_Pen(arrayList_pen);
+                recyclerView.setAdapter(recycler_adapter);
+                recycler_adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Pens from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_getFarmID(String email){
+        APIHelper.getFarmID("getFarmID/"+email, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+
+                farm_id = rawJsonResponse;
+
+                farm_id = farm_id.replaceAll("\\[", "").replaceAll("\\]","");
+
+                API_getPen(farm_id);
+                //  Toast.makeText(CreateGenerationsAndLines.this, "Generation and Lines loaded from database", Toast.LENGTH_SHORT).show();
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

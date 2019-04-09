@@ -64,7 +64,7 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
         final Brooder_Inventory brooder_inventory = arrayListInventory.get(position);
         final Bundle args = new Bundle();
         args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
-        args.putString("Brooder Pen", brooder_inventory.getBrooder_inv_pen());
+        args.putInt("Brooder Pen ID", brooder_inventory.getBrooder_inv_pen  ());
         args.putInt("Brooder ID", brooder_inventory.getBrooder_inv_brooder_id());
 
 
@@ -73,7 +73,8 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
 
 
 
-            holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_tag());
+          /*  holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_tag());*/
+        holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_id().toString());
 
 
 

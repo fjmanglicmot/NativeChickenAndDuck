@@ -1,9 +1,15 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Brooders {
+    @SerializedName("id")
     private Integer id;
+    @SerializedName("family_id")
     private Integer brooder_family_number;
+    @SerializedName("date_added")
     private String brooder_date_added;
+    @SerializedName("deleted_at")
     private String brooder_deleted_at;
 
 

@@ -1,5 +1,6 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,27 +27,35 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
     EditText edit_male_count, edit_female_count;
     Button update, save;
     List<String> famLineGen = new ArrayList<>();
+    Context context;
 
-    Integer fam_id = null;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_view_brooder_inventory, container, false);
+
+        /*    final Bundle args = new Bundle();
+        args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
+        args.putInt("Brooder Pen ID", brooder_inventory.getBrooder_inv_pen  ());
+        args.putInt("Brooder ID", brooder_inventory.getBrooder_inv_brooder_id());
+*/
         final String brooder_tag = getArguments().getString("Brooder Tag");
-        final String brooder_pen = getArguments().getString("Brooder Pen");
+        final Integer brooder_pen = getArguments().getInt("Brooder Pen ID");
         final Integer brooder_id = getArguments().getInt("Brooder ID");
+        context = getActivity();
 
         myDb = new DatabaseHelper(getContext());
 
         Integer fam_id = myDb.getFamIDFromBrooders(brooder_id);
+
         String famLineGen = myDb.getFamLineGen(fam_id);
         String delims = " ";
         String[] tokens = famLineGen.split(delims);
         String fam = tokens[0];
         String line = tokens[1];
         String gen = tokens[2];
-
 
 
         textView = view.findViewById(R.id.textView);
@@ -69,8 +78,6 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
         family_number.setText(fam);
         line_number.setText(line);
         generation_number.setText(gen);
-
-
         Cursor cursor = myDb.getDataFromBrooderInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){

@@ -435,7 +435,7 @@ public class CreateBreederDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor3 != null){
-                                    Pen pen = new Pen(cursor3.getString(1), cursor3.getString(2), cursor3.getInt(3), cursor3.getInt(4));
+                                    Pen pen = new Pen(cursor3.getInt(0),cursor3.getString(2), cursor3.getString(3), cursor3.getInt(4), cursor3.getInt(5), cursor3.getInt(6), cursor3.getInt(7));
                                     arrayListPen_2.add(pen);
                                 }
                             }while (cursor3.moveToNext());
@@ -491,7 +491,7 @@ public class CreateBreederDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor4 != null){
-                                    Pen pen = new Pen(cursor4.getString(1), cursor4.getString(2), cursor4.getInt(3), cursor4.getInt(4));
+                                    Pen pen = new Pen(cursor4.getInt(0),cursor4.getString(2), cursor4.getString(3), cursor4.getInt(4), cursor4.getInt(5), cursor4.getInt(6), cursor4.getInt(7));
                                     arrayListPen_4.add(pen);
                                 }
                             }while (cursor4.moveToNext());

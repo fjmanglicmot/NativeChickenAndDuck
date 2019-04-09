@@ -99,7 +99,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-
     public static final String TABLE_BROODER = "brooder_table";
     public static final String BROODER_COL_0 = "ID";
     public static final String BROODER_COL_1 = "BROODER_FAMILY";
@@ -325,14 +324,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 93 );
+        super(context, DATABASE_NAME, null, 94 );
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //NOTES SA DATABASE
-        //ANG ILAGAY MONG REFERENCE AY YUNG COLUMN NA ID
+
         db.execSQL("create table " + TABLE_PROFILE +" (ID TEXT PRIMARY KEY,BREED TEXT,REGION TEXT,PROVINCE TEXT,TOWN TEXT,BARANGAY TEXT,PHONE TEXT,EMAIL TEXT)");
 
         db.execSQL("create table " + TABLE_PEN +" (ID INTEGER PRIMARY KEY, farm_id INTEGER, PEN_NUMBER TEXT, PEN_TYPE TEXT,PEN_TOTAL_CAPACITY INTEGER,PEN_CURRENT_CAPACITY INTEGER, PEN_IS_ACTIVE INTEGER)");
@@ -341,13 +339,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table " + TABLE_LINE +" (ID INTEGER PRIMARY KEY,LINE_NUMBER TEXT, is_active INTEGER, LINE_GENERATION INTEGER, deleted_at TEXT, FOREIGN KEY (LINE_GENERATION) REFERENCES TABLE_GENERATION(ID))");
 
-        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY,FAMILY_NUMBER TEXT, is_active INTEGER, FAMILY_LINE INTEGER, deleted_at TEXT, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID))");
+        db.execSQL("create table " + TABLE_FAMILY +" (ID INTEGER PRIMARY KEY, FAMILY_NUMBER TEXT, is_active INTEGER, FAMILY_LINE INTEGER, deleted_at TEXT, FOREIGN KEY (FAMILY_LINE) REFERENCES TABLE_LINE(ID))");
 
 
 
 
         db.execSQL("create table " + TABLE_BROODER +" (ID INTEGER PRIMARY KEY, BROODER_FAMILY INTEGER, BROODER_DATE_ADDED TEXT, BROODER_DELETED_AT TEXT, FOREIGN KEY (BROODER_FAMILY) REFERENCES TABLE_FAMILY(ID))");
-        db.execSQL("create table " + TABLE_BROODER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BROODER_INV_BROODER_ID INTEGER, BROODER_INV_PEN_NUMBER TEXT, BROODER_INV_BROODER_TAG TEXT, BROODER_INV_BATCHING_DATE TEXT, BROODER_INV_NUMBER_MALE INTEGER, BROODER_INV_NUMBER_FEMALE INTEGER, BROODER_INV_TOTAL INTEGER, BROODER_INV_LAST_UPDATE TEXT, BROODER_INV_DELETED_AT TEXT, FOREIGN KEY (BROODER_INV_BROODER_ID) REFERENCES TABLE_BROODER(ID))");
+        db.execSQL("create table " + TABLE_BROODER_INVENTORIES +" (ID INTEGER PRIMARY KEY,BROODER_INV_BROODER_ID INTEGER, BROODER_INV_PEN_NUMBER INTEGER, BROODER_INV_BROODER_TAG TEXT, BROODER_INV_BATCHING_DATE TEXT, BROODER_INV_NUMBER_MALE INTEGER, BROODER_INV_NUMBER_FEMALE INTEGER, BROODER_INV_TOTAL INTEGER, BROODER_INV_LAST_UPDATE TEXT, BROODER_INV_DELETED_AT TEXT, FOREIGN KEY (BROODER_INV_BROODER_ID) REFERENCES TABLE_BROODER(ID))");
         db.execSQL("create table " + TABLE_BROODER_FEEDING_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_FEEDING_INVENTORY_ID INTEGER, BROODER_FEEDING_DATE_COLLECTED TEXT, BROODER_FEEDING_AMOUNT_OFFERED TEXT, BROODER_FEEDING_AMOUNT_REFUSED INTEGER, BROODER_FEEDING_REMARKS TEXT, BROODER_FEEDING_DELETED_AT TEXT, FOREIGN KEY (BROODER_FEEDING_INVENTORY_ID) REFERENCES TABLE_BROODER_INVENTORIES(ID))");
         db.execSQL("create table " + TABLE_BROODER_GROWTH_RECORDS +" (ID INTEGER PRIMARY KEY, BROODER_GROWTH_INVENTORY_ID INTEGER, BROODER_GROWTH_COLLECTION_DAY TEXT, BROODER_GROWTH_DATE_COLLECTED TEXT, BROODER_GROWTH_MALE_QUANTITY INTEGER, BROODER_GROWTH_MALE_WEIGHT INTEGER, BROODER_GROWTH_FEMALE_QUANTITY INTEGER, BROODER_GROWTH_FEMALE_WEIGHT INTEGER,BROODER_GROWTH_TOTAL_QUANTITY INTEGER, BROODER_GROWTH_TOTAL_WEIGHT INTEGER,BROODER_GROWTH_DELETED_AT TEXT, FOREIGN KEY (BROODER_GROWTH_INVENTORY_ID) REFERENCES TABLE_BROODER_INVENTORIES(ID))");
 
@@ -429,14 +427,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 //----------------
-/*    public static final String TABLE_PEN = "pen_table";
-    public static final String PEN_COL_0 = "ID";
-    public static final String PEN_COL_1 = "farm_id";
-    public static final String PEN_COL_2 = "PEN_NUMBER";
-    public static final String PEN_COL_3 = "PEN_TYPE";
-    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
-    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
-    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";*/
+
     public boolean insertDataPen(Integer farm_id, String pen_number, String pen_type, Integer pen_total_capacity, Integer pen_current_capacity, Integer is_active){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -453,22 +444,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
+    public boolean insertDataPenWithID(Integer id,Integer farm_id, String pen_number, String pen_type, Integer pen_total_capacity, Integer pen_current_capacity, Integer is_active){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PEN_COL_0, id);
+        contentValues.put(PEN_COL_1, farm_id);
+        contentValues.put(PEN_COL_2, pen_number);
+        contentValues.put(PEN_COL_3, pen_type);
+        contentValues.put(PEN_COL_4, pen_total_capacity);
+        contentValues.put(PEN_COL_5, pen_current_capacity);
+        contentValues.put(PEN_COL_6, is_active);
+        long result = db.insert(TABLE_PEN,null,contentValues);
+        if (result == -1)
+            return  false;
+        else
+            return true;
+
+    }
+
 
 //--------------------
-
-/*    public static final String TABLE_GENERATION = "generation_table";
-    public static final String GENERATION_COL_0 = "ID";
-    public static final String GENERATION_COL_1 = "farm_id";
-    public static final String GENERATION_COL_2 = "GENERATION_NUMBER";
-    public static final String GENERATION_COL_3 = "numerical_generation";
-    public static final String GENERATION_COL_4 = "is_active";
-    public static final String GENERATION_COL_5 = "deleted_at";*/
-
 
 
     public boolean insertDataGeneration(Integer farm_id, String generation_number, Integer numerical_gen, Integer is_active){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(GENERATION_COL_1, farm_id);
+        contentValues.put(GENERATION_COL_2, generation_number);
+        contentValues.put(GENERATION_COL_3, numerical_gen);
+        contentValues.put(GENERATION_COL_4, is_active);
+
+
+
+        long result = db.insert(TABLE_GENERATION,null,contentValues);
+
+        if (result == -1)
+            return false;
+        else
+            return true;
+
+    }
+    public boolean insertDataGenerationWithID(Integer id,Integer farm_id, String generation_number, Integer numerical_gen, Integer is_active){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(GENERATION_COL_0, id);
         contentValues.put(GENERATION_COL_1, farm_id);
         contentValues.put(GENERATION_COL_2, generation_number);
         contentValues.put(GENERATION_COL_3, numerical_gen);
@@ -505,6 +524,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
+    public boolean insertDataLineWithID(Integer id, String line_number, Integer is_active, Integer line_generation_number ){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(LINE_COL_0, id);
+        contentValues.put(LINE_COL_1, line_number);
+        contentValues.put(LINE_COL_2, is_active);
+        contentValues.put(LINE_COL_3, line_generation_number);
+
+
+        long result = db.insert(TABLE_LINE,null,contentValues);
+
+        if (result == -1)
+            return  false;
+        else
+            return true;
+
+    }
+
+
+    /*/*    boolean isInserted = myDb.insertDataFamily(family,1,line_id);
+
+     */
 /*    public static final String TABLE_FAMILY = "family_table";
     public static final String FAMILY_COL_0 = "ID";
     public static final String FAMILY_COL_1 = "FAMILY_NUMBER";
@@ -520,8 +562,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(FAMILY_COL_2, is_active);
         contentValues.put(FAMILY_COL_3, family_line_number);
 
+        long result = db.insert(TABLE_FAMILY,null,contentValues);
 
+        if (result == -1)
+            return  false;
+        else
+            return true;
 
+    }
+    public boolean insertDataFamilyWithID(Integer id, String family_number, Integer is_active, Integer family_line_number, String deleted_at ){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FAMILY_COL_0, id);
+        contentValues.put(FAMILY_COL_1, family_number);
+        contentValues.put(FAMILY_COL_2, is_active);
+        contentValues.put(FAMILY_COL_3, family_line_number);
+        contentValues.put(FAMILY_COL_4, deleted_at);
         long result = db.insert(TABLE_FAMILY,null,contentValues);
 
         if (result == -1)
@@ -531,11 +588,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+
     public boolean insertDataBrooder(Integer brooder_family_number, String brooder_date_added, String brooder_deleted_at ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(BROODER_COL_1, brooder_family_number);
+        contentValues.put(BROODER_COL_2, brooder_date_added);
+        contentValues.put(BROODER_COL_3, brooder_deleted_at);
+
+        long result = db.insert(TABLE_BROODER,null,contentValues);
+
+        if (result == -1)
+            return  false;
+        else
+            return true;
+
+    }
+    public boolean insertDataBrooderWithID(Integer id,Integer brooder_family_number, String brooder_date_added, String brooder_deleted_at ){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BROODER_COL_0, id);
         contentValues.put(BROODER_COL_1, brooder_family_number);
         contentValues.put(BROODER_COL_2, brooder_date_added);
         contentValues.put(BROODER_COL_3, brooder_deleted_at);
@@ -588,10 +663,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean insertDataBrooderInventory(Integer brooder_inv_brooder_id, String brooder_inv_pen_number, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_inv_number_male, Integer brooder_inv_number_female, Integer brooder_inv_total, String brooder_inv_last_update, String brooder_inv_deleted_at){
+    public boolean insertDataBrooderInventory(Integer brooder_inv_brooder_id, Integer brooder_inv_pen_number, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_inv_number_male, Integer brooder_inv_number_female, Integer brooder_inv_total, String brooder_inv_last_update, String brooder_inv_deleted_at){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
+        contentValues.put(BROODER_INV_COL_1, brooder_inv_brooder_id);
+        contentValues.put(BROODER_INV_COL_2, brooder_inv_pen_number);
+        contentValues.put(BROODER_INV_COL_3, brooder_inv_brooder_tag);
+        contentValues.put(BROODER_INV_COL_4, brooder_inv_batching_date);
+        contentValues.put(BROODER_INV_COL_5, brooder_inv_number_male);
+        contentValues.put(BROODER_INV_COL_6, brooder_inv_number_female);
+        contentValues.put(BROODER_INV_COL_7, brooder_inv_total);
+        contentValues.put(BROODER_INV_COL_8, brooder_inv_last_update);
+        contentValues.put(BROODER_INV_COL_9, brooder_inv_deleted_at);
+
+        long result = db.insert(TABLE_BROODER_INVENTORIES,null,contentValues);
+
+        if (result == -1)
+            return  false;
+        else
+            return true;
+
+    }
+
+    public boolean insertDataBrooderInventoryWithID(Integer id, Integer brooder_inv_brooder_id, Integer brooder_inv_pen_number, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_inv_number_male, Integer brooder_inv_number_female, Integer brooder_inv_total, String brooder_inv_last_update, String brooder_inv_deleted_at){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BROODER_INV_COL_0, id);
         contentValues.put(BROODER_INV_COL_1, brooder_inv_brooder_id);
         contentValues.put(BROODER_INV_COL_2, brooder_inv_pen_number);
         contentValues.put(BROODER_INV_COL_3, brooder_inv_brooder_tag);
@@ -1053,6 +1152,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromLineWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_LINE+ " where ID is ?", new String[]{id.toString()});
+
+        return res;
+    }
     public Cursor getAllDataFromFamily(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_FAMILY, null);
@@ -1060,6 +1165,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         return res;
     }
 
+    public Cursor getAllDataFromFamilyWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_FAMILY+ " where ID is ?", new String[]{id.toString()});
+
+        return res;
+    }
 
     public Cursor getDataFromGenerationWhereGenNumber(String number){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1100,10 +1211,24 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         Cursor res = db.rawQuery("select * from " +TABLE_PEN, null);
         return res;
     }
-
+/*
+    public static final String TABLE_PEN = "pen_table";
+    public static final String PEN_COL_0 = "ID";
+    public static final String PEN_COL_1 = "farm_id";
+    public static final String PEN_COL_2 = "PEN_NUMBER";
+    public static final String PEN_COL_3 = "PEN_TYPE";
+    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
+    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
+    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";
+*/
     public Cursor getAllDataFromPenWhere(String pen_number){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_NUMBER like ?", new String[]{pen_number});
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where PEN_NUMBER is ?", new String[]{pen_number});
+        return res;
+    }
+    public Cursor getAllDataFromPenWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_PEN+ " where ID like ?", new String[]{id.toString()});
         return res;
     }
 
@@ -1137,6 +1262,12 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+    public Cursor getAllDataFromBroodersWhereID(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER+ " where ID is ?", new String[]{id.toString()});
+
+        return res;
+    }
     public Cursor getAllDataFromBroodersFeedingWhereBrooderInv(Integer brooder_inv){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_BROODER_FEEDING_RECORDS+ " where BROODER_FEEDING_INVENTORY_ID is ?", new String[] {brooder_inv.toString()});
@@ -1150,10 +1281,15 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
-
-    public Cursor getDataFromBrooderInventoryWherePenAndID(String tag, String pen){
+    public Cursor getAllDataFromBrooderInventoryWhereID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_TAG is ? and BROODER_INV_PEN_NUMBER is ?", new String[] {tag, pen});
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES+ " where ID is ?", new String[]{id.toString()});
+
+        return res;
+    }
+    public Cursor getDataFromBrooderInventoryWherePenAndID(String tag, Integer pen){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " +TABLE_BROODER_INVENTORIES + " where BROODER_INV_BROODER_TAG is ? and BROODER_INV_PEN_NUMBER is ?", new String[] {tag, pen.toString()});
 
         return res;
     }
@@ -1194,8 +1330,16 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
+    /*
+
+    public static final String TABLE_BROODER = "brooder_table";
+    public static final String BROODER_COL_0 = "ID";
+    public static final String BROODER_COL_1 = "BROODER_FAMILY";
+    public static final String BROODER_COL_2 = "BROODER_DATE_ADDED";
+    public static final String BROODER_COL_3 = "BROODER_DELETED_AT";*/
     public Integer getFamIDFromBrooders(Integer id){
-        Integer fam_id = null;
+        Integer fam_id=0;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select BROODER_FAMILY from " +TABLE_BROODER+ " where ID is ?",new String[]{id.toString()});
         res.moveToFirst();
@@ -1624,8 +1768,8 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         SQLiteDatabase db = this.getReadableDatabase();
         StringBuffer buffer = new StringBuffer();
         List<String> famLineGen = new ArrayList<>();
-        Integer line_id = null;
-        Integer gen_id = null;
+        Integer line_id=null;
+        Integer gen_id=null;
 
 
         Cursor fam = db.rawQuery("select FAMILY_LINE, FAMILY_NUMBER from " +TABLE_FAMILY + " where ID is ? ",new String[]{family_id.toString()}, null);
@@ -2075,6 +2219,25 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
         contentValues.put(COL_7, phone);
         contentValues.put(COL_8, email);
         db.update(TABLE_PROFILE, contentValues, "ID = ?", new String[]{ id });
+        return true;
+    }
+
+    /*    public static final String TABLE_PEN = "pen_table";
+    public static final String PEN_COL_0 = "ID";
+    public static final String PEN_COL_1 = "farm_id";
+    public static final String PEN_COL_2 = "PEN_NUMBER";
+    public static final String PEN_COL_3 = "PEN_TYPE";
+    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
+    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
+    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";
+*/
+    public boolean updateDataPen(Integer pen_id, String pen_number, Integer pen_capacity){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PEN_COL_2, pen_number );
+        contentValues.put(PEN_COL_4, pen_capacity);
+
+        db.update(TABLE_PEN, contentValues, "ID = ?", new String[]{ pen_id.toString() });
         return true;
     }
 

@@ -1,6 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory;
 
 public class Family {
+
     private String family_number;
     private String line_number;
     private String generation_number;

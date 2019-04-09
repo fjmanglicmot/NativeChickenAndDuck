@@ -32,10 +32,10 @@ public class RecyclerAdapter_Brooder_Pen extends RecyclerView.Adapter<RecyclerAd
     ArrayList<Brooder_Inventory> arrayList2 = new ArrayList<>();
     ArrayList<Brooder_Inventory> arrayListInventory = new ArrayList<>();
     ArrayList<Brooders> arrayListBrooders = new ArrayList<>();
-    RecyclerAdapter_Brooder_Pen(ArrayList<Brooders_Pen> arrayList, ArrayList<Brooder_Inventory> arrayList2,ArrayList<Brooders> arrayListBrooders){
+    RecyclerAdapter_Brooder_Pen(ArrayList<Brooders_Pen> arrayList/*, ArrayList<Brooder_Inventory> arrayList2,ArrayList<Brooders> arrayListBrooders*/){
         this.arrayList = arrayList;
-        this.arrayList2 = arrayList2;
-        this.arrayListBrooders = arrayListBrooders;
+      /*  this.arrayList2 = arrayList2;
+        this.arrayListBrooders = arrayListBrooders;*/
         this.context = context;
 
 

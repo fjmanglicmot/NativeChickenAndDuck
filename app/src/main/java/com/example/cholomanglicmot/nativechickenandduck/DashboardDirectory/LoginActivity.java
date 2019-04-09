@@ -1,12 +1,9 @@
 package com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory;
 
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,12 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -161,7 +154,7 @@ public class LoginActivity extends AppCompatActivity{
             //Toast.makeText(this, "Name of the user:"+name, Toast.LENGTH_SHORT).show();
             //Picasso.get().load(photo).into(imageView1);
             sign.setVisibility(View.INVISIBLE);
-            sign_out_button.setVisibility(View.VISIBLE);
+//            sign_out_button.setVisibility(View.VISIBLE);
 
         }else{
            //Picasso.get().load(R.drawable.logo2).into(imageView1);

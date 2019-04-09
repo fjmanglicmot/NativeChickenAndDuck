@@ -211,7 +211,7 @@ public class CreateReplacementDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor_pen != null){
-                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                     arrayListPen.add(pen);
                                 }
                             }while (cursor_pen.moveToNext());
@@ -291,7 +291,7 @@ public class CreateReplacementDialog extends DialogFragment {
                             cursor3.moveToFirst();
                             if(cursor3.getCount() != 0){
                                 do{
-                                    Pen pen = new Pen(cursor3.getString(1), cursor3.getString(2), cursor3.getInt(3), cursor3.getInt(4));
+                                    Pen pen = new Pen(cursor3.getInt(0),cursor3.getString(2), cursor3.getString(3), cursor3.getInt(4), cursor3.getInt(5), cursor3.getInt(6), cursor3.getInt(7));
                                     arrayListPen_2.add(pen);
                                 }while (cursor3.moveToNext());
                                 //do nothing
@@ -360,7 +360,7 @@ public class CreateReplacementDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor_pen != null){
-                                    Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                     arrayListPen.add(pen);
 
                                 }
@@ -439,7 +439,7 @@ public class CreateReplacementDialog extends DialogFragment {
                             }else{
                                 do{
                                     if(cursor3 != null){
-                                        Pen pen = new Pen(cursor3.getString(1), cursor3.getString(2), cursor3.getInt(3), cursor3.getInt(4));
+                                        Pen pen = new Pen(cursor3.getInt(0),cursor3.getString(2), cursor3.getString(3), cursor3.getInt(4), cursor3.getInt(5), cursor3.getInt(6), cursor3.getInt(7));
                                         arrayListPen_2.add(pen);
                                     }
                                 }while (cursor3.moveToNext());

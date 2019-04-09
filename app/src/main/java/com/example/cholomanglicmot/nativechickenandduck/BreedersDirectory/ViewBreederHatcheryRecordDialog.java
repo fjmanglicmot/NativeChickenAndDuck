@@ -49,6 +49,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
     private String brooder_pen;
     ArrayList<Pen> arrayListPen = new ArrayList<>();
     ArrayList<Pen> arrayListPen2 = new ArrayList<>();
+    Integer brooder_pen_id;
 
     @Nullable
     @Override
@@ -277,7 +278,10 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                 }
             }
         });
-
+        Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
+        if(cursor_pen1.getCount() != 0){
+            brooder_pen_id = cursor_pen1.getInt(0);
+        }
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -339,7 +343,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                                 } else {
                                     do {
                                         if (cursor_pen != null) {
-                                            Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                             arrayListPen.add(pen);
                                         }
                                     } while (cursor_pen.moveToNext());
@@ -362,7 +366,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                                 Integer id = cursor1.getInt(0);
 
                                 // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen_id, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
 
                                 boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(edit_no_hatched.getText().toString()) + total, current);
                                 if (isPenUpdated && isInventoryInserted && isInserted) {
@@ -385,7 +389,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                                 } else {
                                     do {
                                         if (cursor_pen != null) {
-                                            Pen pen = new Pen(cursor_pen.getString(1), cursor_pen.getString(2), cursor_pen.getInt(3), cursor_pen.getInt(4));
+                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
                                             arrayListPen.add(pen);
 
                                         }
@@ -406,7 +410,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
                                 int brooder_id = cursorBrooderChecker.getInt(0);
                                 boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(edit_no_hatched.getText().toString()) + total), current);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id, brooder_pen, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id, brooder_pen_id, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
 
 
                                 if (isPenUpdated && isInventoryInserted) {

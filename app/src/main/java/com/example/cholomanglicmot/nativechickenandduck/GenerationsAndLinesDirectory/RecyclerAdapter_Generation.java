@@ -50,7 +50,7 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
 
 
         holder.generation_number.setText(generation.getGeneration_number());
-        holder.generation_status.setText(generation.getGeneration_status());
+        holder.generation_status.setText(generation.getGeneration_status().toString());
         holder.generation_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

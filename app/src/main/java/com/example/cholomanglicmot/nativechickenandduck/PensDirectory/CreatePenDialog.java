@@ -25,6 +25,8 @@ import com.loopj.android.http.RequestParams;
 
 import cz.msebera.android.httpclient.Header;
 
+
+
 public class CreatePenDialog extends DialogFragment {
 
     private static final String TAG = "CreatePenDialog";
@@ -108,7 +110,7 @@ public class CreatePenDialog extends DialogFragment {
                     Integer farm_id = 7;
                     Integer is_active = 1;
                     Integer zero = 0;
-                    boolean isInserted = myDb.insertDataPen(farm_id,pen_number, selected_pen_type,0,Integer.parseInt(mInput_pen_capacity.getText().toString()), is_active);
+                    boolean isInserted = myDb.insertDataPen(farm_id,pen_number, selected_pen_type,Integer.parseInt(mInput_pen_capacity.getText().toString()),0, is_active);
 
 
 
@@ -118,8 +120,8 @@ public class CreatePenDialog extends DialogFragment {
                         requestParams.add("farm_id", farm_id.toString());
                         requestParams.add("number", pen_number);
                         requestParams.add("type", selected_pen_type);
-                        requestParams.add("total_capacity", zero.toString());
-                        requestParams.add("current_capacity", mInput_pen_capacity.toString());
+                        requestParams.add("total_capacity", mInput_pen_capacity.getText().toString());
+                        requestParams.add("current_capacity", zero.toString());
                         requestParams.add("is_active", is_active.toString());
 
                         API_addPen(requestParams);
@@ -147,18 +149,23 @@ public class CreatePenDialog extends DialogFragment {
 
         return view;
     }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     private void API_addPen(RequestParams requestParams){
         APIHelper.addPen("addPen", requestParams, new BaseJsonHttpResponseHandler<Object>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
-                Toast.makeText(context, "Successfully added pen to web", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Successfully added Pen to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(context, "Failed to add pen to web", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -167,10 +174,5 @@ public class CreatePenDialog extends DialogFragment {
             }
         });
     }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
 }

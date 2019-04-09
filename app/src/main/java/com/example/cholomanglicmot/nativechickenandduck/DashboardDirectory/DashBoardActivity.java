@@ -28,13 +28,15 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+//import com.squareup.picasso.Picasso;
 
 public class DashBoardActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -80,7 +82,7 @@ public class DashBoardActivity extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-       // Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
 

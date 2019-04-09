@@ -14,17 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
-import com.loopj.android.http.BaseJsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import cz.msebera.android.httpclient.Header;
 
 public class EditPenDialog extends DialogFragment {
 
@@ -37,13 +30,18 @@ public class EditPenDialog extends DialogFragment {
     Context context;
     String pen_number;
     Integer pen_capacity;
-
+    String input_pen_number;
+    Integer input_pen_capacity;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_edit_pen, container, false);
         final String pen = getArguments().getString("Pen");
+        final Integer pen_id = getArguments().getInt("Pen ID");
+        context = getActivity().getApplicationContext();
+
         myDb = new DatabaseHelper(getContext());
+
         mActionOk = view.findViewById(R.id.action_ok);
 
         new_pen_number = view.findViewById(R.id.new_pen_number);
@@ -51,7 +49,7 @@ public class EditPenDialog extends DialogFragment {
         context = getActivity().getApplicationContext();
 
 
-        Cursor cursor = myDb.getAllDataFromPenWhere(pen);
+        Cursor cursor = myDb.getAllDataFromPenWhereID(pen_id);
         cursor.moveToFirst();
 
         if(cursor.getCount() != 0){
@@ -62,15 +60,33 @@ public class EditPenDialog extends DialogFragment {
         new_pen_number.setHint(pen_number);
         new_pen_capacity.setHint(pen_capacity.toString());
 
-        myDb = new DatabaseHelper(getContext());
+
 
 
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(new_pen_number.getText().toString().isEmpty()){
+                    input_pen_number = new_pen_number.getHint().toString();
+                }else{
+                    input_pen_number = new_pen_number.getText().toString();
+                }
+
+                if(new_pen_capacity.getText().toString().isEmpty()){
+                    input_pen_capacity = Integer.parseInt(new_pen_capacity.getHint().toString());
+                }else{
+                    input_pen_capacity = Integer.parseInt(new_pen_capacity.getText().toString());
+                }
 
 
-                Toast.makeText(context, "yo", Toast.LENGTH_SHORT).show();
+                boolean isUpdated = myDb.updateDataPen(pen_id, input_pen_number,input_pen_capacity);
+                if(isUpdated){
+                    Toast.makeText(context, "Pen updated", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, CreatePen.class);
+                    startActivity(intent);
+                }
+
+
 
 
 

@@ -2,8 +2,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -22,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
@@ -35,13 +39,18 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.squareup.picasso.Picasso;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+//import com.squareup.picasso.Picasso;
 
 public class CreateBrooders extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -56,6 +65,7 @@ public class CreateBrooders extends AppCompatActivity {
     ExpandableListView Exp_list;
     ProjectAdapter adapter;
     DatabaseHelper myDb;
+    ArrayList<Brooders> arrayList_brooder;
     //private String brooder_pen = getArguments().getString("brooder_pen");
 
     //Map<String, ArrayList<String>> brooder_inventory_dictionary = new HashMap<String, ArrayList<String>>();
@@ -77,7 +87,6 @@ public class CreateBrooders extends AppCompatActivity {
         setContentView(R.layout.activity_create_brooders);
 
 
-
         ////////////
         FirebaseAuth mAuth;
 
@@ -93,28 +102,26 @@ public class CreateBrooders extends AppCompatActivity {
 
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View hView =  navigationView.getHeaderView(0);
-        TextView nav_user = (TextView)hView.findViewById(R.id.textView8);
-        TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
+        View hView = navigationView.getHeaderView(0);
+        TextView nav_user = (TextView) hView.findViewById(R.id.textView8);
+        TextView nav_email = (TextView) hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-    //    Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
 
 
-
         Exp_list = findViewById(R.id.exp_list);
         Project_category = DataProvider.getInfo();
-        Project_list =  new ArrayList<String>(Project_category.keySet());
+        Project_list = new ArrayList<String>(Project_category.keySet());
         adapter = new ProjectAdapter(this, Project_category, Project_list);
         Exp_list.setAdapter(adapter);
 
 
-
         myDb = new DatabaseHelper(this);
 
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView1);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView1);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -125,7 +132,7 @@ public class CreateBrooders extends AppCompatActivity {
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 String string2 = Project_list.get(groupPosition);
 
-                switch(string2){
+                switch (string2) {
                     case "Dashboard":
                         Intent intent_main = new Intent(CreateBrooders.this, DashBoardActivity.class);
                         startActivity(intent_main);
@@ -169,12 +176,26 @@ public class CreateBrooders extends AppCompatActivity {
         });
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.closed);
-        mToolbar = (Toolbar)findViewById(R.id.nav_action);
+        mToolbar = (Toolbar) findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Create Brooders");
+
+        //get brooders
+        //get brooder_inventories
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            //if internet is available, load data from web database
+
+
+            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
+            API_getBrooder();
+
+
+        } else {
+
 
 /////////////////////////
         StringBuffer buffer = new StringBuffer();
@@ -182,77 +203,119 @@ public class CreateBrooders extends AppCompatActivity {
         cursor_pen.moveToFirst();
 
 
-
-
         //////////////////////////////////////////
 
-        Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory();
-        Cursor cursor_brooder_pen = myDb.getBroodersFromPen();
-        Cursor cursor_brooder = myDb.getAllDataFromBrooders();
 
-        cursor_brooder.moveToFirst();
-        if(cursor_brooder.getCount() == 0){
+        Cursor cursor_brooder_pen = myDb.getBroodersFromPen(); //naloload na kasi na-load na siya from the pen
+       // Cursor cursor_brooder = myDb.getAllDataFromBrooders();
+
+       /* cursor_brooder.moveToFirst();
+        if (cursor_brooder.getCount() == 0) {
             //show message
-            Toast.makeText(this,"No data from brooders.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No data from brooders.", Toast.LENGTH_LONG).show();
 
-        }else {
+        } else {
             do {
-                /*    private Integer id;
-    private Integer brooder_family_number;
-    private String brooder_date_added;
-    private String brooder_deleted_at;
-*/
 
-                Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2),cursor_brooder.getString(3));
+
+                Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2), cursor_brooder.getString(3));
                 arrayList3.add(brooders);
 
 
-
             } while (cursor_brooder.moveToNext());
-        }
+        }*/
 
 
-
-        if(cursor_brooder_pen.getCount() == 0){
+        if (cursor_brooder_pen.getCount() == 0) {
             //show message
-            Toast.makeText(this,"No data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show();
             return;
-        }else{
+        } else {
 
             cursor_brooder_pen.moveToFirst();
             do {
-                                                      /*    private String brooder_pen_number;    private Integer brooder_pen_content;    private Integer brooder_pen_free;*/
-                Brooders_Pen broodersPen = new Brooders_Pen(cursor_brooder_pen.getString(1), cursor_brooder_pen.getInt(3), cursor_brooder_pen.getInt(4)-cursor_brooder_pen.getInt(3));
+
+                Brooders_Pen broodersPen = new Brooders_Pen(cursor_brooder_pen.getString(2), cursor_brooder_pen.getInt(5), cursor_brooder_pen.getInt(4) - cursor_brooder_pen.getInt(5));
                 arrayList.add(broodersPen);
-            }while (cursor_brooder_pen.moveToNext());
-
-            cursor_brooder_inventory.moveToFirst();
-            if(cursor_brooder_inventory.getCount() == 0){
-                //show message
-                Toast.makeText(this,"No data.", Toast.LENGTH_LONG).show();
-
-            }else {
-                do {
-
-                    Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
-                    arrayList2.add(brooder_inventory);
+            } while (cursor_brooder_pen.moveToNext());
 
 
-                } while (cursor_brooder_inventory.moveToNext());
-            }
-
-
-            recycler_adapter = new RecyclerAdapter_Brooder_Pen(arrayList,arrayList2,arrayList3);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
+            recycler_adapter = new RecyclerAdapter_Brooder_Pen(arrayList/*, arrayList2, arrayList3*/);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
             recyclerView.setAdapter(recycler_adapter);
             recycler_adapter.notifyDataSetChanged();
 
         }
 
+    }
 
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getBrooder(){
+        APIHelper.getBrooder("getBrooder/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
+                Gson gson = new Gson();
+                JSONBrooder jsonBrooder = gson.fromJson(rawJsonResponse, JSONBrooder.class);
+                arrayList_brooder = jsonBrooder.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBroodersWhereID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+                        boolean isInserted = myDb.insertDataBrooderWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getBrooder_family_number(), arrayList_brooder.get(i).getBrooder_date_added(), arrayList_brooder.get(i).getBrooder_deleted_at());
+                        Toast.makeText(CreateBrooders.this, "BROODERS FUCKING ADDED", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+                Cursor cursor_brooder_pen = myDb.getBroodersFromPen();
+
+                if (cursor_brooder_pen.getCount() == 0) {
+                    //show message
+                  /*  Toast.makeText(getApplicationContext(), "No data", Toast.LENGTH_SHORT).show();*/
+                    return;
+                } else {
+
+                    cursor_brooder_pen.moveToFirst();
+                    do {
+
+                        Brooders_Pen broodersPen = new Brooders_Pen(cursor_brooder_pen.getString(2), cursor_brooder_pen.getInt(5), cursor_brooder_pen.getInt(4) - cursor_brooder_pen.getInt(5));
+                        arrayList.add(broodersPen);
+                    } while (cursor_brooder_pen.moveToNext());
+
+
+                    recycler_adapter = new RecyclerAdapter_Brooder_Pen(arrayList/*, arrayList2, arrayList3*/);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
+                    recyclerView.setAdapter(recycler_adapter);
+                    recycler_adapter.notifyDataSetChanged();
+
+                }
+               // Toast.makeText(getApplicationContext(), "Successfully added Brooders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
