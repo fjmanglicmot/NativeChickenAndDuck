@@ -43,7 +43,7 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
     ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
     Integer brooder_pen_id;
-
+    boolean isSend = false;
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
 
@@ -231,9 +231,10 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
 
 
 
-                            while(!API_addBrooderFeeding(requestParams)){
+                           /* while(!API_addBrooderFeeding(requestParams)){
 
-                            }
+                            }*/
+                            API_addBrooderFeeding(requestParams);
 
                         }
 
@@ -280,11 +281,13 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
         builder.show();
     }
 
-    private boolean API_addBrooderFeeding(RequestParams requestParams){
+    private void API_addBrooderFeeding(RequestParams requestParams){
+
         APIHelper.addBrooderFeeding("addBrooderFeeding", requestParams, new BaseJsonHttpResponseHandler<Object>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
                 //Toast.makeText(getActivity(), "Successfully added brooder feeding record to web", Toast.LENGTH_SHORT).show();
+                isSend = true;
 
             }
 
@@ -299,7 +302,7 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
                 return null;
             }
         });
-        return true;
+
     }
     private void API_updateBrooderFeeding( ){
         APIHelper.getBrooderFeeding("getBrooderFeeding/", new BaseJsonHttpResponseHandler<Object>() {
@@ -341,10 +344,10 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
                                 requestParams.add("deleted_at", deleted_at);
 
 
+                                API_addBrooderFeeding(requestParams);
+                            /*    while(!API_addBrooderFeeding(requestParams)){
 
-                                while(!API_addBrooderFeeding(requestParams)){
-
-                                }
+                                }*/
                             }
                         }
 

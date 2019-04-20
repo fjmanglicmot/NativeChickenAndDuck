@@ -67,13 +67,14 @@ public class CreateBreederDialog extends DialogFragment {
     Integer batching_week2=null;
     String formatted=null;
     String brooder_tag2=null;
+    Context context;
     ArrayList<Breeders> arrayListBreeder = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_breeder, container, false);
         mActionOk = view.findViewById(R.id.action_ok);
-
+        context = getActivity();
         //breeder_pen = getArguments().getString("breeder_pen");
         myDb = new DatabaseHelper(getContext());
 
@@ -505,6 +506,7 @@ public class CreateBreederDialog extends DialogFragment {
                         Cursor cursor1 = myDb.getDataFromReplacementInventoryWhereTag(replacement_tag_2);
 
                         cursor1.moveToFirst();
+                        Integer id1 = cursor1.getInt(0);
                         replacement_pen_2 = cursor1.getInt(2);
                         Integer current_male_count = cursor1.getInt(5);
                         Integer current_male_total = cursor1.getInt(7);
@@ -516,6 +518,16 @@ public class CreateBreederDialog extends DialogFragment {
 
                         //update the current male and female count of the replacement inventory
                         boolean isUpdated = myDb.updateReplacementInventoryMaleCountAndTotal(replacement_tag_2, new_male_count, new_male_total);
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("replacement_inv_id", id1.toString());
+                            requestParams.add("male", new_male_count.toString());
+                            requestParams.add("total_", new_male_total.toString());
+
+
+                            API_editReplacementInventoryMaleFemale(requestParams);
+                        }
 
                         //updatePen
 
@@ -582,7 +594,7 @@ public class CreateBreederDialog extends DialogFragment {
 
                         Cursor cursor2 = myDb.getDataFromReplacementInventoryWhereTag(female_replacement_tag_2);
                         cursor2.moveToFirst();
-
+                        Integer id3 = cursor2.getInt(0);
                         female_replacement_pen_2 = cursor2.getInt(2);
                         Integer current_female_count = cursor2.getInt(6);
                         Integer current_female_total = cursor2.getInt(7);
@@ -591,6 +603,16 @@ public class CreateBreederDialog extends DialogFragment {
 
 
                         boolean isUpdatedFemale = myDb.updateReplacementInventoryFemaleCountAndTotal(female_replacement_tag_2,new_female_count, new_female_total);
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("replacement_inv_id", id3.toString());
+                            requestParams.add("female", new_female_count.toString());
+                            requestParams.add("total_", new_female_total.toString());
+
+
+                            API_editReplacementInventoryMaleFemale(requestParams);
+                        }
 
                         //updateFemale
                         Cursor cursor4 = myDb.getAllDataFromPen();
@@ -716,6 +738,25 @@ public class CreateBreederDialog extends DialogFragment {
 
         return view;
     }
+    private void API_editReplacementInventoryMaleFemale(RequestParams requestParams){
+        APIHelper.editReplacementInventoryMaleFemale("editReplacementInventoryMaleFemale", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+       //         Toast.makeText(context, "Successfully edited replacement male and female", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to edit replacement male and female", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
     private void API_editPenCount(RequestParams requestParams){
         APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {
             @Override
@@ -726,7 +767,7 @@ public class CreateBreederDialog extends DialogFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to edit pen count", Toast.LENGTH_SHORT).show();
             }
 
             @Override

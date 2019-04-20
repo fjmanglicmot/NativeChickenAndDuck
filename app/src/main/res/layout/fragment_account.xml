@@ -40,7 +40,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/profile_id"
+                    android:id="@+id/farm_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
@@ -78,6 +78,7 @@
                     android:layout_marginLeft="5dp"/>
 
                 <TextView
+
                     android:textStyle="bold"
                     android:id="@+id/farm_name"
                     android:layout_width="150dp"
@@ -86,36 +87,10 @@
                     android:text="Sample Farm"
                     android:background="@android:color/transparent"
                     android:textSize="14sp" />
-                <EditText
-                    android:id="@+id/edit_farm_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/breed"
-                    android:layout_marginLeft="5dp"/>
-
-                <TextView
-                    android:textStyle="bold"
-                    android:id="@+id/profile_breed"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="BP"
-                    android:background="@android:color/transparent"
-                    android:textSize="14sp" />
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -138,11 +113,7 @@
                     android:text="Calinog Campus, Brgy. Simsiman, Calinog, Iloilo"
                     android:background="@android:color/transparent"
                     android:textSize="14sp" />
-                <EditText
-                    android:id="@+id/edit_farm_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -159,18 +130,14 @@
 
                 <TextView
                     android:textStyle="bold"
-                    android:id="@+id/farm_batching_week"
+                    android:id="@+id/batching_week"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="Every 1 week(s)"
                     android:background="@android:color/transparent"
                     android:textSize="14sp" />
-                <EditText
-                    android:id="@+id/edit_batching_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -187,7 +154,7 @@
 >
 
         <Button
-            android:id="@+id/account_submit_button"
+            android:id="@+id/edit_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

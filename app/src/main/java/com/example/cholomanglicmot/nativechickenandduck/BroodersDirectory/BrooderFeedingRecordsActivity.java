@@ -116,7 +116,7 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
 
 
 
-            API_getBrooderFeeding();
+            //API_getBrooderFeeding();
 
 
         }

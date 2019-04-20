@@ -32,6 +32,7 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView mMainNav;
     private Button show_data_button;
     TextView name_textview;
+    CircleImageView display_photo;
 
 
     private AccountFragment accountFragment;
@@ -85,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-        // Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
+
         nav_email.setText(email);
         ///////////////////
 
@@ -97,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ProjectAdapter(this, Project_category, Project_list);
         Exp_list.setAdapter(adapter);
         mMainNav =  findViewById(R.id.bottom_nav);
-        name_textview = findViewById(R.id.name_textview);
+        name_textview = findViewById(R.id.name);
+        display_photo = findViewById(R.id.display_photo);
+        name_textview.setText(name);
+        Picasso.get().load(photo).into(display_photo);
 
 
 

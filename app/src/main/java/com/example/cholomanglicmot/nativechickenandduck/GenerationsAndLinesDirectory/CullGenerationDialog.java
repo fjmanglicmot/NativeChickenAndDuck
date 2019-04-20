@@ -13,11 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
-import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +41,7 @@ public class CullGenerationDialog extends DialogFragment {
 
         final String generation_number = getArguments().getString("Generation Number");
         final Integer generation_id = getArguments().getInt("Generation ID");
-
+        //Toast.makeText(getActivity(), generation_id.toString(), Toast.LENGTH_SHORT).show();
         context = getActivity();
 
         myDb = new DatabaseHelper(getContext());
@@ -72,15 +70,8 @@ public class CullGenerationDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 //update  is_active column of selected inventory to 0 or false
-                String date = getDate();
-                Toast.makeText(getActivity(), date, Toast.LENGTH_SHORT).show();
-                boolean isDeleted = myDb.cullReplacementInventory(generation_number, date);
-                //update brooder pen
-                boolean isUpdateed = myDb.updateDataPen1(generation_id, pen_number,pen_capacity-total);
-                if(isDeleted){
-                    Toast.makeText(getContext(), "Replacement "+generation_number+" deleted.", Toast.LENGTH_SHORT).show();
-                }
-                Intent intent_line = new Intent(getActivity(), CreateReplacements.class);
+
+                Intent intent_line = new Intent(getActivity(), CreateGenerationsAndLines.class);
                 startActivity(intent_line);
 
             }

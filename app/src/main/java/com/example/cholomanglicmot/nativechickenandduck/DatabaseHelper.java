@@ -1298,6 +1298,7 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
         return res;
     }
+
     public Cursor getAllDataFromFamilyWhereID(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " +TABLE_FAMILY+ " where ID is ?", new String[]{id.toString()});
@@ -2367,6 +2368,21 @@ public boolean insertEggQualityRecords(Integer breeder_inv_id, String date, Inte
 
     }
 
+    public boolean updateFarm(Integer id, String name, String address, Integer week){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FARM_COL_2, name);
+        contentValues.put(FARM_COL_4, address);
+        contentValues.put(FARM_COL_5, week);
+
+        long result = db.update(TABLE_FARMS,contentValues,"ID = ?", new String[]{id.toString()});
+        if (result == -1)
+            return  false;
+        else
+            return true;
+
+
+    }
 
     public boolean updateDataAddress(String id, String breed, String region, String province, String town, String barangay){
         SQLiteDatabase db = this.getWritableDatabase();

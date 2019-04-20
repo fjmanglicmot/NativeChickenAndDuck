@@ -377,13 +377,24 @@ public class CreateReplacementDialog extends DialogFragment {
                             Cursor cursor1 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag_2);
 
                             cursor1.moveToFirst();
-
+                            Integer id1 = cursor1.getInt(0);
                             Integer current_total = cursor1.getInt(7);
                             Integer new_total = current_total - totalCount;
 
 
                             //update specific brooder inventory's total count
+
                             boolean isUpdated = myDb.updateBrooderInventory(brooder_tag_2, new_total);
+                            if(isNetworkAvailable()){
+
+                                RequestParams requestParams = new RequestParams();
+                                requestParams.add("brooder_inv_id", id1.toString());
+                                requestParams.add("total_", new_total.toString());
+
+
+
+                                API_editBrooderInventoryMaleFemale(requestParams);
+                            }
 
 
 
@@ -582,12 +593,21 @@ public class CreateReplacementDialog extends DialogFragment {
                             Cursor cursor1 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag_2);
 
                             cursor1.moveToFirst();
-
+                            Integer id = cursor1.getInt(0);
                             Integer current_total = cursor1.getInt(7);
                             Integer new_total = current_total - totalCount;
 
                             boolean isUpdated = myDb.updateBrooderInventory(brooder_tag_2, new_total);
+                            if(isNetworkAvailable()){
 
+                                RequestParams requestParams = new RequestParams();
+                                requestParams.add("brooder_inv_id", id.toString());
+                                requestParams.add("total_", new_total.toString());
+
+
+
+                                API_editBrooderInventoryMaleFemale(requestParams);
+                            }
 
 
                             //updating brooder pen's values
@@ -730,6 +750,25 @@ public class CreateReplacementDialog extends DialogFragment {
 
 
         return view;
+    }
+    private void API_editBrooderInventoryMaleFemale(RequestParams requestParams){
+        APIHelper.editBrooderInventoryMaleFemale("editBrooderInventoryMaleFemale", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+      //          Toast.makeText(context, "Successfully edited brooder male and female", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     private void API_editPenCount(RequestParams requestParams){
         APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {

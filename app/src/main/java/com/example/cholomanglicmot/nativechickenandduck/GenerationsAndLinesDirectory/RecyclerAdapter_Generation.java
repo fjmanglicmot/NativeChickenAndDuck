@@ -57,7 +57,8 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
 
 
         holder.generation_number.setText(generation.getGeneration_number());
-        holder.generation_status.setText(generation.getGeneration_status().toString());
+
+
         holder.generation_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,17 +77,27 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
                 showMessage("Generation "+generation.getGeneration_number(), buffer.toString());
             }
         });
-        holder.generation_cull.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentActivity activity = (FragmentActivity)(context);
-                FragmentManager fm = activity.getSupportFragmentManager();
-                CullGenerationDialog alertDialog = new CullGenerationDialog();
-                alertDialog.setArguments(args);
-                alertDialog.show(fm, "CullGenerationDialog");
-                notifyDataSetChanged();
-            }
-        });
+        if(arrayList.get(position).getGeneration_status()==0){
+            holder.generation_cull.setImageResource(R.drawable.ic_remove_black_24dp);
+            holder.generation_cull.setClickable(false);
+            holder.generation_cull.setEnabled(false);
+            holder.generation_status.setText("Inactive");
+        }else{
+            holder.generation_status.setText("Active");
+            holder.generation_cull.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentActivity activity = (FragmentActivity)(context);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    CullGenerationDialog alertDialog = new CullGenerationDialog();
+                    alertDialog.setArguments(args);
+                    alertDialog.show(fm, "CullGenerationDialog");
+                    notifyDataSetChanged();
+                }
+            });
+        }
+
+
 
 
     //notifyDataSetChanged();

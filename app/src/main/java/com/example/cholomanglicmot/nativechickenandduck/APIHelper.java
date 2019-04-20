@@ -183,6 +183,12 @@ public class APIHelper {
     public static void editReplacementInventoryMaleFemale(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
         client.patch(getAbsoluteUrl(url), request, responseHandler);
     }
+    public static void editFarm(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void editBreederInventoryMaleFemale(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
     //URL
     private static String getAbsoluteUrl(String url){
         return BASE_URL + url;

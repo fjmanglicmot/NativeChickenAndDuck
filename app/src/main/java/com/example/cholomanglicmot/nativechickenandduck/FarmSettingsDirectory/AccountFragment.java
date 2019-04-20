@@ -1,15 +1,17 @@
 package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -19,10 +21,13 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
  * A simple {@link Fragment} subclass.
  */
 public class AccountFragment extends Fragment {
-    private Button account_submit_button;
-    private TextView profile_id;
-    private EditText edit_farm_name, edit_farm_address, edit_batching_date;
+    private Button edit_button;
+    private TextView farm_code, farm_name, farm_address, batching_week;
+
     DatabaseHelper myDb;
+    String farm_code1, farm_name1, farm_address1;
+    Integer batching_week1;
+    Context context;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -35,26 +40,37 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         myDb = new DatabaseHelper(getContext());
+        context = getActivity();
+        edit_button = (Button) view.findViewById(R.id.edit_button);
+        farm_code = view.findViewById(R.id.farm_code);
+        farm_name = view.findViewById(R.id.farm_name);
+        farm_address = view.findViewById(R.id.farm_address);
+        batching_week = view.findViewById(R.id.batching_week);
 
-        account_submit_button = (Button) view.findViewById(R.id.account_submit_button);
-        edit_farm_name = view.findViewById(R.id.edit_farm_name);
-        edit_farm_address = view.findViewById(R.id.edit_farm_address);
-        edit_batching_date = view.findViewById(R.id.edit_batching_date);
 
-
-       /* Cursor cursor = myDb.getAllData();
+        Cursor cursor = myDb.getAllDataFromFarms();
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
-            profile_id.setText(cursor.getString(0));
-            profile_breed.setHint(cursor.getString(1));
+            farm_name1 = cursor.getString(1);
+            farm_code1 = cursor.getString(2);
+            farm_address1 = cursor.getString(3);
+            batching_week1 = cursor.getInt(4);
         }
-*/
 
-        account_submit_button.setOnClickListener(new View.OnClickListener() {
+        farm_code.setText(farm_code1);
+        farm_name.setText(farm_name1);
+        farm_address.setText(farm_address1);
+        batching_week.setText("Every "+batching_week1+" week/s");
+
+        edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                EditFarmDialog alertDialog = new EditFarmDialog();
+               //alertDialog.setArguments(args);
+                alertDialog.show(fm, "EditFarmDialog");
 
-                Toast.makeText(getActivity(),"Database updated", Toast.LENGTH_SHORT).show();
             }
         });
         return view;

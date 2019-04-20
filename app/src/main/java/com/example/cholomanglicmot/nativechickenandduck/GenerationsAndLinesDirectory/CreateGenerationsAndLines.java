@@ -306,9 +306,11 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 cursor.moveToFirst();
                 do {
 
-                        Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
+                            Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
 
-                        arrayList.add(generation);
+                            arrayList.add(generation);
+
+
 
 
 
