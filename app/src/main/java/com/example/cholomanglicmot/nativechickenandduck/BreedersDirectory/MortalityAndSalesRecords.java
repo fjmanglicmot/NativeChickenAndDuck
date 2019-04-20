@@ -96,14 +96,18 @@ public class MortalityAndSalesRecords extends AppCompatActivity {
             Toast.makeText(this, "No data in Mortality and Sales", Toast.LENGTH_SHORT).show();
         }else{
             do{
+                Integer breeder_inv_id = cursor.getInt(2);
+                if(breeder_inv_id == breeder_id){
+                    Mortality_Sales mortalityAndSalesRecords = new Mortality_Sales(cursor.getInt(0), cursor.getString(1),breeder_tag, cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5),cursor.getString(6), cursor.getFloat(7), cursor.getInt(8), cursor.getInt(9),cursor.getInt(10),cursor.getString(11),cursor.getString(12), cursor.getString(12));
+                    arrayList_temp.add(mortalityAndSalesRecords);
+                }
 
-                                                                                            /*nteger id, String date, Integer breeder_id, Integer replaement_id, Integer brooder_id,         String type, S       tring category,       Integer price,      Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
-                 */
-                Mortality_Sales mortalityAndSalesRecords = new Mortality_Sales(cursor.getInt(0), cursor.getString(1),breeder_tag, cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5),cursor.getString(6), cursor.getFloat(7), cursor.getInt(8), cursor.getInt(9),cursor.getInt(10),cursor.getString(11),cursor.getString(12), cursor.getString(12));
-                arrayList_temp.add(mortalityAndSalesRecords);
+
             }while (cursor.moveToNext());
         }
 
+
+        //dapat may filter pa sa arraylist temp na dapat tung mortality and sales lang ng given breeder tag yung lalabas
         recycler_adapter = new RecyclerAdapter_Mortality_and_Sales(arrayList_temp);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();

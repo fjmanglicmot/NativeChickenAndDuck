@@ -80,6 +80,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
                 Intent intent_replacement_feeding_records = new Intent(context, BreederFeedingRecordsActivity.class);
                 intent_replacement_feeding_records.putExtra("Breeder Pen",breeders.getBrooder_inv_pen());
                 intent_replacement_feeding_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                intent_replacement_feeding_records.putExtra("Breeder Inventory ID",breeders.getId());
                 context.startActivity(intent_replacement_feeding_records);
             }
         });
@@ -90,6 +91,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
                 Intent intent_replacement_pheno_morpho_records = new Intent(context, EggProductionRecords.class);
                 intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
                 intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                intent_replacement_pheno_morpho_records.putExtra("Breeder Inventory ID",breeders.getId());
                 context.startActivity(intent_replacement_pheno_morpho_records);
             }
         });

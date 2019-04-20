@@ -1,17 +1,31 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Replacement_GrowthRecords {
+    @SerializedName("id")
     private Integer id;
+    @SerializedName("replacement_inventory_id")
     private Integer replacement_growth_inventory_id;
+
     private String replacement_growth_tag;
+    @SerializedName("collection_day")
     private Integer replacement_growth_collection_day;
+    @SerializedName("date_collected")
     private String replacement_growth_date_collected;
+    @SerializedName("male_quantity")
     private Integer replacement_growth_male_quantity;
+    @SerializedName("male_weight")
     private Float replacement_growth_male_weight;
+    @SerializedName("female_quantity")
     private Integer replacement_growth_female_quantity;
+    @SerializedName("female_weight")
     private Float replacement_growth_female_weight;
+    @SerializedName("total_quantity")
     private Integer replacement_growth_total_quantity;
+    @SerializedName("total_weight")
     private Float replacement_growth_total_weight;
+    @SerializedName("deleted_at")
     private String replacement_growth_deleted_at;
 
     Replacement_GrowthRecords(){
@@ -134,3 +148,4 @@ public class Replacement_GrowthRecords {
 
 
 }
+

@@ -26,16 +26,10 @@ public class RecyclerAdapter_Replacement_Pen extends RecyclerView.Adapter<Recycl
     //Map<String, ArrayList<String>> brooder_inventory_dictionary = new HashMap<String, ArrayList<String>>();
 
 
-    RecyclerView recyclerView;
-    RecyclerView.Adapter recycler_adapter;
-    RecyclerView.LayoutManager layoutManager;
-    ArrayList<Replacement_Inventory> arrayList2 = new ArrayList<>();
-    ArrayList<Replacement_Inventory> arrayListInventory = new ArrayList<>();
-    ArrayList<Replacements> arrayListReplacements = new ArrayList<>();
-    RecyclerAdapter_Replacement_Pen(ArrayList<Replacement_Pen> arrayList, ArrayList<Replacement_Inventory> arrayList2, ArrayList<Replacements> arrayListReplacements){
+
+    RecyclerAdapter_Replacement_Pen(ArrayList<Replacement_Pen> arrayList){
         this.arrayList = arrayList;
-        this.arrayList2 = arrayList2;
-        this.arrayListReplacements = arrayListReplacements;
+
         this.context = context;
 
 

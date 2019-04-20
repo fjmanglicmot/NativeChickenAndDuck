@@ -83,6 +83,9 @@ public class HatcheryRecords extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
+        Cursor cur = myDb.getDataFromBreederInvWhereTag(breeder_tag);
+        cur.moveToFirst();
+        Integer bred = cur.getInt(0);
 
 
         Cursor cursor_brooder_feeding_records = myDb.getAllDataFromHatcheryRecords();
@@ -93,11 +96,12 @@ public class HatcheryRecords extends AppCompatActivity {
 
         }else {
             do {
+                Integer breeder_inv_id1 = cursor_brooder_feeding_records.getInt(1);
+                if(breeder_inv_id1 == bred) {
+                    Hatchery_Records hatcheryRecords = new Hatchery_Records(cursor_brooder_feeding_records.getInt(0), cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), breeder_tag, cursor_brooder_feeding_records.getString(3), cursor_brooder_feeding_records.getInt(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getInt(7), cursor_brooder_feeding_records.getString(8), cursor_brooder_feeding_records.getString(9));
 
-                Hatchery_Records hatcheryRecords = new Hatchery_Records(cursor_brooder_feeding_records.getInt(0),cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2),breeder_tag ,cursor_brooder_feeding_records.getString(3), cursor_brooder_feeding_records.getInt(4), cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getInt(7), cursor_brooder_feeding_records.getString(8), cursor_brooder_feeding_records.getString(9));
-
-                arrayListBrooderGrowthRecords.add(hatcheryRecords);
-
+                    arrayListBrooderGrowthRecords.add(hatcheryRecords);
+                }
             } while (cursor_brooder_feeding_records.moveToNext());
         }
 

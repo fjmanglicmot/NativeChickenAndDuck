@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -64,7 +63,7 @@ public class ReplacementPhenoMorphoRecordsActivity extends AppCompatActivity {
         ///////////////////////////////DATABASE
 
 
-        ////inventory
+
         Cursor cursor_inventory = myDb.getAllDataFromReplacementInventory();
         cursor_inventory.moveToFirst();
 
@@ -72,52 +71,18 @@ public class ReplacementPhenoMorphoRecordsActivity extends AppCompatActivity {
 
         } else {
             do {
-                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_inventory.getInt(0),cursor_inventory.getInt(1), cursor_inventory.getString(2), cursor_inventory.getString(3),cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6),cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
-                arrayListReplacementInventory.add(replacement_inventory);
+
+
+                /*    private Integer id;brooder_inv_brooder_id           ;brooder_inv_pen;               brooder_inv_brooder_tag;        brooder_inv_batching_date;  brooder_male_quantity           ;brooder_female_quantity;       brooder_total_quantity;      brooder_inv_last_update;         brooder_inv_deleted_at;f            amily;line;generation;*/
+                Replacement_Inventory breeder_inventory = new Replacement_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), cursor_inventory.getInt(2),cursor_inventory.getString(3),cursor_inventory.getString(4),cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
+                arrayListReplacementInventory.add(breeder_inventory);
             } while (cursor_inventory.moveToNext());
         }
-        ///GROWTH RECORDS
-        Cursor cursor_growth = myDb.getAllDataFromReplacementPhenoMorphoRecords();
-        cursor_growth.moveToFirst();
-
-        if(cursor_growth.getCount()==0){
-            Toast.makeText(this,"No data from pheno and morpho records", Toast.LENGTH_SHORT).show();
-        }else{
-            do{
 
 
-                 Replacement_PhenoMorphoRecords replacement_phenoMorphoRecords = new Replacement_PhenoMorphoRecords(cursor_growth.getInt(0),cursor_growth.getInt(1), cursor_growth.getString(2), cursor_growth.getString(3), cursor_growth.getString(4), cursor_growth.getString(5), null,null);
-                //add constrcutor for pheno and morpho
-                arrayList_temp.add(replacement_phenoMorphoRecords);
-            }while (cursor_growth.moveToNext());
-
-        }
-
-        //kunin mo naman yung replacement inventories ng given PEN NUMBER
-        for (int i = 0; i<arrayListReplacementInventory.size();i++){
-            if (arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen)){
-                arrayListReplacementInventory1.add(arrayListReplacementInventory.get(i));
-
-
-            }
-        }
-
-        //kunin mo naman yung feeding records based sa id ng brooder inventories sa arrayListReplacementInventory1
-/*
-        for (int i=0; i<arrayList_temp.size();i++){
-            for(int j=0;j<arrayListReplacementInventory1.size();j++){
-                if (arrayList_temp.get(i).getPheno_morpho_inv_id().equals(arrayListReplacementInventory1.get(j).getId())){
-                    arrayListGrowth.add(arrayList_temp.get(i));
-
-                }
-            }
-        }*/
-        recycler_adapter = new RecyclerAdapter_Replacement_PhenoMorpho(arrayListReplacementInventory1);
+        recycler_adapter = new RecyclerAdapter_Replacement_PhenoMorpho(arrayListReplacementInventory);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();
-
-
-
     }
     @Override
     public boolean onSupportNavigateUp() {

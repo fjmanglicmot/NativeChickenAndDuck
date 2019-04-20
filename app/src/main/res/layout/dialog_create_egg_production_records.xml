@@ -64,7 +64,7 @@
             android:layout_below="@+id/textView3"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:hint="Total Eggs that passes as good"
+
             android:textSize="15sp"
             android:inputType="number"/>
 
@@ -85,7 +85,7 @@
             android:layout_below="@+id/textView5"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:hint="Total egg weight of all intact eggs"
+
             android:inputType="number"
             android:textSize="15sp" />
         <TextView
@@ -105,7 +105,7 @@
             android:layout_below="@+id/textView5"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:hint="Total eggs that were broken"
+
             android:inputType="number"
             android:textSize="15sp" />
         <TextView
@@ -124,7 +124,7 @@
             android:layout_below="@+id/textView5"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:hint="Total eggs that were broken"
+
             android:inputType="number"
             android:textSize="15sp" />
         <TextView
@@ -144,7 +144,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:hint="Add remarks"
-            android:inputType="number"
+            android:inputType="text"
             android:textSize="15sp" />
         <LinearLayout
             android:layout_width="match_parent"

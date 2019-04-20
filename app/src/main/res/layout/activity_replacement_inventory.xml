@@ -62,7 +62,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         >
-
+                        <TextView
+                            android:id="@+id/replacement_inventory_code"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:text="Inventory Code"
+                            android:textStyle="bold"
+                            />
 
                         <TextView
                             android:id="@+id/brooder_inventory_batch_date"
@@ -74,16 +83,7 @@
                             android:textSize="12sp"
                             android:text="Batching Date" />
 
-                        <TextView
-                            android:id="@+id/replacement_inventory_code"
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:gravity="center"
-                            android:textSize="12sp"
-                            android:text="Inventory Code"
-                            android:textStyle="bold"
-                            />
+
 
           <!--          <TextView
                         android:id="@+id/replacement_inventory_family"
@@ -161,15 +161,7 @@
                             android:textStyle="bold"
                             android:textSize="12sp"
                             android:text="Update" />
-                        <TextView
-                            android:id="@+id/brooder_inventory_mort"
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:gravity="center"
-                            android:textStyle="bold"
-                            android:textSize="12sp"
-                            android:text="Mort/Sale" />-->
+                   -->
                         <TextView
                             android:id="@+id/brooder_inventory_view"
                             android:layout_width="50dp"
@@ -181,7 +173,15 @@
                             android:text="View" />
 
 
-
+                        <TextView
+                            android:id="@+id/brooder_inventory_mort"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="12sp"
+                            android:text="Mort/Sale" />
                         <TextView
                             android:id="@+id/brooder_inventory_cull"
                             android:layout_width="50dp"

@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -83,30 +84,20 @@ public class BrooderInventoryActivity extends AppCompatActivity {
             brooder_pen_id = cursor1.getInt(0);
         }
 
-        Cursor cursor = myDb.getAllDataFromPenWhere(brooder_pen);
-        cursor.moveToFirst();
-        if(cursor.getCount()!=0){
-            pen_id = cursor.getInt(0);
-        }
+
 
         boolean isNetworkAvailable = isNetworkAvailable();
         if (isNetworkAvailable) {
             //if internet is available, load data from web database
 
 
-            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
-
-            API_getBrooderInventory(pen_id);
 
 
-        } else {
-
-            ///////so meron ka nang arraylist para sa brooders
-            //////meron narin para sa brooderinventory
-            ///////gawa ka ng dictionary na ang key ay ang brooder_id ng brooder
+            API_getBrooderInventory();
 
 
-            //famLineGen = myDb.getFamLineGen(cursor_brooder_inventory.get)
+        }
+
 
             Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory(); //para sa pagstore ng data sa arraylist
             cursor_brooder_inventory.moveToFirst();
@@ -125,7 +116,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
 
             for (int i=0;i<arrayListBrooderInventory.size();i++){
-                if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen_id) ){
+                if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == brooder_pen_id && arrayListBrooderInventory.get(i).getBrooder_inv_deleted_at() == null){
 
                     arrayList_temp.add(arrayListBrooderInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
 
@@ -138,7 +129,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
             recyclerView.setAdapter(recycler_adapter);
             recycler_adapter.notifyDataSetChanged();
 
-        }
+
 
 
 
@@ -149,8 +140,8 @@ public class BrooderInventoryActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    private void API_getBrooderInventory(Integer pen_id){
-        APIHelper.getBrooderInventory("getBrooderInventory/"+pen_id.toString(), new BaseJsonHttpResponseHandler<Object>() {
+    private void API_getBrooderInventory(){
+        APIHelper.getBrooderInventory("getBrooderInventory/", new BaseJsonHttpResponseHandler<Object>() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
@@ -163,27 +154,15 @@ public class BrooderInventoryActivity extends AppCompatActivity {
                     Cursor cursor = myDb.getAllDataFromBrooderInventoryWhereID(arrayList_brooderInventory.get(i).getId());
                     cursor.moveToFirst();
 
-                   // if (cursor.getCount() == 0) {
+                    if (cursor.getCount() == 0) {
 
-                        arrayList_temp.add(arrayList_brooderInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
+
                         boolean isInserted = myDb.insertDataBrooderInventoryWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_id(), arrayList_brooderInventory.get(i).getBrooder_inv_pen(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_tag(),arrayList_brooderInventory.get(i).getBrooder_inv_batching_date(),arrayList_brooderInventory.get(i).getBrooder_male_quantity(),arrayList_brooderInventory.get(i).getBrooder_female_quantity(),arrayList_brooderInventory.get(i).getBrooder_total_quantity(), arrayList_brooderInventory.get(i).getBrooder_inv_last_update(), arrayList_brooderInventory.get(i).getBrooder_inv_deleted_at());
-                    //Toast.makeText(BrooderInventoryActivity.this, "oyoyooyoy", Toast.LENGTH_SHORT).show();
-                   // }
+
+                    }
 
                 }
 
-                for (int i=0;i<arrayList_brooderInventory.size();i++){
-                  //  if(arrayList_brooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
-
-
-
-                   // }
-                }
-                recycler_adapter = new RecyclerAdapter_Brooder_Inventory(arrayList_temp, null);
-                recyclerView.setAdapter(recycler_adapter);
-                recycler_adapter.notifyDataSetChanged();
-
-             //   Toast.makeText(getApplicationContext(), "Successfully added Brooder Inventory from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -200,7 +179,10 @@ public class BrooderInventoryActivity extends AppCompatActivity {
     }
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        Intent intent_brooders = new Intent(BrooderInventoryActivity.this, CreateBrooders.class);
+
+        startActivity(intent_brooders);
+
         return true;
     }
     public void showMessage(String title, String message){

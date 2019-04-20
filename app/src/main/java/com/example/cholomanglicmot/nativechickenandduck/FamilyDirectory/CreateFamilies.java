@@ -258,7 +258,7 @@ public class CreateFamilies extends AppCompatActivity {
 
 
 
-        }else{
+        }
             Cursor cursor = myDb.getAllDataFromFamily();
             cursor.moveToFirst();
 
@@ -298,7 +298,7 @@ public class CreateFamilies extends AppCompatActivity {
                 recyclerView.setAdapter(recycler_adapter);
                 recycler_adapter.notifyDataSetChanged();
 
-            }
+
         }
 
 
@@ -350,9 +350,9 @@ public class CreateFamilies extends AppCompatActivity {
 
                 API_getFamily();
 
-                recycler_adapter = new RecyclerAdapter_Family(arrayList_family);
+             /*   recycler_adapter = new RecyclerAdapter_Family(arrayList_family);
                 recyclerView.setAdapter(recycler_adapter);
-                recycler_adapter.notifyDataSetChanged();
+                recycler_adapter.notifyDataSetChanged();*/
 
             }
 

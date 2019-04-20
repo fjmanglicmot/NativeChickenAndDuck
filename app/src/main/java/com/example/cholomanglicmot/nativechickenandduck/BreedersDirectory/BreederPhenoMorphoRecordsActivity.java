@@ -26,30 +26,37 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
     ArrayList<Breeder_Inventory>arrayListReplacementInventory = new ArrayList<>();
     ArrayList<Breeder_Inventory>arrayListReplacementInventory1 = new ArrayList<>();
     ArrayList<Breeder_PhenoMorphoRecords>arrayList_temp = new ArrayList<>();
-
+    Integer replacement_pen;
+    String replacement_pen_number=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_replacement_pheno_morpho_records);
+        myDb = new DatabaseHelper(getApplicationContext());
+        String breeder_tag;
 
-        String replacement_pen,breeder_tag;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
                 replacement_pen= null;
                 breeder_tag = null;
             } else {
-                replacement_pen= extras.getString("Replacement Pen");
+                replacement_pen= extras.getInt("Replacement Pen");
                 breeder_tag = extras.getString("Breeder Tag");
             }
         } else {
-            replacement_pen= (String) savedInstanceState.getSerializable("Replacement Pen");
+            replacement_pen= (Integer) savedInstanceState.getSerializable("Replacement Pen");
             breeder_tag = (String) savedInstanceState.getSerializable("Breeder Tag");
         }
 
+        Cursor cursor = myDb.getAllDataFromPenWhereID(replacement_pen);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            replacement_pen_number = cursor.getString(2);
+        }
 
         text_pen = findViewById(R.id.pheno_title);
-        text_pen.setText("Phenotypic & Morphometric Data | Pen "+replacement_pen);
+        text_pen.setText("Phenotypic & Morphometric Data | Pen "+replacement_pen_number);
 
         myDb = new DatabaseHelper(this);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerViewReplacementInventory);
@@ -60,7 +67,7 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Breeder Inventory");
+        getSupportActionBar().setTitle("Breeder Phenotypic & Morphometric Data");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
@@ -79,31 +86,12 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
 
 
                                                                                   /*    private Integer id;brooder_inv_brooder_id           ;brooder_inv_pen;               brooder_inv_brooder_tag;        brooder_inv_batching_date;  brooder_male_quantity           ;brooder_female_quantity;       brooder_total_quantity;      brooder_inv_last_update;         brooder_inv_deleted_at;f            amily;line;generation;*/
-                Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), cursor_inventory.getString(2),cursor_inventory.getString(3),cursor_inventory.getString(4),cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
+                Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), cursor_inventory.getInt(2),cursor_inventory.getString(3),cursor_inventory.getString(4),cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
                 arrayListReplacementInventory.add(breeder_inventory);
             } while (cursor_inventory.moveToNext());
         }
 
 
-        //kunin mo naman yung replacement inventories ng given PEN NUMBER
-   /*     for (int i = 0; i<arrayListReplacementInventory.size();i++){
-            if (arrayListReplacementInventory.get(i).getBrooder_inv_pen().equals(replacement_pen)){
-                arrayListReplacementInventory1.add(arrayListReplacementInventory.get(i));
-
-
-            }
-        }
-*/
-        //kunin mo naman yung feeding records based sa id ng brooder inventories sa arrayListReplacementInventory1
-/*
-        for (int i=0; i<arrayList_temp.size();i++){
-            for(int j=0;j<arrayListReplacementInventory1.size();j++){
-                if (arrayList_temp.get(i).getPheno_morpho_inv_id().equals(arrayListReplacementInventory1.get(j).getId())){
-                    arrayListGrowth.add(arrayList_temp.get(i));
-
-                }
-            }
-        }*/
         recycler_adapter = new RecyclerAdapter_Breeder_PhenoMorpho(arrayListReplacementInventory);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();
@@ -114,6 +102,7 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         Intent intent_brooders = new Intent(BreederPhenoMorphoRecordsActivity.this, CreateBreeders.class);
+
         startActivity(intent_brooders);
         return true;
     }
@@ -123,6 +112,7 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
 
 
         Intent intent_brooders = new Intent(BreederPhenoMorphoRecordsActivity.this, CreateBreeders.class);
+
         startActivity(intent_brooders);
 
     }

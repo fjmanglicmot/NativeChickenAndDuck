@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,10 +17,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.Calendar;
+
+import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -87,6 +95,26 @@ public class SalesFragment extends Fragment {
                     boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), breeder_id,null,null,"breeder","sold", Integer.parseInt(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
 
 
+                    if(isNetworkAvailable()){
+                        Integer total = Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString());
+                        RequestParams requestParams = new RequestParams();
+                        //requestParams.add("id", id_0.toString());
+                        requestParams.add("date", date_sold.getText().toString());
+                        requestParams.add("breeder_inventory_id", breeder_id.toString());
+                        requestParams.add("type", "breeder");
+                        requestParams.add("category", "sold");
+                        requestParams.add("price", price.getText().toString());
+                        requestParams.add("male", male_sold.getText().toString());
+                        requestParams.add("female", female_sold.getText().toString());
+                        requestParams.add("total", total.toString());
+                        requestParams.add("reason", null);
+                        requestParams.add("remarks", remarks.getText().toString());
+
+
+
+
+                        API_addMortalityAndSales(requestParams);
+                    }
 
                     Cursor cursor = myDb.getDataFromBreederInvWhereTag(breeder_tag);
                     cursor.moveToFirst();
@@ -117,6 +145,31 @@ public class SalesFragment extends Fragment {
         });
         return view;
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
+    private void API_addMortalityAndSales(RequestParams requestParams){
+        APIHelper.addMortalityAndSales("addMortalityAndSales", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 
 }

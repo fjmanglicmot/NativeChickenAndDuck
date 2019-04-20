@@ -39,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -94,7 +95,7 @@ public class CreatePen extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-        //Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
 
@@ -249,7 +250,7 @@ public class CreatePen extends AppCompatActivity {
 
 
 
-        }else{
+        }
 
 //-----DATABASE
             Cursor cursor = myDb.getAllDataFromPen();
@@ -262,16 +263,7 @@ public class CreatePen extends AppCompatActivity {
             }else{
 
                 do {
-/*    public static final String TABLE_PEN = "pen_table";
-    public static final String PEN_COL_0 = "ID";
-    public static final String PEN_COL_1 = "farm_id";
-    public static final String PEN_COL_2 = "PEN_NUMBER";
-    public static final String PEN_COL_3 = "PEN_TYPE";
-    public static final String PEN_COL_4 = "PEN_TOTAL_CAPACITY";
-    public static final String PEN_COL_5 = "PEN_CURRENT_CAPACITY";
-    public static final String PEN_COL_6 = "PEN_IS_ACTIVE";
-*/
-                                /*  public Pen (Integer id, String pen_number,  String pen_type,        Integer pen_inventory,Integer pen_capacity, Integer farm_id, Integer is_active){  */
+
                     Pen pen = new Pen(cursor.getInt(0),cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(1), cursor.getInt(6));
                     arrayList.add(pen);
                 }while (cursor.moveToNext());
@@ -281,7 +273,7 @@ public class CreatePen extends AppCompatActivity {
                 recycler_adapter.notifyDataSetChanged();
 
             }
-        }
+
 
 
     }
@@ -312,9 +304,7 @@ public class CreatePen extends AppCompatActivity {
                     }
 
                 }
-                recycler_adapter = new RecyclerAdapter_Pen(arrayList_pen);
-                recyclerView.setAdapter(recycler_adapter);
-                recycler_adapter.notifyDataSetChanged();
+
 
             }
 

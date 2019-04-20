@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,13 +20,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateBreederFeedingRecordDialog extends DialogFragment {
 
@@ -44,7 +52,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_create_breeder_feeding_records, container, false);
         myDb = new DatabaseHelper(getContext());
-        final String breeder_pen = getArguments().getString("breeder pen number");
+        final Integer breeder_pen = getArguments().getInt("breeder pen number");
         final String breeder_tag = getArguments().getString("Breeder Tag");
 
 
@@ -67,7 +75,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_feeding_date_collected.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_feeding_date_collected.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -75,7 +83,6 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
 
             }
         });
-
 
 
 
@@ -99,7 +106,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
                     }else {
                         do {
 
-                            Breeder_Inventory brooder_inventory = new Breeder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                            Breeder_Inventory brooder_inventory = new Breeder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
                             arrayListBrooderInventory.add(brooder_inventory);
 
 
@@ -107,7 +114,7 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
                     }
 
                      for (int i=0;i<arrayListBrooderInventory.size();i++){
-                            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(breeder_pen) ){
+                            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == breeder_pen ){
 
                                 arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -201,13 +208,33 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
 
 
                     ///C. INSERTING FEEDING RECORD TO THE DATABASE BY BATCH
-
+                    boolean isNetworkAvailable = isNetworkAvailable();
                     for ( Map.Entry<Integer, ArrayList<Float>> entry : inventory_dictionary.entrySet()) {
                         Integer key = entry.getKey();
                         Float valueOffered = entry.getValue().get(0);
                         Float valueRefused = entry.getValue().get(1);
                         // do something with key and/or tab
                         boolean isInserted = myDb.insertDataBreederFeedingRecords( key ,brooder_feeding_date_collected.getText().toString(), Float.parseFloat(brooder_feeding_record_offered.getText().toString()), Float.parseFloat(brooder_feeding_record_refused.getText().toString()),brooder_feeding_record_remarks.getText().toString(),null);
+
+
+                        if(isNetworkAvailable){
+
+                            RequestParams requestParams = new RequestParams();
+
+                            requestParams.add("breeder_inventory_id", key.toString());
+                            requestParams.add("date_collected", brooder_feeding_date_collected.getText().toString());
+                            requestParams.add("amount_offered", valueOffered.toString());
+                            requestParams.add("amount_refused", valueRefused.toString());
+                            requestParams.add("remarks", brooder_feeding_record_remarks.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+
+
+                            API_addBreederFeeding(requestParams);
+
+
+
+                        }
                         if(isInserted){
                             //continue
                         }else{
@@ -226,15 +253,6 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
 
 
 
-
-                   /* boolean isInserted = myDb.insertDataBrooderFeedingRecords( n ,brooder_feeding_date_collected.getText().toString(), parseInt(brooder_feeding_record_offered.getText().toString()), parseInt(brooder_feeding_record_refused.getText().toString()),brooder_feeding_record_remarks.getText().toString(),null);
-                    if(!isInserted){
-                        Toast.makeText(getContext(),"Not added to database", Toast.LENGTH_LONG).show();
-                    }else{
-                        Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getActivity(), BrooderFeedingRecordsActivity.class);
-                        startActivity(intent);
-                    }*/
 
 
                 }else{
@@ -258,6 +276,33 @@ public class CreateBreederFeedingRecordDialog extends DialogFragment {
         builder.setMessage(message);
         builder.show();
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
+    private boolean API_addBreederFeeding(RequestParams requestParams){
+        APIHelper.addBreederFeeding("addBreederFeeding", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getActivity(), "Successfully added brooder feeding record to web", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                 Toast.makeText(getActivity(), "Failed to add brooder feeding record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+        return true;
+    }
 
 }

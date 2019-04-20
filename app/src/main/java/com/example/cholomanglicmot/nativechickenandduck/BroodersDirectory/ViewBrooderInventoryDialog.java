@@ -2,6 +2,8 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +16,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ViewBrooderInventoryDialog extends DialogFragment {
 
@@ -36,11 +43,6 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_view_brooder_inventory, container, false);
 
-        /*    final Bundle args = new Bundle();
-        args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
-        args.putInt("Brooder Pen ID", brooder_inventory.getBrooder_inv_pen  ());
-        args.putInt("Brooder ID", brooder_inventory.getBrooder_inv_brooder_id());
-*/
         final String brooder_tag = getArguments().getString("Brooder Tag");
         final Integer brooder_pen = getArguments().getInt("Brooder Pen ID");
         final Integer brooder_id = getArguments().getInt("Brooder ID");
@@ -88,6 +90,7 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
             brooder_male_count.setText(cursor.getString(5));
             brooder_female_count.setText(cursor.getString(6));
             brooder_total.setText(cursor.getString(7));
+            brooder_date_added.setText(cursor.getString(8));
 
         }
 
@@ -122,6 +125,19 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
             public void onClick(View view) {
                 if(edit_female_count.getVisibility() == View.VISIBLE){
                     boolean isUpdated = myDb.updateMaleFemaleCount(brooder_tag, Integer.parseInt(edit_male_count.getText().toString()),Integer.parseInt(edit_female_count.getText().toString()) );
+                    Cursor cursor_tag = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag);
+                    cursor_tag.moveToFirst();
+                    Integer brooder_id = cursor_tag.getInt(0);
+                    if(isNetworkAvailable()){
+
+                        RequestParams requestParams = new RequestParams();
+                        requestParams.add("brooder_inv_id", brooder_id.toString());
+                        requestParams.add("male", edit_male_count.getText().toString());
+                        requestParams.add("female", edit_female_count.getText().toString());
+
+
+                        API_editBrooderInventoryMaleFemale(requestParams);
+                    }
                     if(isUpdated == true){
                         Toast.makeText(getContext(), "Updated male and female count", Toast.LENGTH_SHORT).show();
                         getDialog().dismiss();
@@ -137,5 +153,30 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
 
 
         return view;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_editBrooderInventoryMaleFemale(RequestParams requestParams){
+        APIHelper.editBrooderInventoryMaleFemale("editBrooderInventoryMaleFemale", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully edited brooder male and female", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 }

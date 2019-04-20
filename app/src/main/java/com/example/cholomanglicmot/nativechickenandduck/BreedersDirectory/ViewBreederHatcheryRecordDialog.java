@@ -278,10 +278,10 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                 }
             }
         });
-        Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
+   /*     Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
         if(cursor_pen1.getCount() != 0){
             brooder_pen_id = cursor_pen1.getInt(0);
-        }
+        }*/
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -364,6 +364,11 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
 
                                 Integer id = cursor1.getInt(0);
+
+                                Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
+                                if(cursor_pen1.getCount() != 0){
+                                    brooder_pen_id = cursor_pen1.getInt(0);
+                                }
 
                                 // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
                                 boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen_id, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);

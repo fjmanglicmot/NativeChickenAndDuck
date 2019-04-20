@@ -51,6 +51,7 @@ public class ViewBrooderFeedingDialog extends DialogFragment {
         Cursor cursor = myDb.getAllDataFromBrooderFeedingRecordsWhereFeedingID(brooder_feeding_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
+
             Integer offered_int = cursor.getInt(0);
             Integer refused_int = cursor.getInt(1);
 

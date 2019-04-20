@@ -21,7 +21,7 @@ public class RecyclerAdapter_Mortality_and_Sales extends RecyclerView.Adapter<Re
 
     ArrayList<Mortality_Sales> arrayList = new ArrayList<>();
 
-    RecyclerAdapter_Mortality_and_Sales(ArrayList<Mortality_Sales> arrayList){
+    public RecyclerAdapter_Mortality_and_Sales(ArrayList<Mortality_Sales> arrayList){
         this.arrayList = arrayList;
 
 

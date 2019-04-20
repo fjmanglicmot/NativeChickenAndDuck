@@ -71,7 +71,7 @@ public class RecyclerAdapter_Replacement_PhenoMorpho extends RecyclerView.Adapte
 
         ///pass replacement tag to args
         final Bundle args = new Bundle();
-        args.putString("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
+        args.putInt("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
 
         args.putString("Replacement Tag", replacement_inventory.getReplacement_inv_replacement_tag());
 

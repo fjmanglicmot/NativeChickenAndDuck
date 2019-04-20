@@ -37,7 +37,7 @@ public class ViewBreederEggQualRecordDialog extends DialogFragment {
         myDb = new DatabaseHelper(getContext());
 
         textView=view.findViewById(R.id.textView);
-        deleted_at = view.findViewById(R.id.deleted_at);
+
         date_collected = view.findViewById(R.id.date_collected);
         week = view.findViewById(R.id.week);
         egg_weight = view.findViewById(R.id.egg_weight); //galing sa brooder table
@@ -100,7 +100,7 @@ public class ViewBreederEggQualRecordDialog extends DialogFragment {
             Float thick_top_ = cursor.getFloat(14);
             Float thick_mid_ = cursor.getFloat(15);
             Float thick_bot_ = cursor.getFloat(16);
-            String deleted_at_ = cursor.getString(17);
+
 
 ////////////YUNG AGE IN WEEKS DAPAT ATA CINOCOMPUTE?????????
             date_collected.setText(cursor.getString(2));
@@ -120,7 +120,7 @@ public class ViewBreederEggQualRecordDialog extends DialogFragment {
             shell_thickness_top.setText(thick_top_.toString());
             shell_thickness_middle.setText(thick_mid_.toString());
             shell_thickness_bottom.setText(thick_bot_.toString());
-            deleted_at.setText(deleted_at_);
+
 
 
 

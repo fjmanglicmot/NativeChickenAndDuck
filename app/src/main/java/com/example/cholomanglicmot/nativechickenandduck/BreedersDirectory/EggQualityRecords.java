@@ -85,6 +85,9 @@ public class EggQualityRecords extends AppCompatActivity {
 
         ///////////////////////////////DATABASE
 
+        Cursor cur = myDb.getDataFromBreederInvWhereTag(breeder_tag);
+        cur.moveToFirst();
+        Integer bred = cur.getInt(0);
 
 
 
@@ -97,11 +100,13 @@ public class EggQualityRecords extends AppCompatActivity {
 
         }else {
             do {
-                                                            /*Integer id,Integer egg_breeder_inv_id,  String date,          Float weight,           String color,       String shape,                Float length,          Float width,    Float albument_height,  Float albument_weight,   Float yolk_weight,        String yolk_color, Float shell_weight,   Float shell_thickness_top, Float shell_thickness_middle,  Float shell_thickness_bottom*/
-                Egg_Quality egg_quality = new Egg_Quality(cursor.getInt(0),breeder_tag,cursor.getInt(1), cursor.getString(2),cursor.getInt(3), cursor.getFloat(4), cursor.getString(5), cursor.getString(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getFloat(9), cursor.getFloat(10), cursor.getFloat(11), cursor.getString(12), cursor.getFloat(13), cursor.getFloat(14), cursor.getFloat(15), cursor.getFloat(16));
+                Integer breeder_inv_id1 = cursor.getInt(1);
+                if(breeder_inv_id1 == bred) {
+                    /*Integer id,Integer egg_breeder_inv_id,  String date,          Float weight,           String color,       String shape,                Float length,          Float width,    Float albument_height,  Float albument_weight,   Float yolk_weight,        String yolk_color, Float shell_weight,   Float shell_thickness_top, Float shell_thickness_middle,  Float shell_thickness_bottom*/
+                    Egg_Quality egg_quality = new Egg_Quality(cursor.getInt(0), breeder_tag, cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getFloat(4), cursor.getString(5), cursor.getString(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getFloat(9), cursor.getFloat(10), cursor.getFloat(11), cursor.getString(12), cursor.getFloat(13), cursor.getFloat(14), cursor.getFloat(15), cursor.getFloat(16));
 
-                arrayListBrooderGrowthRecords.add(egg_quality);
-
+                    arrayListBrooderGrowthRecords.add(egg_quality);
+                }
             } while (cursor.moveToNext());
         }
 

@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,11 +19,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateEggProductionDialog extends DialogFragment{
     private EditText date_collected, intact,weight,broken, rejected,remarks;
@@ -87,7 +95,7 @@ public class CreateEggProductionDialog extends DialogFragment{
 
                     if(cursor.getCount() != 0){
                         do{
-                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
+                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
                             arrayListBrooderInventory.add(breeder_inventory);
 
                         }while(cursor.moveToNext());
@@ -103,6 +111,24 @@ public class CreateEggProductionDialog extends DialogFragment{
 ////////////////////////
                     boolean isInserted = myDb.insertEggProductionRecords(arrayList_temp.get(0).getId(), date_collected.getText().toString(), Integer.parseInt(intact.getText().toString()), Float.parseFloat(weight.getText().toString()), Integer.parseInt(broken.getText().toString()), Integer.parseInt(rejected.getText().toString()), remarks.getText().toString(), null);
 
+                    boolean isNetworkAvailable = isNetworkAvailable();
+                    if(isNetworkAvailable){
+
+                        RequestParams requestParams = new RequestParams();
+                        //requestParams.add("id", id_0.toString());
+                        requestParams.add("breeder_inventory_id", arrayList_temp.get(0).getId().toString());
+                        requestParams.add("date_collected", date_collected.getText().toString());
+                        requestParams.add("total_eggs_intact", intact.getText().toString());
+                        requestParams.add("total_egg_weight", weight.getText().toString());
+                        requestParams.add("total_broken", broken.getText().toString());
+                        requestParams.add("total_rejects", rejected.getText().toString());
+                        requestParams.add("remarks", remarks.getText().toString());
+                        requestParams.add("deleted_at", null);
+
+
+
+                        API_addEggProduction(requestParams);
+                    }
                     if (isInserted == true){
                         Toast.makeText(getContext(),"Egg Production added to database", Toast.LENGTH_LONG).show();
                         Intent intent_line = new Intent(getActivity(), EggProductionRecords.class);
@@ -140,5 +166,29 @@ public class CreateEggProductionDialog extends DialogFragment{
         builder.setMessage(message);
         builder.show();
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addEggProduction(RequestParams requestParams){
+        APIHelper.addEggProduction("addEggProduction", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 }

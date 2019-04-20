@@ -2,7 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDire
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +51,10 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
 
         final Generation generation = arrayList.get(position);
 
+        final Bundle args = new Bundle();
+        args.putString("Generation Number", generation.getGeneration_number());
+        args.putInt("Generation ID", generation.getId());
+
 
         holder.generation_number.setText(generation.getGeneration_number());
         holder.generation_status.setText(generation.getGeneration_status().toString());
@@ -69,7 +76,17 @@ public class RecyclerAdapter_Generation extends RecyclerView.Adapter<RecyclerAda
                 showMessage("Generation "+generation.getGeneration_number(), buffer.toString());
             }
         });
-
+        holder.generation_cull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                CullGenerationDialog alertDialog = new CullGenerationDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "CullGenerationDialog");
+                notifyDataSetChanged();
+            }
+        });
 
 
     //notifyDataSetChanged();

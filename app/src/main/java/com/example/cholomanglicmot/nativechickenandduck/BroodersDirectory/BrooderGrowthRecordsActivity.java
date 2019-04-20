@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,12 +16,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class BrooderGrowthRecordsActivity extends AppCompatActivity {
@@ -34,6 +42,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
     ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
     ImageButton create_brooder_feeding_records;
+    Integer brooder_pen_id;
 
     Map<Integer, Integer> inventory_dictionary = new HashMap<Integer, Integer>();
 
@@ -83,10 +92,23 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         ///////////////////////////////DATABASE
+        Cursor cursor1 = myDb.getAllDataFromPenWhere(brooder_pen);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            brooder_pen_id = cursor1.getInt(0);
+        }
+
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            //if internet is available, load data from web database
 
 
+            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
+
+            API_getBrooderGrowth();
 
 
+        }
 
 
 
@@ -110,7 +132,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
 
 
         for (int i=0;i<arrayListBrooderInventory.size();i++){
-            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
+            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == brooder_pen_id) {
 
                 arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -134,7 +156,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
             do {
                 //                                                                        Integer id,                 Integer brooder_growth_inventory_id,String , Integer brooder_growth_collection_day,      String brooder_growth_date_collected,       Integer brooder_growth_male_quantity,           Float brooder_growth_male_weight,                  Integer brooder_growth_female_quantity, Float brooder_growth_female_weight,          Integer brooder_growth_total_quantity,      Float brooder_growth_total_weight,              String brooder_growth_deleted_at){
                 for(int k=0;k<arrayList_temp.size();k++){
-                    if(arrayList_temp.get(k).getBrooder_inv_brooder_id().equals(cursor_brooder_growth_records.getInt(1))){
+                    if(arrayList_temp.get(k).getBrooder_inv_brooder_id() == cursor_brooder_growth_records.getInt(1)){
                         Brooder_GrowthRecords brooderGrowthRecords = new Brooder_GrowthRecords(cursor_brooder_growth_records.getInt(0),cursor_brooder_growth_records.getInt(1),arrayList_temp.get(k).getBrooder_inv_brooder_tag(),cursor_brooder_growth_records.getInt(2), cursor_brooder_growth_records.getString(3),cursor_brooder_growth_records.getInt(4), cursor_brooder_growth_records.getFloat(5), cursor_brooder_growth_records.getInt(6), cursor_brooder_growth_records.getFloat(7),cursor_brooder_growth_records.getInt(8), cursor_brooder_growth_records.getFloat(9), cursor_brooder_growth_records.getString(10));
                         arrayListBrooderGrowthRecords.add(brooderGrowthRecords);
 
@@ -156,6 +178,51 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+     private void API_getBrooderGrowth(){
+        APIHelper.getBrooderGrowth("getBrooderGrowth/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBrooderGrowth jsonBrooderGrowth = gson.fromJson(rawJsonResponse, JSONBrooderGrowth.class);
+                ArrayList<Brooder_GrowthRecords> arrayList_brooderInventory = jsonBrooderGrowth.getData();
+
+
+                for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBrooderGrowthRecordsWhereGrowthID(arrayList_brooderInventory.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+                        boolean isInserted = myDb.insertDataBrooderGrowthRecordsWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getBrooder_growth_inventory_id(), arrayList_brooderInventory.get(i).getBrooder_growth_collection_day(), arrayList_brooderInventory.get(i).getBrooder_growth_date_collected(),arrayList_brooderInventory.get(i).getBrooder_growth_male_quantity(),arrayList_brooderInventory.get(i).getBrooder_growth_male_weight(),arrayList_brooderInventory.get(i).getBrooder_growth_female_quantity(),arrayList_brooderInventory.get(i).getBrooder_growth_female_weight(),arrayList_brooderInventory.get(i).getBrooder_growth_total_quantity(),arrayList_brooderInventory.get(i).getBrooder_growth_total_weight(),arrayList_brooderInventory.get(i).getBrooder_growth_deleted_at());
+                        //Toast.makeText(BrooderInventoryActivity.this, "oyoyooyoy", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Growth Records from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public void onBackPressed() {

@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,13 +20,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateReplacementFeedingRecordDialog extends DialogFragment {
 
@@ -37,6 +45,7 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
     ArrayList<Replacement_Inventory>arrayList_temp = new ArrayList<>();
     ArrayList<Replacement_Inventory>arrayList_temp1 = new ArrayList<>();
     ArrayList<Replacements> arrayListReplacements = new ArrayList<>();
+    Integer replacement_pen_id;
 
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
@@ -83,6 +92,14 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
 
 
 
+        Cursor cursor = myDb.getAllDataFromPenWhere(replacement_pen);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            replacement_pen_id = cursor.getInt(0);
+        }
+
+
+
         mActionOk = view.findViewById(R.id.action_ok);
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,9 +107,9 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
                 if(!replacement_feeding_date_collected.getText().toString().isEmpty() && !replacement_feeding_record_offered.getText().toString().isEmpty() && !replacement_feeding_record_refused.getText().toString().isEmpty()){
 
 
-                    Cursor cursor_replacement_inv = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
-                    cursor_replacement_inv.moveToFirst();
-                    if(cursor_replacement_inv.getCount() == 0){
+                    Cursor cursor_brooder_inventory = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
+                    cursor_brooder_inventory.moveToFirst();
+                    if(cursor_brooder_inventory.getCount() == 0){
                         //show message
 
                         Toast.makeText(getActivity(),"Add Replacements first", Toast.LENGTH_LONG).show();
@@ -100,15 +117,15 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
                     }else {
                         do {
 
-                            Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_replacement_inv.getInt(0),cursor_replacement_inv.getInt(1), cursor_replacement_inv.getString(2), cursor_replacement_inv.getString(3),cursor_replacement_inv.getString(4), cursor_replacement_inv.getInt(5), cursor_replacement_inv.getInt(6),cursor_replacement_inv.getInt(7), cursor_replacement_inv.getString(8), cursor_replacement_inv.getString(9));
-                            arrayListReplacementInventory.add(replacement_inventory);
+                            Replacement_Inventory brooder_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                            arrayListReplacementInventory.add(brooder_inventory);
 
 
-                        } while (cursor_replacement_inv.moveToNext());
+                        } while (cursor_brooder_inventory.moveToNext());
                     }
 
                     for (int i=0;i<arrayListReplacementInventory.size();i++){
-                        if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
+                        if(arrayListReplacementInventory.get(i).getReplacement_inv_pen() == replacement_pen_id) {
 
                             arrayList_temp.add(arrayListReplacementInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -124,12 +141,12 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
 
 
 
-                    ArrayList<Integer> arrayListReplacement = new ArrayList<>();
+                    ArrayList<Integer> arrayListBrooder = new ArrayList<>();
                     for(int i = 0;i<arrayList_temp.size();i++){
-                        if(arrayListReplacement.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
+                        if(arrayListBrooder.contains(arrayList_temp.get(i).getReplacement_inv_replacement_id())){
                             //do nothing
                         }else{
-                            arrayListReplacement.add(arrayList_temp.get(i).getReplacement_inv_replacement_id());
+                            arrayListBrooder.add(arrayList_temp.get(i).getReplacement_inv_replacement_id());
                         }
                     }
 
@@ -137,8 +154,8 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
                     ArrayList<Float> float_zero = new ArrayList<>();
                     float_zero.add(0.0f);
                     float_zero.add(0.0f);
-                    for(int i = 0;i<arrayListReplacement.size();i++){
-                        inventory_dictionary.put(arrayListReplacement.get(i),float_zero);
+                    for(int i = 0;i<arrayListBrooder.size();i++){
+                        inventory_dictionary.put(arrayListBrooder.get(i),float_zero);
                     }
 
 
@@ -198,19 +215,41 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
                     }
 
 
-
+                   // Toast.makeText(getActivity(), inventory_dictionary.toString(), Toast.LENGTH_SHORT).show();
 
 
                     ///C. INSERTING FEEDING RECORD TO THE DATABASE BY BATCH
-
+                    ///C. INSERTING FEEDING RECORD TO THE DATABASE BY BATCH
+                    boolean isNetworkAvailable = isNetworkAvailable();
                     for ( Map.Entry<Integer, ArrayList<Float>> entry : inventory_dictionary.entrySet()) {
                         Integer key = entry.getKey();
                         Float valueOffered = entry.getValue().get(0);
                         Float valueRefused = entry.getValue().get(1);
                         // do something with key and/or tab
-                        boolean isInserted = myDb.insertDataReplacementFeedingRecords( key ,replacement_feeding_date_collected.getText().toString(), valueOffered, valueRefused,replacement_feeding_record_remarks.getText().toString(),null);
+                        boolean isInserted = myDb.insertDataReplacementFeedingRecords(key ,replacement_feeding_date_collected.getText().toString(), valueOffered, valueRefused,replacement_feeding_record_remarks.getText().toString(),null);
+
+
+                        if(isNetworkAvailable){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("replacement_inventory_id", key.toString());
+                            requestParams.add("date_collected", replacement_feeding_date_collected.getText().toString());
+                            requestParams.add("amount_offered", valueOffered.toString());
+                            requestParams.add("amount_refused", valueRefused.toString());
+                            requestParams.add("remarks", replacement_feeding_record_remarks.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+
+
+                            while(!API_addReplacementFeeding(requestParams)){
+                                //do nothing
+                            }
+
+                        }
+
+
                         if(isInserted){
-                            //continue
+                            Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
                         }else{
                             Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
                             getDialog().dismiss();
@@ -218,22 +257,28 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
                         }
                     }
 
-                    Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
+                   // API_updateBrooderFeeding();
                     Intent intent = new Intent(getActivity(), ReplacementFeedingRecordsActivity.class);
                     intent.putExtra("Replacement Pen",replacement_pen);
                     startActivity(intent);
 
-                    getDialog().dismiss();
 
+
+
+
+
+                    getDialog().dismiss();
                 }else{
                     Toast.makeText(getContext(),"Please fill any empty fields", Toast.LENGTH_LONG).show();
                 }
 
 
 
+
             }
 
         });
+
 
         return view;
     }
@@ -244,6 +289,32 @@ public class CreateReplacementFeedingRecordDialog extends DialogFragment {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+    private boolean API_addReplacementFeeding(RequestParams requestParams){
+        APIHelper.addReplacementFeeding("addReplacementFeeding", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getActivity(), "Successfully added brooder feeding record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+//                 Toast.makeText(getActivity(), "Failed to add brooder feeding record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+        return true;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 

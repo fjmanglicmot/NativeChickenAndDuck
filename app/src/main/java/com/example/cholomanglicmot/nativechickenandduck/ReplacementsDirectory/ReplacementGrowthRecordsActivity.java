@@ -1,7 +1,10 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +15,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
@@ -32,7 +40,7 @@ public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
     ArrayList<Replacement_Inventory>arrayListReplacementInventory1 = new ArrayList<>();
     ArrayList<Replacement_Inventory>arrayList_temp = new ArrayList<>();
     ImageButton create_brooder_feeding_records;
-
+    Integer replacement_pen_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,54 +87,24 @@ public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
 
         ///////////////////////////////DATABASE
 
-
-        ////inventory
-     /*   Cursor cursor_inventory = myDb.getAllDataFromReplacementInventory();
-        cursor_inventory.moveToFirst();
-
-        if (cursor_inventory.getCount() == 0) {
-
-        } else {
-            do {
-                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_inventory.getInt(0),cursor_inventory.getInt(1), cursor_inventory.getString(2), cursor_inventory.getString(3),cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6),cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
-                arrayListReplacementInventory.add(replacement_inventory);
-            } while (cursor_inventory.moveToNext());
+        Cursor cursor =myDb.getAllDataFromPenWhere(replacement_pen);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            replacement_pen_id = cursor.getInt(0);
         }
 
-        ///GROWTH RECORDS
-        Cursor cursor_growth = myDb.getAllDataFromReplacementGrowthRecords();
-        cursor_growth.moveToFirst();
 
-            if(cursor_growth.getCount()==0){
-            //Toast.makeText(this,"No data from growth records", Toast.LENGTH_SHORT).show();
-            }else{
-                do{
-                    Replacement_GrowthRecords replacement_growthRecords = new Replacement_GrowthRecords(cursor_growth.getInt(0), cursor_growth.getInt(1),            null,                  cursor_growth.getInt(2),                     cursor_growth.getString(3),                     cursor_growth.getInt(4),                    cursor_growth.getFloat(5),                      cursor_growth.getInt(6),                          cursor_growth.getFloat(7),                cursor_growth.getInt(8),                    cursor_growth.getFloat(9),          cursor_growth.getString(10));
-                    arrayList_temp.add(replacement_growthRecords);
-                }while (cursor_growth.moveToNext());
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            //if internet is available, load data from web database
+
+
+            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
+
+            API_getReplacementGrowth();
+
 
         }
-
-        //kunin mo naman yung replacement inventories ng given PEN NUMBER
-        for (int i = 0; i<arrayListReplacementInventory.size();i++){
-            if (arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen)){
-                arrayListReplacementInventory1.add(arrayListReplacementInventory.get(i));
-
-
-            }
-        }
-
-        //kunin mo naman yung feeding records based sa id ng brooder inventories sa arrayListReplacementInventory1
-
-        for (int i=0; i<arrayList_temp.size();i++){
-            for(int j=0;j<arrayListReplacementInventory1.size();j++){
-                if (arrayList_temp.get(i).getReplacement_growth_inventory_id().equals(arrayListReplacementInventory1.get(j).getId())){
-                    arrayListGrowth.add(arrayList_temp.get(i));
-
-                }
-            }
-        }
-*/
         Cursor cursor_brooder_inventory = myDb.getAllDataFromReplacementInventory(); //para sa pagstore ng data sa arraylist
         cursor_brooder_inventory.moveToFirst();
         if(cursor_brooder_inventory.getCount() == 0){
@@ -136,7 +114,7 @@ public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
         }else {
             do {
 
-                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
                 arrayListReplacementInventory.add(replacement_inventory);
 
 
@@ -146,7 +124,7 @@ public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
 
 
         for (int i=0;i<arrayListReplacementInventory.size();i++){
-            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
+            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen() == replacement_pen_id ){
 
                 arrayList_temp.add(arrayListReplacementInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -200,6 +178,51 @@ public class ReplacementGrowthRecordsActivity extends AppCompatActivity {
         builder.setMessage(message);
         builder.show();
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getReplacementGrowth(){
+        APIHelper.getReplacementGrowth("getReplacementGrowth/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
+
+                Gson gson = new Gson();
+                JSONReplacementGrowth jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONReplacementGrowth.class);
+                ArrayList<Replacement_GrowthRecords> arrayList_brooderInventory = jsonBrooderInventory.getData();
+
+
+                for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromReplacementGrowthRecordsWhereGrowthID(arrayList_brooderInventory.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+                        boolean isInserted = myDb.insertDataBrooderGrowthRecordsWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getReplacement_growth_inventory_id(), arrayList_brooderInventory.get(i).getReplacement_growth_collection_day(), arrayList_brooderInventory.get(i).getReplacement_growth_date_collected(),arrayList_brooderInventory.get(i).getReplacement_growth_male_quantity(),arrayList_brooderInventory.get(i).getReplacement_growth_male_weight(),arrayList_brooderInventory.get(i).getReplacement_growth_female_quantity(),arrayList_brooderInventory.get(i).getReplacement_growth_female_weight(),arrayList_brooderInventory.get(i).getReplacement_growth_total_quantity(),arrayList_brooderInventory.get(i).getReplacement_growth_total_weight(),arrayList_brooderInventory.get(i).getReplacement_growth_deleted_at());
+                        //Toast.makeText(BrooderInventoryActivity.this, "oyoyooyoy", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 
 }

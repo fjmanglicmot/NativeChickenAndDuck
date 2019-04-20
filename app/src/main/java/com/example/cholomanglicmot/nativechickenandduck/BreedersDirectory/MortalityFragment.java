@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,10 +19,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.Calendar;
+
+import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -69,7 +77,7 @@ public class MortalityFragment extends Fragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        date_died.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        date_died.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -85,7 +93,25 @@ public class MortalityFragment extends Fragment {
                 if(!date_died.getText().toString().isEmpty() && !male_death.getText().toString().isEmpty() && !female_death.getText().toString().isEmpty() && !reason.getSelectedItem().toString().isEmpty()){
                     boolean isInserted = myDb.insertDataMortalityAndSales(date_died.getText().toString(),breeder_id,null,null, "breeder", "died", null,Integer.parseInt(male_death.getText().toString()), Integer.parseInt(female_death.getText().toString()),Integer.parseInt(male_death.getText().toString())+Integer.parseInt(female_death.getText().toString()),reason.getSelectedItem().toString(), remarks.getText().toString(), null );
 
+                    if(isNetworkAvailable()){
+                        Integer total = Integer.parseInt(male_death.getText().toString())+Integer.parseInt(female_death.getText().toString());
+                        RequestParams requestParams = new RequestParams();
+                        //requestParams.add("id", id_0.toString());
+                        requestParams.add("date", date_died.getText().toString());
+                        requestParams.add("breeder_inventory_id", breeder_id.toString());
+                        requestParams.add("type", "breeder");
+                        requestParams.add("category", "died");
+                        requestParams.add("male", male_death.getText().toString());
+                        requestParams.add("female", female_death.getText().toString());
+                        requestParams.add("total", total.toString());
+                        requestParams.add("reason", reason.getSelectedItem().toString());
+                        requestParams.add("remarks", remarks.getText().toString());
 
+
+
+
+                        API_addMortalityAndSales(requestParams);
+                    }
                     Cursor cursor = myDb.getDataFromBreederInvWhereTag(breeder_tag);
                     cursor.moveToFirst();
                     Integer male_death_ =  Integer.parseInt(male_death.getText().toString());
@@ -120,6 +146,31 @@ public class MortalityFragment extends Fragment {
         });
         return view;
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
+    private void API_addMortalityAndSales(RequestParams requestParams){
+        APIHelper.addMortalityAndSales("addMortalityAndSales", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 
 }

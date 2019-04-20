@@ -22,13 +22,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateReplacementGrowthRecordDialog extends DialogFragment {
 
@@ -50,6 +55,7 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
     ArrayList<Replacement_Inventory>arrayList_temp1 = new ArrayList<>();
     ArrayList<Replacements> arrayListReplacements = new ArrayList<>();
     boolean  isOtherDayChecked;
+    Integer replacement_pen_id;
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
 
@@ -195,15 +201,20 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                     }else {
                         do {
 
-                            Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                            Replacement_Inventory replacement_inventory = new Replacement_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
                             arrayListBrooderInventory.add(replacement_inventory);
 
 
                         } while (cursor_brooder_inventory.moveToNext());
                     }
 
+                    Cursor cursor_pen = myDb.getAllDataFromPenWhere(replacement_pen);
+                    cursor_pen.moveToFirst();
+                    if(cursor_pen.getCount() != 0){
+                        replacement_pen_id = cursor_pen.getInt(0);
+                    }
                     for (int i=0;i<arrayListBrooderInventory.size();i++){
-                        if(arrayListBrooderInventory.get(i).getReplacement_inv_pen().equals(replacement_pen) ){
+                        if(arrayListBrooderInventory.get(i).getReplacement_inv_pen() == replacement_pen_id) {
 
                             arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -337,6 +348,22 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
                             if (arrayList_temp.get(i).getReplacement_inv_replacement_id().equals(key)){
 
                                 boolean isInserted = myDb.insertDataReplacementGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getReplacement_male_quantity(),male,arrayList_temp.get(i).getReplacement_female_quantity(),female,arrayList_temp.get(i).getReplacement_total_quantity(),female+male,null);
+                                RequestParams requestParams = new RequestParams();
+                                requestParams.add("broodergrower_inventory_id", key.toString());
+                                requestParams.add("collection_day", brooder_growth_collection.toString());
+                                requestParams.add("date_collected", brooder_growth_date_added.getText().toString());
+                                requestParams.add("male_quantity", arrayList_temp.get(i).getReplacement_male_quantity().toString());
+                                requestParams.add("male_weight", male.toString());
+                                requestParams.add("female_quantity", arrayList_temp.get(i).getReplacement_female_quantity().toString());
+                                requestParams.add("female_weight", female.toString());
+                                requestParams.add("total_quantity", arrayList_temp.get(i).getReplacement_total_quantity().toString());
+                                requestParams.add("total_weight", total.toString());
+                                requestParams.add("deleted_at", null);
+
+                                while(!API_addReplacementGrowth(requestParams)) {
+                                    //do nothing
+                                }
+
                                 if(!isInserted){
                                     Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
                                     //getDialog().dismiss();
@@ -379,6 +406,25 @@ public class CreateReplacementGrowthRecordDialog extends DialogFragment {
         builder.setMessage(message);
         builder.show();
     }
+    private boolean API_addReplacementGrowth(RequestParams requestParams){
+        APIHelper.addReplacementGrowth("addReplacementGrowth", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+             //   Toast.makeText(getContext(), "Successfully added replacement feeding record to web", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+              //  Toast.makeText(getContext(), "Failed to add replacement feeding record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+        return true;
+    }
 
 }

@@ -11,12 +11,16 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ import com.example.cholomanglicmot.nativechickenandduck.SpinnerAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
     private Spinner spinner_plumage_color,spinner_plumage_pattern;
@@ -70,6 +75,109 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
     private int[] skin_color_images = {R.drawable.skin_white,R.drawable.skin_yellow};
 
 
+    private Spinner spinner_plumage_color_duck;
+    List<String> lines = new ArrayList<String>() {{
+        add("Black");
+        add("Brown with Black");
+        add("Black with Brown");
+        add("Brown");
+    }};
+
+    private Spinner spinner_plumage_pattern_duck;
+    List<String> plumage_patter_duck = new ArrayList<String>() {{
+        add("Dusky");
+        add("Runner");
+        add("Mallard");
+        add("Runner/Mallard");
+        add("Plain Brown");
+    }};
+
+
+    private Spinner spinner_body_carriage_duck;
+    List<String> body_carriage_duck = new ArrayList<String>() {{
+        add("Horizontal");
+        add("Slight upright");
+        add("Upright");
+
+    }};
+
+    private Spinner spinner_shank_color_duck;
+    List<String> shank_color_duck = new ArrayList<String>() {{
+        add("Black");
+        add("Brown");
+        add("Dark Brown");
+        add("Dark Orange");
+        add("Orange with Black");
+
+    }};
+
+
+    private Spinner spinner_neck_feather_markings;
+    List<String> neck_feather_markings = new ArrayList<String>() {{
+        add("Plain");
+        add("With Bib (Small)");
+        add("With Bib (Medium)");
+        add("With Bib (Large)");
+
+    }};
+
+
+    private Spinner spinner_wing_feather_color;
+    List<String> wing_feather_color = new ArrayList<String>() {{
+        add("Black with Brown");
+        add("Black with White");
+        add("Brown with White");
+        add("Brown");
+
+    }};
+
+    private Spinner spinner_tail_feather_color;
+    List<String> tail_feather_color = new ArrayList<String>() {{
+        add("Black");
+        add("Brown");
+        add("Brown with White");
+
+    }};
+
+    private Spinner spinner_bill_color;
+    List<String> bill_color = new ArrayList<String>() {{
+        add("Green");
+        add("Black");
+        add("Black with Grey");
+
+    }};
+
+    private Spinner spinner_bill_shape;
+    List<String> bill_shape = new ArrayList<String>() {{
+        add("Uniform");
+        add("Saddle");
+
+    }};
+
+
+    private Spinner spinner_bean_color;
+    List<String> bean_color = new ArrayList<String>() {{
+        add("Black");
+        add("Grey");
+
+    }};
+
+    private Spinner spinner_presence_of_crest;
+    List<String> crest = new ArrayList<String>() {{
+        add("Yes");
+        add("No");
+
+    }};
+
+    private Spinner spinner_eye_color;
+    List<String> eye_color = new ArrayList<String>() {{
+        add("Black");
+        add("Brown");
+
+    }};
+
+
+
     private RadioGroup sex;
     private RadioButton male, female;
     private Button mActionOk;
@@ -79,6 +187,9 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
 
     private String  replacement_pen;
     private String replacement_inv_tag, pheno_record;
+    Switch replacement_system_type;
+    LinearLayout chicken, duck;
+    boolean isDuck;
 
     DatabaseHelper myDb;
 
@@ -140,11 +251,89 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
         spinner_skin_color.setAdapter(spinnerAdapter12);
 
 
+        //duck
+        spinner_plumage_color_duck = view.findViewById(R.id.spinner_plumage_color_duck);
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, lines);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_plumage_color_duck.setAdapter(dataAdapter2);
+
+
+        spinner_plumage_pattern_duck= view.findViewById(R.id.spinner_plumage_pattern_duck);
+        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, plumage_patter_duck);
+        dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_plumage_pattern_duck.setAdapter(dataAdapter3);
+
+
+        spinner_body_carriage_duck= view.findViewById(R.id.spinner_body_carriage_duck);
+        ArrayAdapter<String> dataAdapter4 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, body_carriage_duck);
+        dataAdapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_body_carriage_duck.setAdapter(dataAdapter4);
+
+        spinner_shank_color_duck= view.findViewById(R.id.spinner_shank_color_duck);
+        ArrayAdapter<String> dataAdapter5 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, shank_color_duck);
+        dataAdapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_shank_color_duck.setAdapter(dataAdapter5);
+
+
+        spinner_neck_feather_markings= view.findViewById(R.id.spinner_neck_feather_markings);
+        ArrayAdapter<String> dataAdapter6 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, neck_feather_markings);
+        dataAdapter6.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_neck_feather_markings.setAdapter(dataAdapter6);
+
+
+
+        spinner_wing_feather_color= view.findViewById(R.id.spinner_wing_feather_color);
+        ArrayAdapter<String> dataAdapter7 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, wing_feather_color);
+        dataAdapter7.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_wing_feather_color.setAdapter(dataAdapter7);
+
+
+        spinner_tail_feather_color= view.findViewById(R.id.spinner_tail_feather_color);
+        ArrayAdapter<String> dataAdapter8 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, tail_feather_color);
+        dataAdapter8.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_tail_feather_color.setAdapter(dataAdapter8);
+
+        spinner_bill_color= view.findViewById(R.id.spinner_bill_color);
+        ArrayAdapter<String> dataAdapter9 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, bill_color);
+        dataAdapter9.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_bill_color.setAdapter(dataAdapter9);
+
+
+        spinner_bill_shape= view.findViewById(R.id.spinner_bill_shape);
+        ArrayAdapter<String> dataAdapter10 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, bill_shape);
+        dataAdapter10.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_bill_shape.setAdapter(dataAdapter10);
+
+
+        spinner_bean_color= view.findViewById(R.id.spinner_bean_color);
+        ArrayAdapter<String> dataAdapter11 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, bean_color);
+        dataAdapter11.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_bean_color.setAdapter(dataAdapter11);
+
+
+
+        spinner_presence_of_crest= view.findViewById(R.id.spinner_presence_of_crest);
+        ArrayAdapter<String> dataAdapter12 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, crest);
+        dataAdapter12.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_presence_of_crest.setAdapter(dataAdapter12);
+
+
+        spinner_eye_color= view.findViewById(R.id.spinner_eye_color);
+        ArrayAdapter<String> dataAdapter13 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, eye_color);
+        dataAdapter13.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_eye_color.setAdapter(dataAdapter13);
+
+
+
+
         mActionOk = view.findViewById(R.id.action_ok);
 
         sex = view.findViewById(R.id.radio_group_gender);
         male = view.findViewById(R.id.radioButton);
         female = view.findViewById(R.id.radioButton2);
+        replacement_system_type = view.findViewById(R.id.replacement_system_type);
+        chicken = view.findViewById(R.id.chicken);
+        duck = view.findViewById(R.id.duck);
 
         pheno_date = view.findViewById(R.id.pheno_date);
         pheno_tag = view.findViewById(R.id.pheno_tag);
@@ -174,6 +363,27 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
                     }
                 }, year, month, day);
                 mDatePicker.show();
+
+            }
+        });
+
+        replacement_system_type.setChecked(false);
+        replacement_system_type.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                if (isChecked) {
+                    duck.setVisibility(View.VISIBLE);
+                    chicken.setVisibility(View.GONE);
+                    isDuck = true;
+
+                } else {
+                    duck.setVisibility(View.GONE);
+                    chicken.setVisibility(View.VISIBLE);
+                    isDuck = false;
+                }
 
             }
         });
@@ -214,36 +424,71 @@ public class CreatePhenoMorphoDialogBreeder extends DialogFragment{
 
 
                     ///concatinating all pheno data to a string
-                    pheno.append(spinner_plumage_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_plumage_pattern.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_hackle_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_hackle_pattern.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_body_carriage.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_comb_type.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_comb_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_earlobe_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_iris_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_beak_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_shank_color.getSelectedItem().toString()+", ");
-                    pheno.append(spinner_skin_color.getSelectedItem().toString()+", ");
+                    if(!isDuck){
+                        pheno.append("["+'"'+spinner_plumage_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_plumage_pattern.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_hackle_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_hackle_pattern.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_body_carriage.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_comb_type.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_comb_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_earlobe_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_iris_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_beak_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_shank_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_skin_color.getSelectedItem().toString()+'"'+"]");
 
-                    final Bundle args = new Bundle();
+                        final Bundle args = new Bundle();
 
-                    args.putString("Phenotypic Records", pheno.toString());
-                    args.putString("Phenotypic Sex", gender);
-                    args.putString("Phenotypic Tag", pheno_tag.getText().toString());
-                    args.putString("Phenotypic Date", pheno_date.getText().toString());
-                    args.putString("Replacement Pen", replacement_pen);
-                    args.putString("Replacement Tag", replacement_inv_tag);
+                        args.putString("Phenotypic Records", pheno.toString());
+                        args.putString("Phenotypic Sex", gender);
+                        args.putString("Phenotypic Tag", pheno_tag.getText().toString());
+                        args.putString("Phenotypic Date", pheno_date.getText().toString());
+                        args.putString("Replacement Pen", replacement_pen);
+                        args.putString("Replacement Tag", replacement_inv_tag);
 
 
 
-                    FragmentActivity activity = (FragmentActivity)(getContext());
-                    FragmentManager fm = activity.getSupportFragmentManager();
-                    CreateMorphoDialogBreeder alertDialog = new CreateMorphoDialogBreeder();
-                    alertDialog.setArguments(args);
-                    alertDialog.show(fm, "CreateReplacementDialog");
-                    getDialog().dismiss();
+                        FragmentActivity activity = (FragmentActivity)(getContext());
+                        FragmentManager fm = activity.getSupportFragmentManager();
+                        CreateMorphoDialogBreeder alertDialog = new CreateMorphoDialogBreeder();
+                        alertDialog.setArguments(args);
+                        alertDialog.show(fm, "CreateMorphoDialogBreeder");
+                        getDialog().dismiss();
+                    }else{
+
+                        pheno.append("["+'"'+spinner_plumage_color_duck.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_plumage_pattern_duck.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_body_carriage_duck.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_shank_color_duck.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_neck_feather_markings.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_wing_feather_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_tail_feather_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_bill_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_bill_shape.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_bean_color.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_presence_of_crest.getSelectedItem().toString()+'"'+", ");
+                        pheno.append('"'+spinner_eye_color.getSelectedItem().toString()+'"'+"]");
+
+                        final Bundle args = new Bundle();
+
+                        args.putString("Phenotypic Records", pheno.toString());
+                        args.putString("Phenotypic Sex", gender);
+                        args.putString("Phenotypic Tag", pheno_tag.getText().toString());
+                        args.putString("Phenotypic Date", pheno_date.getText().toString());
+                        args.putString("Replacement Pen", replacement_pen);
+                        args.putString("Replacement Tag", replacement_inv_tag);
+
+
+
+                        FragmentActivity activity = (FragmentActivity)(getContext());
+                        FragmentManager fm = activity.getSupportFragmentManager();
+                        CreateMorphoDialogBreeder alertDialog = new CreateMorphoDialogBreeder();
+                        alertDialog.setArguments(args);
+                        alertDialog.show(fm, "CreateMorphoDialogBreeder");
+                        getDialog().dismiss();
+                    }
+
 
 
 

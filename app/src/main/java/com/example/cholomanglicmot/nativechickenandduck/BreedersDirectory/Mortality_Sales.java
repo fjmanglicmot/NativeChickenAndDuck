@@ -21,7 +21,7 @@ public class Mortality_Sales {
 
     }
 
-    Mortality_Sales(Integer id, String date, String tag,Integer breeder_id, Integer replaement_id, Integer brooder_id, String type, String category, Float price, Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
+    public Mortality_Sales(Integer id, String date, String tag, Integer breeder_id, Integer replaement_id, Integer brooder_id, String type, String category, Float price, Integer male_count, Integer female_count, Integer total, String reason, String remarks, String deleted_at){
         this.setId(id);
         this.setDate(date);
         this.setTag(tag);

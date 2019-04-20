@@ -1,17 +1,32 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Brooder_GrowthRecords {
+    @SerializedName("id")
     private Integer id;
+    @SerializedName("broodergrower_inventory_id")
     private Integer brooder_growth_inventory_id;
+/*    @SerializedName("collection_day")*/
     private String brooder_growth_tag;
+
+    @SerializedName("collection_day")
     private Integer brooder_growth_collection_day;
+    @SerializedName("date_collected")
     private String brooder_growth_date_collected;
+    @SerializedName("male_quantity")
     private Integer brooder_growth_male_quantity;
+    @SerializedName("male_weight")
     private Float brooder_growth_male_weight;
+    @SerializedName("female_quantity")
     private Integer brooder_growth_female_quantity;
+    @SerializedName("female_weight")
     private Float brooder_growth_female_weight;
+    @SerializedName("total_quantity")
     private Integer brooder_growth_total_quantity;
+    @SerializedName("total_weight")
     private Float brooder_growth_total_weight;
+    @SerializedName("deleted_atid")
     private String brooder_growth_deleted_at;
 
     Brooder_GrowthRecords(){

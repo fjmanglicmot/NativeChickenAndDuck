@@ -33,13 +33,15 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+//import com.squareup.picasso.Picasso;
 
 public class CreateBreeders extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -89,7 +91,7 @@ public class CreateBreeders extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-    //    Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
 
@@ -260,38 +262,16 @@ public class CreateBreeders extends AppCompatActivity {
 
                 do {
 
-                    /*
-    public static final String TABLE_BREEDER = "breeder_table";
-    public static final String BREEDER_COL_0 = "ID";
-    public static final String BREEDER_COL_1 = "BREEDER_FAMILY";
-    public static final String BREEDER_COL_2 = "BREEDER_FEMALE_FAMILY";
-    public static final String BREEDER_COL_3 = "BREEDER_DATE_ADDED";
-    public static final String BREEDER_COL_4 = "BREEDER_DELETED_AT";*/
                     Breeders breeders = new Breeders(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4));
                     arrayListBreeders.add(breeders);
                 }while (cursor.moveToNext());
-                /*else {
 
-            do {
-                //                                                                        Integer id,                 Integer brooder_growth_inventory_id,String , Integer brooder_growth_collection_day,      String brooder_growth_date_collected,       Integer brooder_growth_male_quantity,           Float brooder_growth_male_weight,                  Integer brooder_growth_female_quantity, Float brooder_growth_female_weight,          Integer brooder_growth_total_quantity,      Float brooder_growth_total_weight,              String brooder_growth_deleted_at){
-                for(int k=0;k<arrayList_temp.size();k++){
-                    if(arrayList_temp.get(k).getBrooder_inv_brooder_id().equals(cursor_brooder_growth_records.getInt(1))){
-                        Brooder_GrowthRecords brooderGrowthRecords = new Brooder_GrowthRecords(cursor_brooder_growth_records.getInt(0),cursor_brooder_growth_records.getInt(1),arrayList_temp.get(k).getBrooder_inv_brooder_tag(),cursor_brooder_growth_records.getInt(2), cursor_brooder_growth_records.getString(3),cursor_brooder_growth_records.getInt(4), cursor_brooder_growth_records.getFloat(5), cursor_brooder_growth_records.getInt(6), cursor_brooder_growth_records.getFloat(7),cursor_brooder_growth_records.getInt(8), cursor_brooder_growth_records.getFloat(9), cursor_brooder_growth_records.getString(10));
-                        arrayListBrooderGrowthRecords.add(brooderGrowthRecords);
-                        buffer.append("Browth brooder_inv_id"+cursor_brooder_growth_records.getInt(1) + "\n");
-
-                    }
-                }
-
-
-            } while (cursor_brooder_growth_records.moveToNext());
-        }*/
                 do{
                     for(int i=0;i<arrayListBreeders.size();i++){
                         if(arrayListBreeders.get(i).getId().equals(cursorBreederInv.getInt(1))){
                                                                             /*              Integer id,             Integer brooder_inv_brooder_id, S   tring brooder_inv_pen,      String brooder_inv_brooder_tag,      String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity   brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at, String family, String line, String generation) {
                              */
-                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getString(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9));
+                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getInt(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9));
                             arrayListBreederInventory2.add(breeder_inventory);
                             /*
                                                                                      BREEDER_INV_COL_0 = "ID";          BREEDER_INV_BREEDER_ID";     "BREEDER_INV_PEN_NUMBER";       "BREEDER_INV_BREEDER_TAG";              "BREEDER_INV_BATCHING_DATE";    = "BREEDER_INV_NUMBER_MALE";     BREEDER_INV_NUMBER_FEMALE";    BREEDER_INV_TOTAL";    "BREEDER_INV_LAST_UPDATE";              "BREEDER_INV_DELETED_AT";*/                        }

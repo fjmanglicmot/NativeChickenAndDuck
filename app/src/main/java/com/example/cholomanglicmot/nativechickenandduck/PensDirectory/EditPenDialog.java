@@ -16,8 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EditPenDialog extends DialogFragment {
 
@@ -80,6 +85,17 @@ public class EditPenDialog extends DialogFragment {
 
 
                 boolean isUpdated = myDb.updateDataPen(pen_id, input_pen_number,input_pen_capacity);
+
+                if(isNetworkAvailable()){
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("pen_id", pen_id.toString());
+                    requestParams.add("pen_number", input_pen_number);
+                    requestParams.add("pen_capacity", input_pen_capacity.toString());
+
+
+                    API_editPen(requestParams);
+                }
                 if(isUpdated){
                     Toast.makeText(context, "Pen updated", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, CreatePen.class);
@@ -104,5 +120,24 @@ public class EditPenDialog extends DialogFragment {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_editPen(RequestParams requestParams){
+        APIHelper.editPen("editPen", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(context, "Successfully edited pen", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 }

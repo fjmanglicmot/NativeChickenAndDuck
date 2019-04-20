@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -64,7 +65,7 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
         final Brooder_Inventory brooder_inventory = arrayListInventory.get(position);
         final Bundle args = new Bundle();
         args.putString("Brooder Tag", brooder_inventory.getBrooder_inv_brooder_tag());
-        args.putInt("Brooder Pen ID", brooder_inventory.getBrooder_inv_pen  ());
+        args.putInt("Brooder Pen ID", brooder_inventory.getBrooder_inv_pen());
         args.putInt("Brooder ID", brooder_inventory.getBrooder_inv_brooder_id());
 
 
@@ -73,10 +74,10 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
 
 
 
-          /*  holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_tag());*/
-        holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_id().toString());
+        holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_tag());
+      /*  holder.brooder_inventory_code.setText(brooder_inventory.getBrooder_inv_brooder_id().toString());
 
-
+*/
 
             holder.brooder_inventory_batch_date.setText(brooder_inventory.getBrooder_inv_batching_date());
             holder.brooder_view_inventory.setOnClickListener(new View.OnClickListener() {
@@ -98,14 +99,24 @@ public class RecyclerAdapter_Brooder_Inventory extends RecyclerView.Adapter<Recy
             holder.brooder_feeding_mort_sale.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //create dialog box ng mort and sales
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, MortalityAndSalesRecordsBrooder.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Brooder Pen ID",brooder_inventory.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Brooder Tag",brooder_inventory.getBrooder_inv_brooder_tag());
+                    intent_replacement_pheno_morpho_records.putExtra("Brooder ID",brooder_inventory.getBrooder_inv_brooder_id());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
                 }
             });
 
             holder.brooder_feeding_cull.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //create dialog box for cull
+                    FragmentActivity activity = (FragmentActivity)(context);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    CullBrooderInventoryDialog alertDialog = new CullBrooderInventoryDialog();
+                    alertDialog.setArguments(args);
+                    alertDialog.show(fm, "CullBrooderInventoryDialog");
+                    notifyDataSetChanged();
+
                 }
             });
 

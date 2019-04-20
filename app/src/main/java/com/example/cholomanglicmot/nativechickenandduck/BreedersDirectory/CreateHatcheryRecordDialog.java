@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,9 +25,12 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +40,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateHatcheryRecordDialog extends DialogFragment{
     private EditText date_eggs_set,number_eggs_set,            fertile,    eggs_hatched,            date_eggs_hatched;
@@ -51,8 +59,9 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
     ArrayList<Pen> arrayListPen = new ArrayList<>();
     ArrayList<Pen> arrayListPen2 = new ArrayList<>();
     private String brooder_pen;
-    Integer brooder_pen_id;
-
+    Integer brooder_pen_id, batching_week2;
+    String brooder_tag2,formatted;
+    Integer age_weeks = 0;
 
 
 
@@ -141,6 +150,17 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
         });
 
 
+
+        ///GET BATCHING WEEK FROM DATABASE
+        Cursor cursor1 = myDb.getAllDataFromFarms();
+        cursor1.moveToFirst();
+
+        if(cursor1.getCount() != 0){
+
+            batching_week2 = cursor1.getInt(4);
+
+        }
+
         date_eggs_hatched.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,9 +172,12 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                 DatePickerDialog mDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        calendar2.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
+                        formatted = format1.format(calendar2.getTime());
                         selectedMonth++;
                         date_eggs_hatched.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
-                        calendar2.set(selectedYear,selectedMonth,selectedDay);
+
                     }
                 }, year, month, day);
                 mDatePicker.show();
@@ -189,7 +212,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
             }
         });
-
+        boolean isNetworkAvailable = isNetworkAvailable();
 
         mActionOk = view.findViewById(R.id.action_ok);
         mActionOk.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +234,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
                     if(cursor.getCount() != 0){
                         do{
-                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
+                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
                             arrayListBrooderInventory.add(breeder_inventory);
 
                         }while(cursor.moveToNext());
@@ -248,28 +271,22 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                     }
 
                     long age_weeks_long;
-                    int age_weeks = 0;
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
                     try {
                         Date date1 = format.parse(date_eggs_set.getText().toString());
-                        try {
-                            Date date2 = format.parse(date_hatched);
-                            long diff = date2.getTime() - date1.getTime();
-                            age_weeks_long = (diff / (1000 * 60 * 60 * 24 * 7 ));
-                            age_weeks = (int)age_weeks_long;
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        Date date2 = format.parse(formatted);
+                        long diff = date2.getTime() - date1.getTime();
+                        age_weeks_long = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+                        age_weeks = (int) age_weeks_long/7;
+
                     } catch (ParseException e) {
                         e.printStackTrace();
+
                     }
 
-
-                    Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
-                    if(cursor_pen1.getCount() != 0){
-                        brooder_pen_id = cursor_pen1.getInt(0);
-                    }
-
+                   // Toast.makeText(getActivity(), date_eggs_set.getText().toString()+"-"+formatted, Toast.LENGTH_SHORT).show();
                     //if data is complete and
                     if(isIncludedInSystem){
                         if(!fertile.getText().toString().equals(0) && !eggs_hatched.getText().toString().equals(0) && !date_eggs_hatched.getText().toString().equals("") && !outside_generation_spinner.getSelectedItem().toString().isEmpty() && !outside_line_spinner.getSelectedItem().toString().isEmpty() && !outside_family_spinner.getSelectedItem().toString().isEmpty() && !pen.getSelectedItem().toString().isEmpty()){
@@ -293,13 +310,23 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                                 }
                                 boolean isInserted = myDb.insertDataBrooder(familyID,date_eggs_hatched.getText().toString(),null);
 
-                              /*  RequestParams requestParams = new RequestParams();
-                                requestParams.add("BROODER_FAMILY", familyID.toString());
-                                requestParams.add("BROODER_DATE_ADDED", brooder_date_added.getText().toString());
-                                requestParams.add("BROODER_DELETED_AT", "1/1/2019");
+                                if(isNetworkAvailable) {
 
-                                API_addBrooder(requestParams);
-*/
+
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("family_id", familyID.toString());
+                                    requestParams.add("date_added", date_eggs_hatched.getText().toString());
+                                    requestParams.add("deleted_at", null);
+
+                                    API_addBrooder(requestParams);
+
+                                }
+
+                                Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
+                                cursor_pen1.moveToFirst();
+                                if(cursor_pen1.getCount() != 0){
+                                    brooder_pen_id = cursor_pen1.getInt(0);
+                                }
 
 
                                 Cursor cursor_pen = myDb.getAllDataFromPen();
@@ -308,11 +335,12 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                                 }else{
                                     do{
                                         if(cursor_pen != null){
-                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
+                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(1), cursor_pen.getInt(6));
                                             arrayListPen.add(pen);
                                         }
                                     }while (cursor_pen.moveToNext());
                                 }
+
                                 for (int i = 0; i<arrayListPen.size();i++){
                                     if(arrayListPen.get(i).getPen_number().equals(brooder_pen)){
                                         arrayListPen2.add(arrayListPen.get(i));
@@ -332,8 +360,51 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                                 Integer id = cursor1.getInt(0);
 
                                 // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen_id, "QUEBAI"+Integer.parseInt(outside_generation_spinner.getSelectedItem().toString())+Integer.parseInt(outside_line_spinner.getSelectedItem().toString())+Integer.parseInt(outside_family_spinner.getSelectedItem().toString())+m, date_eggs_hatched.getText().toString(), null,null,Integer.parseInt(eggs_hatched.getText().toString()),null,null);
+                                brooder_tag2 = generateBrooderTag();
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen_id, brooder_tag2, formatted, null,null,Integer.parseInt(eggs_hatched.getText().toString()),date_eggs_hatched.getText().toString(),null);
+                                boolean isIn = myDb.insertHatcheryRecords(arrayList_temp.get(0).getId(), date_eggs_set.getText().toString(), formatted, Integer.parseInt(number_eggs_set.getText().toString()),age_weeks,number_fertile,hatched,date_hatched,null);
+                                Integer id_0=null;
+                                Cursor cursor2 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag2);
+                                cursor2.moveToFirst();
+                                if(cursor2.getCount() != 0){
+                                    id_0 = cursor2.getInt(0);
+                                }
 
+
+                                if(isNetworkAvailable){
+                                    //boolean isInventoryInsertedOnline = myDb.insertDataBrooderInventory(id,brooder_pen_id, brooder_tag, brooder_estimated_date_of_hatch.getText().toString(), 0,0,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
+
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("id", id_0.toString());
+                                    requestParams.add("broodergrower_id", id.toString());
+                                    requestParams.add("pen_id", brooder_pen_id.toString());
+                                    requestParams.add("broodergrower_tag", brooder_tag2);
+                                    requestParams.add("batching_date",  formatted);
+                                    requestParams.add("number_male", null);
+                                    requestParams.add("number_female", null);
+                                    requestParams.add("total", eggs_hatched.getText().toString());
+                                    requestParams.add("last_update", date_eggs_hatched.getText().toString());
+                                    requestParams.add("deleted_at", null);
+
+                                    API_addBrooderInventory(requestParams);
+
+                                   //boolean isIn = myDb.insertHatcheryRecords(arrayList_temp.get(0).getId(), date_eggs_set.getText().toString(), null, Integer.parseInt(number_eggs_set.getText().toString()),age_weeks,number_fertile,hatched,date_hatched,null);
+
+                                    RequestParams requestParams1 = new RequestParams();
+                                    //requestParams1.add("id", id_0.toString());
+                                    requestParams1.add("breeder_inventory_id", arrayList_temp.get(0).getId().toString());
+                                    requestParams1.add("date_eggs_set", date_eggs_set.getText().toString());
+                                    requestParams1.add("batching_date",  formatted);
+                                    requestParams1.add("number_eggs_set", number_eggs_set.getText().toString());
+                                    requestParams1.add("week_of_lay", age_weeks.toString());
+                                    requestParams1.add("number_fertile", number_fertile.toString());
+                                    requestParams1.add("number_hatched", hatched.toString());
+                                    requestParams1.add("date_hatched", date_hatched);
+                                    requestParams1.add("deleted_at", null);
+
+                                    API_addHatcheryRecords(requestParams1);
+
+                                }
                                 boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(eggs_hatched.getText().toString())+total,current);
                                 if(isPenUpdated  && isInventoryInserted && isInserted){
                                     Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
@@ -355,7 +426,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                                 }else{
                                     do{
                                         if(cursor_pen != null){
-                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
+                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(1), cursor_pen.getInt(6));
                                             arrayListPen.add(pen);
 
                                         }
@@ -373,13 +444,57 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
                                 int total = arrayListPen2.get(0).getPen_inventory();
                                 int current = arrayListPen2.get(0).getPen_capacity();
 
+                                brooder_pen = pen.getSelectedItem().toString();
+                                Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
+                                cursor_pen1.moveToFirst();
+                                if(cursor_pen1.getCount() != 0){
+                                    brooder_pen_id = cursor_pen1.getInt(0);
+                                }
 
 
-                                int brooder_id = cursorBrooderChecker.getInt(0);
+                                brooder_tag2 = generateBrooderTag();
+                                Integer brooder_id = cursorBrooderChecker.getInt(0);
                                 boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(eggs_hatched.getText().toString())+total),current);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_id, "QUEBAI"+Integer.parseInt(outside_generation_spinner.getSelectedItem().toString())+Integer.parseInt(outside_line_spinner.getSelectedItem().toString())+Integer.parseInt(outside_family_spinner.getSelectedItem().toString())+m, date_eggs_hatched.getText().toString(), null,null,Integer.parseInt(eggs_hatched.getText().toString()),null,null);
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen_id, brooder_tag2, formatted, null,null,Integer.parseInt(eggs_hatched.getText().toString()),date_eggs_hatched.getText().toString(),null);
+                                boolean isInserted = myDb.insertHatcheryRecords(arrayList_temp.get(0).getId(), date_eggs_set.getText().toString(), null, Integer.parseInt(number_eggs_set.getText().toString()),age_weeks,number_fertile,hatched,date_hatched,null);
 
+                                Integer id_0=null;
+                                Cursor cursor2 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag2);
+                                cursor2.moveToFirst();
+                                if(cursor2.getCount() != 0){
+                                    id_0 = cursor2.getInt(0);
+                                }
+                                if(isNetworkAvailable){
 
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("id", id_0.toString());
+                                    requestParams.add("broodergrower_id", brooder_id.toString());
+                                    requestParams.add("pen_id", brooder_pen_id.toString());
+                                    requestParams.add("broodergrower_tag", brooder_tag2);
+                                    requestParams.add("batching_date", formatted);
+                                    requestParams.add("number_male", null);
+                                    requestParams.add("number_female", null);
+                                    requestParams.add("total", eggs_hatched.getText().toString());
+                                    requestParams.add("last_update", date_eggs_hatched.getText().toString());
+                                    requestParams.add("deleted_at", null);
+
+                                    API_addBrooderInventory(requestParams);
+
+                                    RequestParams requestParams1 = new RequestParams();
+                                    //requestParams1.add("id", id_0.toString());
+                                    requestParams1.add("breeder_inventory_id", arrayList_temp.get(0).getId().toString());
+                                    requestParams1.add("date_eggs_set", date_eggs_set.getText().toString());
+                                    requestParams1.add("batching_date",  formatted);
+                                    requestParams1.add("number_eggs_set", number_eggs_set.getText().toString());
+                                    requestParams1.add("week_of_lay", age_weeks.toString());
+                                    requestParams1.add("number_fertile", number_fertile.toString());
+                                    requestParams1.add("number_hatched", hatched.toString());
+                                    requestParams1.add("date_hatched", date_hatched);
+                                    requestParams1.add("deleted_at", null);
+
+                                    API_addHatcheryRecords(requestParams1);
+
+                                }
                                 if(isPenUpdated && isInventoryInserted){
                                     Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
                                     Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
@@ -406,9 +521,24 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
                         //dont include in the system
                         boolean isInserted = myDb.insertHatcheryRecords(arrayList_temp.get(0).getId(), date_eggs_set.getText().toString(), null, Integer.parseInt(number_eggs_set.getText().toString()),age_weeks,number_fertile,hatched,date_hatched,null);
+                        if(isNetworkAvailable){
+                            RequestParams requestParams1 = new RequestParams();
+                            //requestParams1.add("id", id_0.toString());
+                            requestParams1.add("breeder_inventory_id", arrayList_temp.get(0).getId().toString());
+                            requestParams1.add("date_eggs_set", date_eggs_set.getText().toString());
+                            requestParams1.add("batching_date",  formatted);
+                            requestParams1.add("number_eggs_set", number_eggs_set.getText().toString());
+                            requestParams1.add("week_of_lay", age_weeks.toString());
+                            requestParams1.add("number_fertile", number_fertile.toString());
+                            requestParams1.add("number_hatched", hatched.toString());
+                            requestParams1.add("date_hatched", date_hatched);
+                            requestParams1.add("deleted_at", null);
+
+                            API_addHatcheryRecords(requestParams1);
+                        }
 
                         if (isInserted == true){
-                            Toast.makeText(getContext(),"Hatchery Record added to database", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getContext(),"Hatchery Record added to database", Toast.LENGTH_LONG).show();
                             Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
                             intent_line.putExtra("Breeder Tag", breeder_tag);
                             startActivity(intent_line);
@@ -493,6 +623,94 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addBrooderInventory(RequestParams requestParams){
+        APIHelper.addBrooderInventory("addBrooderInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getActivity(), "Successfully added brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getActivity(), "Failed to add brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+
+    private void API_addHatcheryRecords(RequestParams requestParams){
+        APIHelper.addHatcheryRecords("addHatcheryRecords", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getActivity(), "Successfully added brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getActivity(), "Failed to add hatchery record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private String generateBrooderTag() {
+        String tag= null;
+        String code = null;
+        String timestamp;
+
+
+        Cursor cursor = myDb.getAllDataFromFarms();
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            code = cursor.getString(2);
+        }
+        Random rd = new Random();
+
+        Date date= new Date();
+
+        Long time = date.getTime();
+        time = time/1000;
+        int random = rd.nextInt(100);
+        tag = code+Integer.toHexString(random)+time.toString();
+
+        return tag;
+
+    }
+
+    private void API_addBrooder(RequestParams requestParams){
+        APIHelper.addBrooderFamily("addBrooderFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 
 }

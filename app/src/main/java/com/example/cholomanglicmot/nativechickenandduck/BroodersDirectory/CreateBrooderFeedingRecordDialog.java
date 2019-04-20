@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,13 +19,19 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateBrooderFeedingRecordDialog extends DialogFragment {
 
@@ -33,6 +42,7 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
     Calendar calendar;
     ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
+    Integer brooder_pen_id;
 
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
@@ -63,7 +73,7 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_feeding_date_collected.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_feeding_date_collected.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -72,7 +82,11 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
             }
         });
 
-
+        Cursor cursor = myDb.getAllDataFromPenWhere(brooder_pen);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            brooder_pen_id = cursor.getInt(0);
+        }
 
 
         mActionOk = view.findViewById(R.id.action_ok);
@@ -103,7 +117,7 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
                     }
 
                      for (int i=0;i<arrayListBrooderInventory.size();i++){
-                            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
+                            if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == brooder_pen_id) {
 
                                 arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -194,33 +208,46 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
 
 
 
-/*                    buffer.append("feedOffered  "+feedOffered+"\n");
-                    buffer.append("count_inventory  "+count_inventory+"\n");
-                    buffer.append("count_inventory  "+result+"\n");
-                    buffer.append("inventory_dictionary  "+inventory_dictionary.toString()+"\n");
-
-                    buffer.append("multiplier  "+multiplierOffered+"\n\n");
-
-                    showMessage("yo", buffer.toString());*/
 
                     ///C. INSERTING FEEDING RECORD TO THE DATABASE BY BATCH
-
+                    boolean isNetworkAvailable = isNetworkAvailable();
                     for ( Map.Entry<Integer, ArrayList<Float>> entry : inventory_dictionary.entrySet()) {
                         Integer key = entry.getKey();
                         Float valueOffered = entry.getValue().get(0);
                         Float valueRefused = entry.getValue().get(1);
                         // do something with key and/or tab
-                        boolean isInserted = myDb.insertDataBrooderFeedingRecords( key ,brooder_feeding_date_collected.getText().toString(), valueOffered, valueRefused,brooder_feeding_record_remarks.getText().toString(),null);
-                        if(isInserted){
-                            //continue
+                        boolean isInserted = myDb.insertDataBrooderFeedingRecords(key ,brooder_feeding_date_collected.getText().toString(), valueOffered, valueRefused,brooder_feeding_record_remarks.getText().toString(),null);
+
+                        if(isNetworkAvailable){
+
+                            RequestParams requestParams = new RequestParams();
+
+                            requestParams.add("broodergrower_inventory_id", key.toString());
+                            requestParams.add("date_collected", brooder_feeding_date_collected.getText().toString());
+                            requestParams.add("amount_offered", valueOffered.toString());
+                            requestParams.add("amount_refused", valueRefused.toString());
+                            requestParams.add("remarks", brooder_feeding_record_remarks.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+
+
+                            while(!API_addBrooderFeeding(requestParams)){
+
+                            }
+
+                        }
+
+
+                    /*    if(isInserted){
+                            Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
                         }else{
                             Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
                             getDialog().dismiss();
 
-                        }
+                        }*/
                     }
 
-                    Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
+                    API_updateBrooderFeeding();
                     Intent intent = new Intent(getActivity(), BrooderFeedingRecordsActivity.class);
                     intent.putExtra("Brooder Pen",brooder_pen);
                     startActivity(intent);
@@ -229,14 +256,6 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
 
 
 
-                   /* boolean isInserted = myDb.insertDataBrooderFeedingRecords( n ,brooder_feeding_date_collected.getText().toString(), parseInt(brooder_feeding_record_offered.getText().toString()), parseInt(brooder_feeding_record_refused.getText().toString()),brooder_feeding_record_remarks.getText().toString(),null);
-                    if(!isInserted){
-                        Toast.makeText(getContext(),"Not added to database", Toast.LENGTH_LONG).show();
-                    }else{
-                        Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getActivity(), BrooderFeedingRecordsActivity.class);
-                        startActivity(intent);
-                    }*/
 
                     getDialog().dismiss();
                 }else{
@@ -259,6 +278,101 @@ public class CreateBrooderFeedingRecordDialog extends DialogFragment {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+
+    private boolean API_addBrooderFeeding(RequestParams requestParams){
+        APIHelper.addBrooderFeeding("addBrooderFeeding", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                //Toast.makeText(getActivity(), "Successfully added brooder feeding record to web", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getActivity(), "Failed to add brooder feeding record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+        return true;
+    }
+    private void API_updateBrooderFeeding( ){
+        APIHelper.getBrooderFeeding("getBrooderFeeding/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBrooderFeeding jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONBrooderFeeding.class);
+                ArrayList<Brooder_FeedingRecords> arrayList_brooderInventory = jsonBrooderInventory.getData();
+                //ArrayList<Brooder_FeedingRecords> arrayList_temp1 = new ArrayList<>();
+                ArrayList<Integer> arrayList_of_feeding_id = new ArrayList<>();
+                for(int i=0;i<arrayList_brooderInventory.size();i++){
+                    arrayList_of_feeding_id.add(arrayList_brooderInventory.get(i).getId());
+                }
+
+                Cursor cursor = myDb.getAllDataFromBrooderFeedingRecords();
+                cursor.moveToFirst();
+                if(cursor.getCount() != 0){
+                    do{
+
+                        for(int i=0;i<arrayList_brooderInventory.size();i++){
+                            boolean contains_feeding = arrayList_of_feeding_id.contains(cursor.getInt(0));
+                            if(!contains_feeding){
+                                //if it doesnt contain the id, then add the feeding record with a id of the current cursor
+                                Integer id = cursor.getInt(0);
+                                Integer broodergrower_inventory_id = cursor.getInt(1);
+                                String date_collected = cursor.getString(2);
+                                Float amount_offered = cursor.getFloat(3);
+                                Float amount_refused = cursor.getFloat(4);
+                                String remarks = cursor.getString(5);
+                                String deleted_at = cursor.getString(6);
+                                RequestParams requestParams = new RequestParams();
+                                requestParams.add("id", id.toString());
+                                requestParams.add("broodergrower_inventory_id", broodergrower_inventory_id.toString());
+                                requestParams.add("date_collected", date_collected);
+                                requestParams.add("amount_offered", amount_offered.toString());
+                                requestParams.add("amount_refused", amount_refused.toString());
+                                requestParams.add("remarks", remarks);
+                                requestParams.add("deleted_at", deleted_at);
+
+
+
+                                while(!API_addBrooderFeeding(requestParams)){
+
+                                }
+                            }
+                        }
+
+
+
+                    }while (cursor.moveToNext());
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+              //  Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 

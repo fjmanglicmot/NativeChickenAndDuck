@@ -147,7 +147,18 @@
             android:hint="Number of brooders to transfer or add"
             android:inputType="number"
             android:textSize="15sp" />
-
+        <EditText
+            android:id="@+id/replacement_date_hatch"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="Estimated date of hatch"
+            android:inputType="text"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/replacement_date_added"

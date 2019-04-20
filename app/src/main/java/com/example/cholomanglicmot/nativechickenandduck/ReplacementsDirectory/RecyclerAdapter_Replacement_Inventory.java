@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -66,7 +67,7 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
         final Replacement_Inventory replacement_inventory = arrayListReplacementInventory.get(position);
         final Bundle args = new Bundle();
         args.putString("Replacement Tag", replacement_inventory.getReplacement_inv_replacement_tag());
-        args.putString("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
+        args.putInt("Replacement Pen", replacement_inventory.getReplacement_inv_pen());
         args.putInt("Replacement ID", replacement_inventory.getReplacement_inv_replacement_id());
 
 
@@ -96,10 +97,25 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
 
             }
         });
-
+        holder.replacement_inventory_mort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_replacement_pheno_morpho_records = new Intent(context, MortalityAndSalesRecordsReplacement.class);
+                intent_replacement_pheno_morpho_records.putExtra("Brooder Pen ID",replacement_inventory.getReplacement_inv_pen());
+                intent_replacement_pheno_morpho_records.putExtra("Brooder Tag",replacement_inventory.getReplacement_inv_replacement_tag());
+                intent_replacement_pheno_morpho_records.putExtra("Brooder ID",replacement_inventory.getReplacement_inv_replacement_id());
+                context.startActivity(intent_replacement_pheno_morpho_records);
+            }
+        });
         holder.replacement_inventory_cull.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                CullReplacementInventoryDialog alertDialog = new CullReplacementInventoryDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "CullReplacementInventoryDialog");
+                notifyDataSetChanged();
 
             }
         });
@@ -125,6 +141,7 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
         TextView replacement_inventory_last_update;
         ImageButton replacement_inventory_view;
         ImageButton replacement_inventory_cull;
+        ImageButton replacement_inventory_mort;
 
         TextView replacement_inventory_number_male;
         TextView replacement_inventory_number_female;
@@ -138,8 +155,8 @@ public class RecyclerAdapter_Replacement_Inventory extends RecyclerView.Adapter<
             replacement_inventory_gen = view.findViewById(R.id.replacement_inventory_gen);*/
             replacement_inventory_batch_date = view.findViewById(R.id.replacement_inventory_batch_date);;
          /*   replacement_inventory_date_added = view.findViewById(R.id.replacement_inventory_date_added);;
-            replacement_inventory_last_update = view.findViewById(R.id.replacement_inventory_last_update);;
-            replacement_inventory_mort = view.findViewById(R.id.replacement_inventory_mort);;*/
+            replacement_inventory_last_update = view.findViewById(R.id.replacement_inventory_last_update);;*/
+            replacement_inventory_mort = view.findViewById(R.id.replacement_inventory_mort);;
             replacement_inventory_cull = view.findViewById(R.id.replacement_inventory_cull);;
             replacement_inventory_view = view.findViewById(R.id.replacement_inventory_view);;
 

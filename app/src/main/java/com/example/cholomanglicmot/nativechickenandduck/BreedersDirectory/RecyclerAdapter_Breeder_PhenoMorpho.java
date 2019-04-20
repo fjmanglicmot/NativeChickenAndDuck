@@ -71,7 +71,7 @@ public class RecyclerAdapter_Breeder_PhenoMorpho extends RecyclerView.Adapter<Re
 
         ///pass replacement tag to args
         final Bundle args = new Bundle();
-        args.putString("Replacement Pen", replacement_inventory.getBrooder_inv_pen());
+        args.putInt("Replacement Pen", replacement_inventory.getBrooder_inv_pen());
 
         args.putString("Replacement Tag", replacement_inventory.getBrooder_inv_brooder_tag());
 

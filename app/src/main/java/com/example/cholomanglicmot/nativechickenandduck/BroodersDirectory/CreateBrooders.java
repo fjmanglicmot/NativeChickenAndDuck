@@ -194,7 +194,7 @@ public class CreateBrooders extends AppCompatActivity {
             API_getBrooder();
 
 
-        } else {
+        }
 
 
 /////////////////////////
@@ -207,28 +207,10 @@ public class CreateBrooders extends AppCompatActivity {
 
 
         Cursor cursor_brooder_pen = myDb.getBroodersFromPen(); //naloload na kasi na-load na siya from the pen
-       // Cursor cursor_brooder = myDb.getAllDataFromBrooders();
-
-       /* cursor_brooder.moveToFirst();
-        if (cursor_brooder.getCount() == 0) {
-            //show message
-            Toast.makeText(this, "No data from brooders.", Toast.LENGTH_LONG).show();
-
-        } else {
-            do {
-
-
-                Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2), cursor_brooder.getString(3));
-                arrayList3.add(brooders);
-
-
-            } while (cursor_brooder.moveToNext());
-        }*/
-
 
         if (cursor_brooder_pen.getCount() == 0) {
             //show message
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No Brooder data", Toast.LENGTH_SHORT).show();
             return;
         } else {
 
@@ -246,7 +228,7 @@ public class CreateBrooders extends AppCompatActivity {
 
         }
 
-    }
+
 
 
 
@@ -275,34 +257,13 @@ public class CreateBrooders extends AppCompatActivity {
                     if (cursor.getCount() == 0) {
 
                         boolean isInserted = myDb.insertDataBrooderWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getBrooder_family_number(), arrayList_brooder.get(i).getBrooder_date_added(), arrayList_brooder.get(i).getBrooder_deleted_at());
-                        Toast.makeText(CreateBrooders.this, "BROODERS FUCKING ADDED", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateBrooders.this, "Brooders Added", Toast.LENGTH_SHORT).show();
                     }
 
                 }
 
 
-                Cursor cursor_brooder_pen = myDb.getBroodersFromPen();
 
-                if (cursor_brooder_pen.getCount() == 0) {
-                    //show message
-                  /*  Toast.makeText(getApplicationContext(), "No data", Toast.LENGTH_SHORT).show();*/
-                    return;
-                } else {
-
-                    cursor_brooder_pen.moveToFirst();
-                    do {
-
-                        Brooders_Pen broodersPen = new Brooders_Pen(cursor_brooder_pen.getString(2), cursor_brooder_pen.getInt(5), cursor_brooder_pen.getInt(4) - cursor_brooder_pen.getInt(5));
-                        arrayList.add(broodersPen);
-                    } while (cursor_brooder_pen.moveToNext());
-
-
-                    recycler_adapter = new RecyclerAdapter_Brooder_Pen(arrayList/*, arrayList2, arrayList3*/);//arrayList = brooder_pen, arrayListInventory = brooder_inventory, arrayListBrooders = brooders
-                    recyclerView.setAdapter(recycler_adapter);
-                    recycler_adapter.notifyDataSetChanged();
-
-                }
-               // Toast.makeText(getApplicationContext(), "Successfully added Brooders from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override

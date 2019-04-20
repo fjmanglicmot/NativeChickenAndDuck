@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,7 +104,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-   //     Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
         Exp_list = findViewById(R.id.exp_list);
@@ -289,7 +290,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
 
 
-        }else {
+        }
 
 
             Cursor cursor = myDb.getAllDataFromGeneration();
@@ -305,9 +306,11 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 cursor.moveToFirst();
                 do {
 
-                    Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
+                        Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
 
-                    arrayList.add(generation);
+                        arrayList.add(generation);
+
+
 
                 } while (cursor.moveToNext());
 
@@ -315,7 +318,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 line_cursor.moveToFirst();
                 if (line_cursor.getCount() == 0) {
                     //show message
-                    // Toast.makeText(this,"No lines", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(this,"No lines", Toast.LENGTH_SHORT).show();
 
                 } else {
                     String generation_number = null;
@@ -344,7 +347,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 recycler_adapter.notifyDataSetChanged(); //does not work, kailangan may way ka para maupdate yung adapter mo
 
 
-            }
+
         }
 
 
@@ -378,6 +381,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
                 }
 
+/*
 
                 Cursor line_cursor = myDb.getAllDataFromLine();
 
@@ -412,6 +416,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                 recycler_adapter = new RecyclerAdapter_Generation(arrayList_gen, line_dictionary);
                 recyclerView.setAdapter(recycler_adapter);
                 recycler_adapter.notifyDataSetChanged(); //does not work, kailangan may way ka para maupdate yung adapter mo
+*/
 
 
 
@@ -466,7 +471,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
             });
         }
 
-    //}
+
     private void API_getFarmID(String email){
         APIHelper.getFarmID("getFarmID/"+email, new BaseJsonHttpResponseHandler<Object>() {
             @Override

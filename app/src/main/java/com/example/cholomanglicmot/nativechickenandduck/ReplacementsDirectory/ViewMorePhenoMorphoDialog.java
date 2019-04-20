@@ -42,15 +42,7 @@ public class ViewMorePhenoMorphoDialog extends DialogFragment {
 
         save = view.findViewById(R.id.save);
 
-        //textView.setText(pheno_morpho_id.toString());
-        /*    public static final String TABLE_PHENO_MORPHO_VALUES = "pheno_morpho_values";
-    public static final String PHENO_MORPHO_VALUES_COL_0 = "id";
-    public static final String PHENO_MORPHO_VALUES_COL_1   = "gender";
-    public static final String PHENO_MORPHO_VALUES_COL_2   = "tag";
-    public static final String PHENO_MORPHO_VALUES_COL_3   = "phenotypic";
-    public static final String PHENO_MORPHO_VALUES_COL_4   = "morphometric";
-    public static final String PHENO_MORPHO_VALUES_COL_5   = "date_collected";
-    public static final String PHENO_MORPHO_VALUES_COL_6   = "deleted_at";*/
+
 
         Cursor cursor = myDb.getAllDataFromPhenoMorphoRecordsWhereID(pheno_morpho_id);
         cursor.moveToFirst();

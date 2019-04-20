@@ -1,14 +1,23 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
-public class Replacement_FeedingRecords {
+import com.google.gson.annotations.SerializedName;
 
+public class Replacement_FeedingRecords {
+    @SerializedName("id")
     private Integer id;
+    @SerializedName("replacement_inventory_id")
     private Integer replacement_feeding_inventory_id;
+    @SerializedName("date_collected")
     private String replacement_feeding_date_collected;
+
     private String replacement_feeding_tag;
+    @SerializedName("amount_offered")
     private Float replacement_feeding_offered;
+    @SerializedName("amount_refused")
     private Float replacement_feeding_refused;
+    @SerializedName("remarks")
     private String replacement_feeding_remarks;
+    @SerializedName("deleted_at")
     private String replacement_feeding_deleted_at;
 
     public Replacement_FeedingRecords(){

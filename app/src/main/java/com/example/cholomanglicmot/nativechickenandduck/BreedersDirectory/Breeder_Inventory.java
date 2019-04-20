@@ -4,7 +4,7 @@ public class Breeder_Inventory {
 
     private Integer id;
     private Integer brooder_inv_brooder_id;
-    private String brooder_inv_pen;
+    private Integer brooder_inv_pen;
     private String brooder_inv_brooder_tag;
     private String brooder_inv_batching_date;
     private Integer brooder_male_quantity;
@@ -16,7 +16,7 @@ public class Breeder_Inventory {
     public Breeder_Inventory(){
     }
 
-    public Breeder_Inventory(Integer id, Integer brooder_inv_brooder_id, String brooder_inv_pen, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity, Integer brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at) {
+    public Breeder_Inventory(Integer id, Integer brooder_inv_brooder_id, Integer brooder_inv_pen, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity, Integer brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at) {
         this.setId(id);
         this.setBrooder_inv_brooder_id(brooder_inv_brooder_id);
         this.setBrooder_inv_pen(brooder_inv_pen);
@@ -51,11 +51,11 @@ public class Breeder_Inventory {
         this.brooder_inv_brooder_id = brooder_inv_brooder_id;
     }
 
-    public String getBrooder_inv_pen() {
+    public Integer getBrooder_inv_pen() {
         return brooder_inv_pen;
     }
 
-    public void setBrooder_inv_pen(String brooder_inv_pen) {
+    public void setBrooder_inv_pen(Integer brooder_inv_pen) {
         this.brooder_inv_pen = brooder_inv_pen;
     }
 

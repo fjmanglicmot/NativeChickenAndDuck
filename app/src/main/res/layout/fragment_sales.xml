@@ -36,43 +36,77 @@
             android:layout_marginRight="20dp"
             android:inputType="text"
             android:textSize="14sp" />
-        <TextView
-            android:layout_below="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:gravity="left"
-            android:text="Male Sold"
-            />
 
-        <EditText
-            android:id="@+id/male_sold"
+        <LinearLayout
+            android:id="@+id/male_and_female"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/add_brooder_to_pen_text"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:inputType="number"
-            android:textSize="14sp" />
-        <TextView
-            android:layout_below="@+id/textView"
+            android:orientation="vertical">
+            <TextView
+                android:layout_below="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="Male Sold"
+                />
+
+            <EditText
+                android:id="@+id/male_sold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/add_brooder_to_pen_text"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:inputType="number"
+                android:textSize="14sp" />
+            <TextView
+                android:layout_below="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="Female Sold"
+                />
+            <EditText
+                android:id="@+id/female_sold"
+                android:layout_below="@+id/add_brooder_to_pen_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:inputType="number"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/total"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:gravity="left"
-            android:text="Female Sold"
-            />
-        <EditText
-            android:id="@+id/female_sold"
-            android:layout_below="@+id/add_brooder_to_pen_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:inputType="number"
-            android:textSize="14sp" />
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_below="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="left"
+                android:text="Total Sold"
+                />
+            <EditText
+                android:id="@+id/total_sold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:inputType="number"
+                android:textSize="14sp" />
+        </LinearLayout>
+
         <TextView
             android:layout_below="@+id/textView"
             android:layout_width="match_parent"
@@ -82,7 +116,6 @@
             android:gravity="left"
             android:text="Price"
             />
-
         <EditText
             android:id="@+id/price"
             android:layout_width="match_parent"

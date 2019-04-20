@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -21,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
@@ -34,13 +38,18 @@ import com.example.cholomanglicmot.nativechickenandduck.ProjectAdapter;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-//import com.squareup.picasso.Picasso;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+//import com.squareup.picasso.Picasso;
 
 public class CreateReplacements extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -93,7 +102,7 @@ public class CreateReplacements extends AppCompatActivity {
         TextView nav_email = (TextView)hView.findViewById(R.id.textView9);
         CircleImageView circleImageView = hView.findViewById(R.id.display_photo);
         nav_user.setText(name);
-       // Picasso.get().load(photo).into(circleImageView);
+        Picasso.get().load(photo).into(circleImageView);
         nav_email.setText(email);
         ///////////////////
 
@@ -167,24 +176,21 @@ public class CreateReplacements extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Create Replacements");
 
-        Cursor cursor_replacement_inventory = myDb.getAllDataFromReplacementInventory();
-        Cursor cursor_replacement_pen = myDb.getReplacementsFromPen();
-        Cursor cursor_replacement = myDb.getAllDataFromReplacements();
 
-        cursor_replacement.moveToFirst();
-        if (cursor_replacement.getCount() == 0) {
-            //show message
-            Toast.makeText(this, "No data from replacements.", Toast.LENGTH_LONG).show();
-
-        } else {
-            do {
-/*   Brooders brooders = new Brooders(cursor_brooder.getInt(0), cursor_brooder.getInt(1), cursor_brooder.getString(2),cursor_brooder.getString(3));*/
-                Replacements replacements = new Replacements(cursor_replacement.getInt(0), cursor_replacement.getString(1), cursor_replacement.getString(2), cursor_replacement.getString(3));
-                arrayList3.add(replacements);
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            //if internet is available, load data from web database
 
 
-            } while (cursor_replacement.moveToNext());
+            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
+            API_getReplacement();
+
+
         }
+
+
+        Cursor cursor_replacement_pen = myDb.getReplacementsFromPen();
+
 
 
         if (cursor_replacement_pen.getCount() == 0) {
@@ -195,12 +201,13 @@ public class CreateReplacements extends AppCompatActivity {
 
             cursor_replacement_pen.moveToFirst();
             do {
-                Replacement_Pen replacement_pen = new Replacement_Pen(cursor_replacement_pen.getString(1), cursor_replacement_pen.getInt(3), cursor_replacement_pen.getInt(4) - cursor_replacement_pen.getInt(3));
+            
+                Replacement_Pen replacement_pen = new Replacement_Pen(cursor_replacement_pen.getString(2), cursor_replacement_pen.getInt(5), cursor_replacement_pen.getInt(4) - cursor_replacement_pen.getInt(5));
                 arrayList.add(replacement_pen);
             } while (cursor_replacement_pen.moveToNext());
 
 
-            recycler_adapter = new RecyclerAdapter_Replacement_Pen(arrayList,arrayList2,arrayList3);//arrayList = brooder_pen, arrayListInventory = replacement_inventory, arrayListReplacements = brooders
+            recycler_adapter = new RecyclerAdapter_Replacement_Pen(arrayList);//arrayList = brooder_pen, arrayListInventory = replacement_inventory, arrayListReplacements = brooders
             recyclerView.setAdapter(recycler_adapter);
             recycler_adapter.notifyDataSetChanged();
 
@@ -211,6 +218,50 @@ public class CreateReplacements extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getReplacement(){
+        APIHelper.getReplacement("getReplacement/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONReplacement jsonReplacement = gson.fromJson(rawJsonResponse, JSONReplacement.class);
+                ArrayList <Replacements> arrayList_brooder = jsonReplacement.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromReplacementsWhereID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+                        boolean isInserted = myDb.insertDataReplacementWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getReplacement_family_number(), arrayList_brooder.get(i).getReplacement_date_added(), arrayList_brooder.get(i).getReplacement_deleted_at());
+                        Toast.makeText(CreateReplacements.this, "Replacements Added", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

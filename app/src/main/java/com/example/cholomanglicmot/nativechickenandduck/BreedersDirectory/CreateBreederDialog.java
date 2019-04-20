@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,15 +25,22 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateBreederDialog extends DialogFragment {
 
@@ -46,13 +56,17 @@ public class CreateBreederDialog extends DialogFragment {
     DatabaseHelper mydb;
     Random random = new Random();
     boolean isSystemOutside;
-    String replacement_tag_2, replacement_pen_2, female_replacement_pen_2;
+    String replacement_tag_2, replacement_pen_number, female_replacement_pen_number;
+    Integer replacement_pen_2, female_replacement_pen_2;
     String  female_replacement_tag_2;
     ArrayList<Pen> arrayListPen_2= new ArrayList();
     ArrayList<Pen> arrayListPen_3= new ArrayList();
     ArrayList<Pen> arrayListPen_4= new ArrayList();
     ArrayList<Pen> arrayListPen_5= new ArrayList();
-
+    Integer pen_id;
+    Integer batching_week2=null;
+    String formatted=null;
+    String brooder_tag2=null;
     ArrayList<Breeders> arrayListBreeder = new ArrayList<>();
     @Nullable
     @Override
@@ -247,6 +261,16 @@ public class CreateBreederDialog extends DialogFragment {
         });
 
 
+        ///GET BATCHING WEEK FROM DATABASE
+        Cursor cursor1 = myDb.getAllDataFromFarms();
+        cursor1.moveToFirst();
+
+        if(cursor1.getCount() != 0){
+
+            batching_week2 = cursor1.getInt(4);
+
+        }
+
 
         estimated_date_of_hatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,9 +283,11 @@ public class CreateBreederDialog extends DialogFragment {
                 DatePickerDialog mDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        calendar.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
+                        formatted = format1.format(calendar.getTime());
                         selectedMonth++;
                         estimated_date_of_hatch.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
-                        calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
                 mDatePicker.show();
@@ -323,7 +349,7 @@ public class CreateBreederDialog extends DialogFragment {
 
 
 
-
+        boolean isNetworkAvailable = isNetworkAvailable();
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -344,22 +370,76 @@ public class CreateBreederDialog extends DialogFragment {
                         }
                         boolean isInserted = myDb.insertDataBreeder(familyID, null,outside_date_transferred.getText().toString(),null);
                         //kunin yung selected pen tapos kung 0 yung content niya, ay
+                        if(isNetworkAvailable) {
+
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("family_id", familyID.toString());
+                            requestParams.add("date_added", outside_date_transferred.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+                            API_addBreeder(requestParams);
+
+                        }
 
 
                         Cursor cursor_pen = myDb.getAllDataFromPenWhere(outside_place_to_pen.getSelectedItem().toString());
                         cursor_pen.moveToFirst();
                         int total = cursor_pen.getInt(4);
-                        int current = cursor_pen.getInt(3);
+                        int current = cursor_pen.getInt(5);
                         //update pen count
-                        boolean isPenUpdated = myDb.updatePen(outside_place_to_pen.getSelectedItem().toString(), "Layer", (Integer.parseInt(outside_male_quantity.getText().toString())+Integer.parseInt(outside_female_quantity.getText().toString()))+current,total);
+                        boolean isPenUpdated = myDb.updatePen(outside_place_to_pen.getSelectedItem().toString(), "Layer", total,Integer.parseInt(outside_male_quantity.getText().toString())+Integer.parseInt(outside_female_quantity.getText().toString())+current);
+
+                        //updatePen
+                        Integer current_pen9 = Integer.parseInt(outside_male_quantity.getText().toString())+Integer.parseInt(outside_female_quantity.getText().toString())+current;
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("pen_number", outside_place_to_pen.getSelectedItem().toString());
+                            requestParams.add("pen_current", current_pen9.toString());
 
 
+
+                            API_editPenCount(requestParams);
+                        }
 
                         Cursor cursor = myDb.getIDFromBreedersWhere(familyID);
                         cursor.moveToFirst();
                         Integer id = cursor.getInt(0);
+                        Cursor cursor5 = myDb.getAllDataFromPenWhere(outside_place_to_pen.getSelectedItem().toString());
+                        cursor5.moveToFirst();
+                        if(cursor5.getCount() != 0){
+                            pen_id = cursor5.getInt(0);
+                        }
+                        brooder_tag2 = generateBrooderTag();
+                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(outside_male_quantity.getText().toString()), Integer.parseInt(outside_female_quantity.getText().toString()),Integer.parseInt(outside_female_quantity.getText().toString())+Integer.parseInt(outside_male_quantity.getText().toString()),outside_date_transferred.getText().toString(),null);
+                        Integer id_0=null;
+                        Cursor cursor2 = myDb.getDataFromBreederInvWhereTag(brooder_tag2);
+                        cursor2.moveToFirst();
+                        if(cursor2.getCount() != 0){
+                            id_0 = cursor2.getInt(0);
+                        }
+                        if(isNetworkAvailable){
+                            Integer breeder_total = Integer.parseInt(outside_female_quantity.getText().toString())+Integer.parseInt(outside_male_quantity.getText().toString());
+                            RequestParams requestParams = new RequestParams();
+                           // requestParams.add("id", id_0.toString());
+                            requestParams.add("breeder_id", id.toString());
+                            requestParams.add("pen_id", pen_id.toString());
+                            requestParams.add("breeder_tag", brooder_tag2);
+                            requestParams.add("batching_date", formatted);
+                            requestParams.add("number_male", outside_male_quantity.getText().toString());
+                            requestParams.add("number_female", outside_female_quantity.getText().toString());
+                            requestParams.add("total", breeder_total.toString());
+                            requestParams.add("last_update", outside_date_transferred.getText().toString());
+                            requestParams.add("deleted_at", null);
 
-                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, outside_place_to_pen.getSelectedItem().toString(), "QUEBAI"+Integer.parseInt(outside_generation_spinner.getSelectedItem().toString())+Integer.parseInt(outside_line_spinner.getSelectedItem().toString())+Integer.parseInt(outside_line_spinner.getSelectedItem().toString())+m, outside_date_transferred.getText().toString(),Integer.parseInt(outside_male_quantity.getText().toString()), Integer.parseInt(outside_female_quantity.getText().toString()),Integer.parseInt(outside_female_quantity.getText().toString())+Integer.parseInt(outside_male_quantity.getText().toString()),null,null);
+
+
+                            API_addBreederInventory(requestParams);
+                        }
+
+
+
 
                         if(isInserted == true && isInventoryInserted == true){
                             Toast.makeText(getActivity(),"Breeder added to database", Toast.LENGTH_SHORT).show();
@@ -389,6 +469,18 @@ public class CreateBreederDialog extends DialogFragment {
                             female_familyID = cursor_female_familyID.getInt(0);
                         }
                         boolean isInserted = myDb.insertDataBreeder(familyID, female_familyID,date_transferred.getText().toString(),null);
+                        if(isNetworkAvailable) {
+
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("family_id", familyID.toString());
+                            requestParams.add("female_family_id", female_familyID.toString());
+                            requestParams.add("date_added", date_transferred.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+                            API_addBreeder(requestParams);
+
+                        }
 
 
                         //put string operations here
@@ -413,19 +505,19 @@ public class CreateBreederDialog extends DialogFragment {
                         Cursor cursor1 = myDb.getDataFromReplacementInventoryWhereTag(replacement_tag_2);
 
                         cursor1.moveToFirst();
-                        replacement_pen_2 = cursor1.getString(2);
+                        replacement_pen_2 = cursor1.getInt(2);
                         Integer current_male_count = cursor1.getInt(5);
                         Integer current_male_total = cursor1.getInt(7);
 
                         Integer new_male_count = current_male_count - maleCount;
-                        Integer new_male_total = current_male_total - current_male_count;
+                        Integer new_male_total = current_male_total - maleCount;
 
 
 
                         //update the current male and female count of the replacement inventory
                         boolean isUpdated = myDb.updateReplacementInventoryMaleCountAndTotal(replacement_tag_2, new_male_count, new_male_total);
 
-
+                        //updatePen
 
 
                         //update Pen where the replacement inventory was transferred from
@@ -435,23 +527,38 @@ public class CreateBreederDialog extends DialogFragment {
                         }else{
                             do{
                                 if(cursor3 != null){
-                                    Pen pen = new Pen(cursor3.getInt(0),cursor3.getString(2), cursor3.getString(3), cursor3.getInt(4), cursor3.getInt(5), cursor3.getInt(6), cursor3.getInt(7));
+                                    Pen pen = new Pen(cursor3.getInt(0),cursor3.getString(2), cursor3.getString(3), cursor3.getInt(4), cursor3.getInt(5), cursor3.getInt(1), cursor3.getInt(6));
                                     arrayListPen_2.add(pen);
                                 }
                             }while (cursor3.moveToNext());
                         }
-                        for (int i = 0; i<arrayListPen_2.size();i++){
-                            if(arrayListPen_2.get(i).getPen_number().equals(replacement_pen_2)){
-                                arrayListPen_3.add(arrayListPen_2.get(i));
-                            }
+
+                        //replacement_pen_2 is the id of the selected pen, find its corresponding pen_number from the database
+                        Cursor cursor7 = myDb.getAllDataFromPenWhereID(replacement_pen_2);
+                        cursor7.moveToFirst();
+                        Integer total_2=0;
+                        Integer current_2=0;
+                        if (cursor7.getCount() != 0){
+                            replacement_pen_number = cursor7.getString(2);
+                            total_2 = cursor7.getInt(4);
+                            current_2 = cursor7.getInt(5);
                         }
 
-                        int current_2 = arrayListPen_3.get(0).getPen_inventory();
-                        int total_2 = arrayListPen_3.get(0).getPen_capacity();
-
                         //UPDATE PEN (BAWASAN YUNG YUNG BROODER PEN KUNG SAN GALING YUNG BROODER INVENTORY
-                        boolean isBrooderPenUpdated = myDb.updatePen(replacement_pen_2, "Grower",  current_2-maleCount, total_2);
+                        boolean isBrooderPenUpdated = myDb.updatePen(replacement_pen_number, "Grower",  total_2, current_2-maleCount);
 
+                        //updatePen
+                        Integer current_pen0 = current_2-maleCount;
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("pen_number", replacement_pen_number);
+                            requestParams.add("pen_current", current_pen0.toString());
+
+
+
+                            API_editPenCount(requestParams);
+                        }
 
 
 
@@ -474,58 +581,118 @@ public class CreateBreederDialog extends DialogFragment {
 
 
                         Cursor cursor2 = myDb.getDataFromReplacementInventoryWhereTag(female_replacement_tag_2);
-
                         cursor2.moveToFirst();
-                        female_replacement_pen_2 = cursor2.getString(2);
+
+                        female_replacement_pen_2 = cursor2.getInt(2);
                         Integer current_female_count = cursor2.getInt(6);
                         Integer current_female_total = cursor2.getInt(7);
                         Integer new_female_count = current_female_count - femaleCount;
-                        Integer new_female_total = current_female_total - current_female_count;
+                        Integer new_female_total = current_female_total - femaleCount;
 
 
                         boolean isUpdatedFemale = myDb.updateReplacementInventoryFemaleCountAndTotal(female_replacement_tag_2,new_female_count, new_female_total);
 
+                        //updateFemale
                         Cursor cursor4 = myDb.getAllDataFromPen();
                         cursor4.moveToFirst();
                         if(cursor4.getCount() == 0){
                         }else{
                             do{
                                 if(cursor4 != null){
-                                    Pen pen = new Pen(cursor4.getInt(0),cursor4.getString(2), cursor4.getString(3), cursor4.getInt(4), cursor4.getInt(5), cursor4.getInt(6), cursor4.getInt(7));
+                                    Pen pen = new Pen(cursor4.getInt(0),cursor4.getString(2), cursor4.getString(3), cursor4.getInt(4), cursor4.getInt(5), cursor4.getInt(1), cursor4.getInt(6));
                                     arrayListPen_4.add(pen);
                                 }
                             }while (cursor4.moveToNext());
                         }
-                        for (int i = 0; i<arrayListPen_4.size();i++){
-                            if(arrayListPen_4.get(i).getPen_number().equals(female_replacement_pen_2)){
-                                arrayListPen_5.add(arrayListPen_4.get(i));
-                            }
+
+
+                        //replacement_pen_2 is the id of the selected pen, find its corresponding pen_number from the database
+                        Cursor cursor6 = myDb.getAllDataFromPenWhereID(female_replacement_pen_2);
+                        cursor6.moveToFirst();
+                        Integer total_3 =0;
+                        Integer current_3=0;
+                        if (cursor6.getCount() != 0){
+                            female_replacement_pen_number = cursor6.getString(2);
+                            total_3 = cursor6.getInt(4);
+                            current_3 = cursor6.getInt(5);
                         }
 
-                        int current_3 = arrayListPen_5.get(0).getPen_inventory();
-                        int total_3 = arrayListPen_5.get(0).getPen_capacity();
+
 
                         //UPDATE PEN (BAWASAN YUNG YUNG BROODER PEN KUNG SAN GALING YUNG BROODER INVENTORY
-                        boolean isBrooderPenUpdated_2 = myDb.updatePen(female_replacement_pen_2, "Grower",  current_3-maleCount, total_3);
+                        boolean isBrooderPenUpdated_2 = myDb.updatePen(female_replacement_pen_number, "Grower", total_3,  current_3-femaleCount);
+                        //updateReplacementPen
+                        Integer current_pen2 = current_3-femaleCount;
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("pen_number", female_replacement_pen_number);
+                            requestParams.add("pen_current", current_pen2.toString());
 
 
+
+                            API_editPenCount(requestParams);
+                        }
 
 
 
                         Cursor cursor_pen = myDb.getAllDataFromPenWhere(place_to_pen.getSelectedItem().toString());
                         cursor_pen.moveToFirst();
                         int total = cursor_pen.getInt(4);
-                        int current = cursor_pen.getInt(3);
+                        int current = cursor_pen.getInt(5);
                         //update pen count
-                        boolean isPenUpdated = myDb.updatePen(place_to_pen.getSelectedItem().toString(), "Layer", (Integer.parseInt(quantity.getText().toString())+Integer.parseInt(female_quantity.getText().toString())+current),total);
+                        boolean isPenUpdated = myDb.updatePen(place_to_pen.getSelectedItem().toString(), "Layer", total,(Integer.parseInt(quantity.getText().toString())+Integer.parseInt(female_quantity.getText().toString())+current));
+                       // updatePenBreeder
+                        Integer current_pen = (Integer.parseInt(quantity.getText().toString())+Integer.parseInt(female_quantity.getText().toString())+current);
+                        if(isNetworkAvailable()){
+
+                            RequestParams requestParams = new RequestParams();
+                            requestParams.add("pen_number", place_to_pen.getSelectedItem().toString());
+                            requestParams.add("pen_current", current_pen.toString());
+
+
+
+                            API_editPenCount(requestParams);
+                        }
 
 
                         Cursor cursor = myDb.getIDFromBreedersWhere(familyID);
                         cursor.moveToFirst();
                         Integer id = cursor.getInt(0);
 
-                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, place_to_pen.getSelectedItem().toString(), "QUEBAI"+Integer.parseInt(generation_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+Integer.parseInt(line_spinner.getSelectedItem().toString())+m, date_transferred.getText().toString(),Integer.parseInt(quantity.getText().toString()), Integer.parseInt(female_quantity.getText().toString()),Integer.parseInt(female_quantity.getText().toString())+Integer.parseInt(quantity.getText().toString()),null,null);
+                        Cursor cursor5 = myDb.getAllDataFromPenWhere(place_to_pen.getSelectedItem().toString());
+                        cursor5.moveToFirst();
+                        if(cursor5.getCount() != 0){
+                            pen_id = cursor5.getInt(0);
+                        }
+                        brooder_tag2 = generateBrooderTag();
+                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(quantity.getText().toString()), Integer.parseInt(female_quantity.getText().toString()),Integer.parseInt(female_quantity.getText().toString())+Integer.parseInt(quantity.getText().toString()),date_transferred.getText().toString(),null);
 
+
+                        Integer id_0=null;
+                        Cursor cursor2_breeder = myDb.getDataFromBreederInvWhereTag(brooder_tag2);
+                        cursor2_breeder.moveToFirst();
+                        if(cursor2_breeder.getCount() != 0){
+                            id_0 = cursor2_breeder.getInt(0);
+                        }
+                        if(isNetworkAvailable){
+                            Integer breeder_total = Integer.parseInt(female_quantity.getText().toString())+Integer.parseInt(quantity.getText().toString());
+                            RequestParams requestParams = new RequestParams();
+                            //requestParams.add("id", id_0.toString());
+                            requestParams.add("breeder_id", id.toString());
+                            requestParams.add("pen_id", pen_id.toString());
+                            requestParams.add("breeder_tag", brooder_tag2);
+                            requestParams.add("batching_date", formatted);
+                            requestParams.add("number_male", quantity.getText().toString());
+                            requestParams.add("number_female", female_quantity.getText().toString());
+                            requestParams.add("total", breeder_total.toString());
+                            requestParams.add("last_update", date_transferred.getText().toString());
+                            requestParams.add("deleted_at", null);
+
+
+
+                            API_addBreederInventory(requestParams);
+                        }
                         if(isInserted == true && isInventoryInserted == true){
                             Toast.makeText(getActivity(),"Breeder added to database", Toast.LENGTH_SHORT).show();
                             Intent intent_line = new Intent(getActivity(), CreateBreeders.class);
@@ -549,7 +716,54 @@ public class CreateBreederDialog extends DialogFragment {
 
         return view;
     }
+    private void API_editPenCount(RequestParams requestParams){
+        APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully edited pen count", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private String generateBrooderTag() {
+        String tag= null;
+        String code = null;
+        String timestamp;
+
+
+        Cursor cursor = myDb.getAllDataFromFarms();
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            code = cursor.getString(2);
+        }
+        Random rd = new Random();
+
+        Date date= new Date();
+
+        Long time = date.getTime();
+        time = time/1000;
+        int random = rd.nextInt(100);
+        tag = code+Integer.toHexString(random)+time.toString();
+
+        return tag;
+
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     private void loadSpinnerDataForGeneration() {
 
         DatabaseHelper db = new DatabaseHelper(getContext());
@@ -668,6 +882,44 @@ public class CreateBreederDialog extends DialogFragment {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+    private void API_addBreeder(RequestParams requestParams){
+        APIHelper.addBreederFamily("addBreederFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addBreederInventory(RequestParams requestParams){
+        APIHelper.addBreederInventory("addBreederInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getActivity(), "Successfully added brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getActivity(), "Failed to add brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 
 

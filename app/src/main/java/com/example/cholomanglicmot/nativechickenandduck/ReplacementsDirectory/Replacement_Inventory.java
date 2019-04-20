@@ -1,23 +1,34 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
-public class Replacement_Inventory {
-    private Integer id;
-    private Integer replacement_inv_replacement_id;
-    private String replacement_inv_pen;
-    private String replacement_inv_replacement_tag;
-    private String replacement_inv_batching_date;
-    private Integer replacement_male_quantity;
-    private Integer replacement_female_quantity;
-    private Integer replacement_total_quantity;
+import com.google.gson.annotations.SerializedName;
 
+public class Replacement_Inventory {
+    @SerializedName("id")
+    private Integer id;
+    @SerializedName("replacement_id")
+    private Integer replacement_inv_replacement_id;
+    @SerializedName("pen_id")
+    private Integer replacement_inv_pen;
+    @SerializedName("replacement_tag")
+    private String replacement_inv_replacement_tag;
+    @SerializedName("batching_date")
+    private String replacement_inv_batching_date;
+    @SerializedName("number_male")
+    private Integer replacement_male_quantity;
+    @SerializedName("number_female")
+    private Integer replacement_female_quantity;
+    @SerializedName("total")
+    private Integer replacement_total_quantity;
+    @SerializedName("last_update")
     private String replacement_inv_last_update;
+    @SerializedName("deleted_at")
     private String replacement_inv_deleted_at;
 
 
 
     public Replacement_Inventory(){
     }
-    public Replacement_Inventory(Integer id, Integer replacement_inv_replacement_id,String replacement_inv_pen, String replacement_inv_replacement_tag ,String replacement_inv_batching_date, Integer replacement_male_quantity, Integer replacement_female_quantity, Integer replacement_total_quantity,String replacement_inv_last_update, String replacement_inv_deleted_at) {
+    public Replacement_Inventory(Integer id, Integer replacement_inv_replacement_id,Integer replacement_inv_pen, String replacement_inv_replacement_tag ,String replacement_inv_batching_date, Integer replacement_male_quantity, Integer replacement_female_quantity, Integer replacement_total_quantity,String replacement_inv_last_update, String replacement_inv_deleted_at) {
         this.setId(id);
         this.setReplacement_inv_replacement_id(replacement_inv_replacement_id);
         this.setReplacement_inv_pen(replacement_inv_pen);
@@ -47,11 +58,11 @@ public class Replacement_Inventory {
     }
 
 
-    public String getReplacement_inv_pen() {
+    public Integer getReplacement_inv_pen() {
         return replacement_inv_pen;
     }
 
-    public void setReplacement_inv_pen(String replacement_inv_pen) {
+    public void setReplacement_inv_pen(Integer replacement_inv_pen) {
         this.replacement_inv_pen = replacement_inv_pen;
     }
 

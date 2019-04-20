@@ -2,8 +2,11 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,13 +24,18 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
@@ -38,7 +46,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
     private LinearLayout linear_total, linear_male, linear_female;
     Integer male_count, female_count, total_count;
     Float total_weight;
-
+    Integer brooder_pen_id;
     boolean isSexingCheched, isOtherDayChecked;
     private Button mActionOk;
     DatabaseHelper myDb;
@@ -46,6 +54,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
     ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
     Switch other_day_switch, sexing_switch;
+    Float total1;
 
     Map<Integer, ArrayList<Float>> inventory_dictionary = new LinkedHashMap<Integer, ArrayList<Float>>();
 
@@ -157,7 +166,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         selectedMonth++;
-                        brooder_growth_date_added.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
+                        brooder_growth_date_added.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
                         calendar.set(selectedYear,selectedMonth,selectedDay);
                     }
                 }, year, month, day);
@@ -166,7 +175,11 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
             }
         });
 
-
+        Cursor cursor1 = myDb.getAllDataFromPenWhere(brooder_pen);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            brooder_pen_id = cursor1.getInt(0);
+        }
 
 
 
@@ -224,7 +237,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     }
 
                     for (int i=0;i<arrayListBrooderInventory.size();i++){
-                        if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen) ){
+                        if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == brooder_pen_id ){
 
                             arrayList_temp.add(arrayListBrooderInventory.get(i)); //ito na yung list ng inventory na nasa pen
 
@@ -360,8 +373,33 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                         for(int i=0;i<arrayList_temp.size();i++){
                             if (arrayList_temp.get(i).getBrooder_inv_brooder_id().equals(key)){
+                                if(male == 0){
+                                    total1 = total;
+                                }else{
+                                    total1 = female+male;
+                                }
+                                boolean isInserted = myDb.insertDataBrooderGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getBrooder_male_quantity(),male,arrayList_temp.get(i).getBrooder_female_quantity(),female,arrayList_temp.get(i).getBrooder_total_quantity(),total,null);
+                                boolean isNetworkAvailable = isNetworkAvailable();
+                                if(isNetworkAvailable){
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("broodergrower_inventory_id", key.toString());
+                                    requestParams.add("collection_day", brooder_growth_collection.toString());
+                                    requestParams.add("date_collected", brooder_growth_date_added.getText().toString());
+                                    requestParams.add("male_quantity", arrayList_temp.get(i).getBrooder_male_quantity().toString());
+                                    requestParams.add("male_weight", male.toString());
+                                    requestParams.add("female_quantity", arrayList_temp.get(i).getBrooder_female_quantity().toString());
+                                    requestParams.add("female_weight", female.toString());
 
-                                boolean isInserted = myDb.insertDataBrooderGrowthRecords(key,brooder_growth_collection,brooder_growth_date_added.getText().toString(),arrayList_temp.get(i).getBrooder_male_quantity(),male,arrayList_temp.get(i).getBrooder_female_quantity(),female,arrayList_temp.get(i).getBrooder_total_quantity(),female+male,null);
+                                    requestParams.add("total_quantity", arrayList_temp.get(i).getBrooder_total_quantity().toString());
+
+                                    requestParams.add("total_weight", total.toString());
+                                    requestParams.add("deleted_at", null);
+
+
+                                    while(!API_addBrooderGrowth(requestParams)){
+                                        //do nothing while the functions is not returning true
+                                    }
+                                }
                                 if(!isInserted){
                                     Toast.makeText(getContext(),"Error inserting record with Inventory id: "+key, Toast.LENGTH_SHORT).show();
                                     getDialog().dismiss();
@@ -371,7 +409,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                     }
 
-                    Toast.makeText(getContext(),"Added to database", Toast.LENGTH_LONG).show();
+
                     Intent intent = new Intent(getActivity(), BrooderGrowthRecordsActivity.class);
                     intent.putExtra("Brooder Pen",brooder_pen);
                     startActivity(intent);
@@ -403,5 +441,31 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
         builder.show();
     }
 
+    private boolean API_addBrooderGrowth(RequestParams requestParams){
+        APIHelper.addBrooderGrowth("addBrooderGrowth", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+               // Toast.makeText(getActivity(), "Successfully added brooder growth record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getContext(), "Failed to add brooder growth record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+        return true;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 }

@@ -35,12 +35,14 @@
         <activity android:name=".BroodersDirectory.BrooderInventoryActivity" />
         <activity android:name=".BroodersDirectory.BrooderFeedingRecordsActivity" />
         <activity android:name=".BroodersDirectory.BrooderGrowthRecordsActivity" />
+        <activity android:name=".BroodersDirectory.MortalityAndSalesRecordsBrooder" />
         <activity android:name=".ReplacementsDirectory.CreateReplacements" />
         <activity android:name=".ReplacementsDirectory.ReplacementInventoryActivity" />
         <activity android:name=".ReplacementsDirectory.ReplacementFeedingRecordsActivity" />
         <activity android:name=".ReplacementsDirectory.ReplacementGrowthRecordsActivity" />
         <activity android:name=".ReplacementsDirectory.ReplacementPhenoMorphoRecordsActivity" />
         <activity android:name=".ReplacementsDirectory.ReplacementPhenoMorphoViewActivity" />
+        <activity android:name=".ReplacementsDirectory.MortalityAndSalesRecordsReplacement" />
         <activity android:name=".BreedersDirectory.BreederFeedingRecordsActivity" />
         <activity android:name=".BreedersDirectory.EggProductionRecords" />
         <activity android:name=".BreedersDirectory.HatcheryRecords" />
@@ -48,6 +50,8 @@
         <activity android:name=".BreedersDirectory.MortalityAndSalesRecords" />
         <activity android:name=".BreedersDirectory.BreederPhenoMorphoRecordsActivity" />
         <activity android:name=".BreedersDirectory.BreederPhenoMorphoViewActivity" />
+
+
     </application>
 
 </manifest>
