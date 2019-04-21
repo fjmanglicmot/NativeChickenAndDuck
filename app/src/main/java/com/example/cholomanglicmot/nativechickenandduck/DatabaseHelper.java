@@ -2286,6 +2286,132 @@ public Integer getAllMaleFromReplacements(){
     }
 
 
+////////////////brooders
+public Integer getAllMaleFromBrooders(){
+    SQLiteDatabase db = this.getWritableDatabase();
+    Integer male_count=0;
+    Cursor res = db.rawQuery("SELECT BROODER_INV_NUMBER_MALE FROM " +TABLE_BROODER_INVENTORIES, null);
+    res.moveToFirst();
+    if(res.getCount() != 0){
+        do{
+            male_count = male_count + res.getInt(0);
+        }while (res.moveToNext());
+    }
+
+    return male_count;
+}
+    public Integer getAllFemaleFromBrooders(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+        Cursor res = db.rawQuery("SELECT BROODER_INV_NUMBER_FEMALE FROM " +TABLE_BROODER_INVENTORIES, null);
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+    public Integer getAllBrooderMaleFromMort(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+        String type = "brooder";
+        String category = "died";
+        Cursor res = db.rawQuery("SELECT MORT_AND_SALES_MALE FROM " +TABLE_MORTALITY_AND_SALES+ " WHERE MORT_AND_SALES_CATEGORY LIKE ? AND MORT_AND_SALES_TYPE LIKE ?", new String[]{category, type});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+    public Integer getAllBrooderFemaleFromMort(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+        String type = "brooder";
+        String category = "died";
+        Cursor res = db.rawQuery("SELECT MORT_AND_SALES_FEMALE FROM " +TABLE_MORTALITY_AND_SALES+ " WHERE MORT_AND_SALES_CATEGORY LIKE ? AND MORT_AND_SALES_TYPE LIKE ?", new String[]{category, type});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+
+    public Integer getAllBrooderMaleFromSales(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+        String type = "brooder";
+        String category = "sold";
+        Cursor res = db.rawQuery("SELECT MORT_AND_SALES_MALE FROM " +TABLE_MORTALITY_AND_SALES+ " WHERE MORT_AND_SALES_CATEGORY LIKE ? AND MORT_AND_SALES_TYPE LIKE ?", new String[]{category, type});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+    public Integer getAllBrooderFemaleFromSales(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+        String type = "brooder";
+        String category = "sold";
+        Cursor res = db.rawQuery("SELECT MORT_AND_SALES_FEMALE FROM " +TABLE_MORTALITY_AND_SALES+ " WHERE MORT_AND_SALES_CATEGORY LIKE ? AND MORT_AND_SALES_TYPE LIKE ?", new String[]{category, type});
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+    public Integer getBrooderFeedingOffered(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+
+
+        Cursor res = db.rawQuery("SELECT BROODER_FEEDING_AMOUNT_OFFERED FROM " +TABLE_BROODER_FEEDING_RECORDS,null);
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
+
+    public Integer getBrooderFeedingRefused(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Integer male_count=0;
+
+
+        Cursor res = db.rawQuery("SELECT BROODER_FEEDING_AMOUNT_REFUSED FROM " +TABLE_BROODER_FEEDING_RECORDS,null);
+        res.moveToFirst();
+        if(res.getCount() != 0){
+            do{
+                male_count = male_count + res.getInt(0);
+            }while (res.moveToNext());
+        }
+
+        return male_count;
+    }
+
 
 
 

@@ -620,6 +620,11 @@ android:fitsSystemWindows="true">
 
 
 
+
+
+
+
+            #fffbed
             <android.support.v7.widget.CardView
                 app:cardBackgroundColor="#fffbed"
                 android:layout_margin="20dp"
@@ -637,6 +642,264 @@ android:fitsSystemWindows="true">
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="GROWERS AND REPLACEMENTS"
+                        android:textStyle="bold"
+                        android:textSize="20sp"/>
+                    <LinearLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Inventory"
+                                android:gravity="center"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                >
+
+                                <LinearLayout
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+
+                                    >
+                                    <LinearLayout
+                                        android:paddingTop="10dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Male"/>
+                                        <TextView
+                                            android:id="@+id/male_count_brooder"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    >
+                                    <LinearLayout
+                                        android:paddingTop="10dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Female"/>
+                                        <TextView
+                                            android:id="@+id/female_count_brooder"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+                                        <TextView
+
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text=""/>
+
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Mortality and Sales" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                >
+
+                                <LinearLayout
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+
+                                    >
+                                    <LinearLayout
+                                        android:paddingTop="10dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Mortality"/>
+                                        <TextView
+                                            android:id="@+id/male_count_replacement_mort"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+                                        <TextView
+                                            android:id="@+id/female_count_replacement_mort"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+
+                                    >
+                                    <LinearLayout
+                                        android:paddingTop="10dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Sales"/>
+                                        <TextView
+                                            android:id="@+id/male_count_replacement_sales"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+                                        <TextView
+                                            android:id="@+id/female_count_replacement_sales"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:paddingTop="40dp"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FEED CONSUMPTION"
+                        android:textSize="15sp"/>
+                    <TextView
+                        android:paddingTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Consumption"
+                        android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/replacement_feeding_consumed"
+                        android:paddingTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0.000 kg"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:paddingBottom="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/replacement_feeding_offered"
+                            android:gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Total Offered: 0.000 kg"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:id="@+id/replacement_feeding_refused"
+                            android:gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Total Refused: 0.000 kg"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+
+
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+
+
+
+
+
+            <android.support.v7.widget.CardView
+                app:cardBackgroundColor="#fff8d6"
+                android:layout_margin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <LinearLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="BROODERS"
                         android:textStyle="bold"
                         android:textSize="20sp"/>
                     <LinearLayout
@@ -763,258 +1026,14 @@ android:fitsSystemWindows="true">
                                             android:gravity="center"
                                             android:text="Mortality"/>
                                         <TextView
-                                            android:id="@+id/male_count_replacement_mort"
+                                            android:id="@+id/male_count_brooder_mort"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
                                             android:text="Na"/>
                                         <TextView
-                                            android:id="@+id/female_count_replacement_mort"
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-
-                                    </LinearLayout>
-
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-
-                                    >
-                                    <LinearLayout
-                                        android:paddingTop="10dp"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Sales"/>
-                                        <TextView
-                                            android:id="@+id/male_count_replacement_sales"
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-                                        <TextView
-                                            android:id="@+id/female_count_replacement_sales"
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-
-                                    </LinearLayout>
-
-                                </LinearLayout>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <TextView
-                        android:paddingTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Consumption"
-                        android:gravity="center"/>
-                    <TextView
-                        android:id="@+id/replacement_feeding_consumed"
-                        android:paddingTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="0.000 kg"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:gravity="center"/>
-
-                    <LinearLayout
-                        android:paddingBottom="50dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/replacement_feeding_offered"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Total Offered: 0.000 kg"
-                            android:layout_weight="1"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:paddingTop="40dp"
-                            android:text="FEED CONSUMPTION"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/replacement_feeding_refused"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Total Refused: 0.000 kg"
-                            android:layout_weight="1"/>
-                    </LinearLayout>
-
-
-
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-
-
-
-
-
-
-
-
-            <android.support.v7.widget.CardView
-                app:cardBackgroundColor="#fff8d6"
-                android:layout_margin="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-                <LinearLayout
-                    android:layout_marginTop="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="BROODERS"
-                        android:textStyle="bold"
-                        android:textSize="20sp"/>
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-                        <LinearLayout
-
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Inventory"
-                                android:gravity="center"/>
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                >
-
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-
-                                    >
-                                    <LinearLayout
-                                        android:paddingTop="10dp"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Male"/>
-                                        <TextView
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-
-                                    </LinearLayout>
-
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_weight="1"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    >
-                                    <LinearLayout
-                                        android:paddingTop="10dp"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Female"/>
-                                        <TextView
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-
-                                    </LinearLayout>
-                                </LinearLayout>
-                            </LinearLayout>
-
-
-                        </LinearLayout>
-                        <LinearLayout
-
-                            android:layout_width="match_parent"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:text="Mortality and Sales" />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                >
-
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-
-                                    >
-                                    <LinearLayout
-                                        android:paddingTop="10dp"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Mortality"/>
-                                        <TextView
+                                            android:id="@+id/female_count_brooder_mort"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -1042,6 +1061,14 @@ android:fitsSystemWindows="true">
                                             android:gravity="center"
                                             android:text="Sales"/>
                                         <TextView
+                                            android:id="@+id/male_count_brooder_sales"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+                                        <TextView
+                                            android:id="@+id/female_count_brooder_sales"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -1056,6 +1083,7 @@ android:fitsSystemWindows="true">
 
                         </LinearLayout>
                     </LinearLayout>
+
                     <TextView
                         android:paddingTop="40dp"
                         android:gravity="center"
@@ -1070,6 +1098,7 @@ android:fitsSystemWindows="true">
                         android:text="Consumption"
                         android:gravity="center"/>
                     <TextView
+                        android:id="@+id/brooder_feeding_consumed"
                         android:paddingTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1084,12 +1113,14 @@ android:fitsSystemWindows="true">
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView
+                            android:id="@+id/brooder_feeding_offered"
                             android:gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Total Offered: 0.000 kg"
                             android:layout_weight="1"/>
                         <TextView
+                            android:id="@+id/brooder_feeding_refused"
                             android:gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

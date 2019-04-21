@@ -94,8 +94,10 @@ public class DashBoardActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    TextView male_count_breeder, female_count_breeder,male_count_breeder_mort, female_count_breeder_mort,male_sales_breeder, female_sales_breeder , egg_sales_breeder,breeder_feeding_offered,breeder_feeding_refused,breeder_feeding_consumed;
-    TextView intact, weight, broken, rejected, fertility, hatchability, total_hatchability;
+    TextView male_count_breeder, female_count_breeder,male_count_breeder_mort, female_count_breeder_mort,male_sales_breeder, female_sales_breeder , egg_sales_breeder,breeder_feeding_offered,breeder_feeding_refused,breeder_feeding_consumed,intact, weight, broken, rejected, fertility, hatchability, total_hatchability;;
+    TextView male_count_replacement, female_count_replacement,male_count_replacement_mort, female_count_replacement_mort, male_count_replacement_sales, female_count_replacement_sales,replacement_feeding_offered,replacement_feeding_refused,replacement_feeding_consumed;
+    TextView male_count_brooder, female_count_brooder,male_count_brooder_mort, female_count_brooder_mort, male_count_brooder_sales, female_count_brooder_sales,brooder_feeding_offered,brooder_feeding_refused,brooder_feeding_consumed;
+
     RecyclerView.LayoutManager layoutManager;
     LinkedHashMap<String, List<String>> Project_category;
     List<String> Project_list;
@@ -187,6 +189,51 @@ public class DashBoardActivity extends AppCompatActivity {
         hatchability.setText(myDb.getHatchabilityPercentage().toString()+" %");
         total_hatchability.setText(myDb.getHatchabilityPercentage().toString()+" %");
 
+
+        male_count_replacement = findViewById(R.id.male_count_replacement);
+        female_count_replacement = findViewById(R.id.female_count_replacement);
+        male_count_replacement.setText(myDb.getAllMaleFromReplacements().toString());
+        female_count_replacement.setText(myDb.getAllFemaleFromReplacements().toString());
+        male_count_replacement_mort = findViewById(R.id.male_count_replacement_mort);
+        female_count_replacement_mort = findViewById(R.id.female_count_replacement_mort);
+        male_count_replacement_mort.setText("Male: "+myDb.getAllReplacementMaleFromMort().toString());
+        female_count_replacement_mort.setText("Female: "+myDb.getAllReplacementFemaleFromMort().toString());
+        male_count_replacement_sales = findViewById(R.id.male_count_replacement_sales);
+        female_count_replacement_sales = findViewById(R.id.female_count_replacement_sales);
+        male_count_replacement_sales.setText("Male: "+myDb.getAllReplacementMaleFromSales().toString());
+        female_count_replacement_sales.setText("Female: "+myDb.getAllReplacementFemaleFromSales());
+
+        replacement_feeding_offered = findViewById(R.id.replacement_feeding_offered);
+        replacement_feeding_refused =findViewById(R.id.replacement_feeding_refused);
+        replacement_feeding_consumed =findViewById(R.id.replacement_feeding_consumed);
+        replacement_feeding_offered.setText(myDb.getReplacementFeedingOffered().toString()+" kg");
+        replacement_feeding_refused.setText(myDb.getReplacementFeedingRefused().toString()+ " kg");
+        Integer consumed2 = myDb.getReplacementFeedingOffered()-myDb.getReplacementFeedingRefused();
+        replacement_feeding_consumed.setText(consumed2.toString() +" kg");
+
+
+
+
+        male_count_brooder = findViewById(R.id.male_count_brooder);
+        female_count_brooder = findViewById(R.id.female_count_brooder);
+        male_count_brooder.setText(myDb.getAllMaleFromBrooders().toString());
+        female_count_brooder.setText(myDb.getAllFemaleFromBrooders().toString());
+        male_count_brooder_mort = findViewById(R.id.male_count_brooder_mort);
+        female_count_brooder_mort = findViewById(R.id.female_count_brooder_mort);
+        male_count_brooder_mort.setText("Male: "+myDb.getAllBrooderMaleFromMort().toString());
+        female_count_brooder_mort.setText("Female: "+myDb.getAllBrooderFemaleFromMort().toString());
+        male_count_brooder_sales = findViewById(R.id.male_count_brooder_sales);
+        female_count_brooder_sales = findViewById(R.id.female_count_brooder_sales);
+        male_count_brooder_sales.setText("Male: "+myDb.getAllBrooderMaleFromSales().toString());
+        female_count_brooder_sales.setText("Female: "+myDb.getAllBrooderFemaleFromSales().toString());
+
+        brooder_feeding_offered = findViewById(R.id.brooder_feeding_offered);
+        brooder_feeding_refused =findViewById(R.id.brooder_feeding_refused);
+        brooder_feeding_consumed =findViewById(R.id.brooder_feeding_consumed);
+        brooder_feeding_offered.setText(myDb.getBrooderFeedingOffered().toString()+" kg");
+        brooder_feeding_refused.setText(myDb.getBrooderFeedingRefused().toString()+ " kg");
+        Integer consumed3 = myDb.getBrooderFeedingOffered()-myDb.getBrooderFeedingRefused();
+        brooder_feeding_consumed.setText(consumed3.toString() +" kg");
 
         layoutManager = new LinearLayoutManager(this);
 
