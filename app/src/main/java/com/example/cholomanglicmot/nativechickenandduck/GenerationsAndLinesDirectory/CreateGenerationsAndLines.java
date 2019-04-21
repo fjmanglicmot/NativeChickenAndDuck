@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -278,15 +279,19 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
 
 
-        boolean isNetworkAvailable = isNetworkAvailable();
 
-        if(isNetworkAvailable){
+
+        if(isNetworkAvailable()){
             //if internet is available, load data from web database
 
 
 
             //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
             API_getFarmID(email);
+            API_updateGeneration(farm_id);
+            API_updateLine();
+
+
 
 
 
@@ -316,7 +321,6 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
                 } while (cursor.moveToNext());
 
-
                 line_cursor.moveToFirst();
                 if (line_cursor.getCount() == 0) {
                     //show message
@@ -328,7 +332,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                         Cursor cursor1 = myDb.getDataFromGenerationWhereID(line_cursor.getInt(3));
                         cursor1.moveToFirst();
                         if (cursor1.getCount() != 0) {
-                            generation_number = cursor1.getString(0);
+                            generation_number = cursor1.getString(2);
                         }
                         if (line_dictionary.containsKey(generation_number)) {
                             list = line_dictionary.get(generation_number);
@@ -382,44 +386,6 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                     }
 
                 }
-
-/*
-
-                Cursor line_cursor = myDb.getAllDataFromLine();
-
-
-                line_cursor.moveToFirst();
-                if (line_cursor.getCount() == 0) {
-                    //show message
-                    // Toast.makeText(this,"No lines", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    String generation_number = null;
-                    do {
-                        Cursor cursor1 = myDb.getDataFromGenerationWhereID(line_cursor.getInt(3));
-                        cursor1.moveToFirst();
-                        if (cursor1.getCount() != 0) {
-                            generation_number = cursor1.getString(0);
-                        }
-                        if (line_dictionary.containsKey(generation_number)) {
-                            list = line_dictionary.get(generation_number);
-                            list.add(line_cursor.getString(1));
-                        } else {
-                            ArrayList<String> list1 = new ArrayList<String>();
-                            list1.add(line_cursor.getString(1));
-                            line_dictionary.put(generation_number, list1);
-                        }
-
-
-                    } while (line_cursor.moveToNext());
-                }
-
-
-                recycler_adapter = new RecyclerAdapter_Generation(arrayList_gen, line_dictionary);
-                recyclerView.setAdapter(recycler_adapter);
-                recycler_adapter.notifyDataSetChanged(); //does not work, kailangan may way ka para maupdate yung adapter mo
-*/
-
 
 
 
@@ -494,6 +460,228 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
                 Toast.makeText(getApplicationContext(), "Failed ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addGeneration(RequestParams requestParams){
+        APIHelper.addGeneration("addGeneration", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced generations to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+              //  Toast.makeText(context, "Failed to add Generation to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateGeneration(String farm_id){
+
+        APIHelper.getGeneration("getGeneration/"+farm_id, new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONGeneration jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONGeneration.class);
+                ArrayList<Generation> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Generation> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromGeneration();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Generation generation = new Generation(cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getInt(4), cursor_brooder_inventory.getInt(0), cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(3), cursor_brooder_inventory.getString(5));
+                        arrayListBrooderInventoryLocal.add(generation);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromGenerationWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer farm_id = cursor.getInt(1);
+                    String number = cursor.getString(2);
+                    Integer numerical_generation = cursor.getInt(3);
+                    Integer is_active = cursor.getInt(4);
+                    String deleted_at = cursor.getString(5);
+
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("farm_id", farm_id.toString());
+                    requestParams.add("number", number);
+                    requestParams.add("numerical_generation", numerical_generation.toString());
+                    requestParams.add("is_active", is_active.toString());
+                    requestParams.add("deleted_at", deleted_at);
+
+
+
+
+                    API_addGeneration(requestParams);
+
+
+
+                }
+                //Toast.makeText(CreateGenerationsAndLines.this, id_to_sync.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to sync from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addLine(RequestParams requestParams){
+        APIHelper.addLine("addLine", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced lines to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to add Line to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateLine(){
+
+        APIHelper.getLine("getLine/", new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONLine jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONLine.class);
+                ArrayList<Line> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Line> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromLine();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Line line = new Line(cursor_brooder_inventory.getInt(0), cursor_brooder_inventory.getString(1),  cursor_brooder_inventory.getInt(3));
+                        arrayListBrooderInventoryLocal.add(line);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromLineWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    String number = cursor.getString(1);
+                    Integer is_active = cursor.getInt(2);
+                    Integer generation_id = cursor.getInt(3);
+                    String deleted_at = cursor.getString(4);
+
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("number", number.toString());
+                    requestParams.add("is_active", is_active.toString());
+                    requestParams.add("generation_id", generation_id.toString());
+                    requestParams.add("deleted_at", deleted_at);
+
+
+                    //Toast.makeText(CreateBreeders.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addLine(requestParams);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to fetch Breeders Inventory from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override

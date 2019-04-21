@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity{
                     if(task.isSuccessful()){
                         progressBar.setVisibility(View.INVISIBLE);
                         Log.d("TAG", "signin success");
-                        Toast.makeText(this, "Signin Success", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Signed-in Succesfully", Toast.LENGTH_SHORT).show();
 
                         FirebaseUser user = mAuth.getCurrentUser();
                         Intent intent_main = new Intent(LoginActivity.this, DashBoardActivity.class);

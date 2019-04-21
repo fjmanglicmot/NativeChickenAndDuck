@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CullPhenoMorphoDialog;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.ViewMorePhenoMorphoDialog;
 
 import java.util.ArrayList;
@@ -67,6 +67,11 @@ public class RecyclerAdapter_Breeder_PhenoMorphoView extends RecyclerView.Adapte
         final Breeder_PhenoMorphoView replacement_phenoMorphoView = arrayListReplacementInventory.get(position);
         final Bundle args = new Bundle();
         args.putInt("PhenoMorpho ID", replacement_phenoMorphoView.getId());
+        args.putString("PhenoMorpho Tag", replacement_phenoMorphoView.getTag());
+        args.putString("PhenoMorpho Gender", replacement_phenoMorphoView.getGender());
+        args.putString("PhenoMorpho Pheno", replacement_phenoMorphoView.getPheno_record());
+        args.putString("PhenoMorpho Morpho", replacement_phenoMorphoView.getMorpho_record());
+        args.putString("PhenoMorpho Date", replacement_phenoMorphoView.getDate());
 
 
         holder.replacement_registry.setText(replacement_phenoMorphoView.getTag());
@@ -90,7 +95,12 @@ public class RecyclerAdapter_Breeder_PhenoMorphoView extends RecyclerView.Adapte
         holder.replacement_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at position "+position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                CullPhenoMorphoDialog alertDialog = new CullPhenoMorphoDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "CullPhenoMorphoDialog");
+                notifyDataSetChanged();
             }
         });
 

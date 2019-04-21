@@ -123,7 +123,7 @@ public class SalesFragmentReplacement extends Fragment {
 
 
                     if(sexingDone){
-                        boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), null,breeder_id,null,"replacement","sold", Integer.parseInt(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
+                        boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), null,breeder_id,null,"replacement","sold", Float.parseFloat(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
                         if(isNetworkAvailable()){
                             Integer total = Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString());
                             RequestParams requestParams = new RequestParams();
@@ -160,7 +160,7 @@ public class SalesFragmentReplacement extends Fragment {
                         }
                     }else{
                         Integer total_death_ = Integer.parseInt(total_sold.getText().toString());
-                        boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), null,breeder_id,null,"replacement","sold", Integer.parseInt(price.getText().toString()), null, null, Integer.parseInt(total_sold.getText().toString()), null, remarks.getText().toString(), null);
+                        boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), null,breeder_id,null,"replacement","sold", Float.parseFloat(price.getText().toString()), null, null, Integer.parseInt(total_sold.getText().toString()), null, remarks.getText().toString(), null);
                         if(isNetworkAvailable()){
 
                             RequestParams requestParams = new RequestParams();

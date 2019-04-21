@@ -1,10 +1,17 @@
 package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Pheno_Morphos {
+    @SerializedName("id")
     private Integer id;
+    @SerializedName("replacement_inventory_id")
     private Integer replacement_inventory;
+    @SerializedName("breeder_inventory_id")
     private Integer breeder_inventory;
+    @SerializedName("values_id")
     private Integer values_id;
+    @SerializedName("deleted_at")
     private String deleted_at;
 
     public Pheno_Morphos(){

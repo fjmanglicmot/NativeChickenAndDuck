@@ -1,25 +1,45 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Egg_Quality {
+    @SerializedName("id")
     private Integer id;
     private String tag;
+    @SerializedName("breeder_inventory_id")
     private Integer egg_breeder_inv_id;
+    @SerializedName("egg_quality_at")
     private Integer week;
+    @SerializedName("date_collected")
     private String date;
+    @SerializedName("weight")
     private Float weight;
+    @SerializedName("color")
     private String color;
+    @SerializedName("shape")
     private String shape;
+    @SerializedName("length")
     private Float length;
+    @SerializedName("width")
     private Float width;
+    @SerializedName("albumen_height")
     private Float albument_height;
+    @SerializedName("albumen_weight")
     private Float albument_weight;
+    @SerializedName("yolk_weight")
     private Float yolk_weight;
+    @SerializedName("yolk_color")
     private String yolk_color;
+    @SerializedName("shell_weight")
     private Float shell_weight;
+    @SerializedName("thickness_top")
     private Float shell_thickness_top;
+    @SerializedName("thickness_mid")
     private Float shell_thickness_middle;
+    @SerializedName("thickness_bot")
     private Float shell_thickness_bottom;
-
+    @SerializedName("deleted_at")
+    private String deleted_at;
     Egg_Quality(){
 
     }
@@ -61,6 +81,14 @@ public class Egg_Quality {
         this.setShell_thickness_top(shell_thickness_top);
         this.setShell_thickness_middle(shell_thickness_middle);
         this.setShell_thickness_bottom(shell_thickness_bottom);
+    }
+
+    public String getDeleted_at() {
+        return deleted_at;
+    }
+
+    public void setDeleted_at(String deleted_at) {
+        this.deleted_at = deleted_at;
     }
 
     public String getTag() {

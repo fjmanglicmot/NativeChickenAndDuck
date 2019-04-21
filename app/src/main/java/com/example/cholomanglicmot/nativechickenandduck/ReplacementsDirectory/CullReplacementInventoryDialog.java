@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.icu.text.SimpleDateFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,12 +18,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CullReplacementInventoryDialog extends DialogFragment {
 
@@ -87,12 +94,33 @@ public class CullReplacementInventoryDialog extends DialogFragment {
                 String date = getDate();
                 Toast.makeText(getActivity(), date, Toast.LENGTH_SHORT).show();
                 boolean isDeleted = myDb.cullReplacementInventory(brooder_tag, date);
+                if(isNetworkAvailable()){
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("tag", brooder_tag);
+                    requestParams.add("date", getDate());
+
+
+
+                    API_cullReplacementInventory(requestParams);
+                }
                 //update brooder pen
                 boolean isUpdateed = myDb.updateDataPen1(brooder_pen, pen_number,pen_capacity-total);
+                Integer current_count = pen_capacity-total;
+                if(isNetworkAvailable()){
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("pen_number", pen_number);
+                    requestParams.add("pen_current", current_count.toString());
+
+
+
+                    API_editPenCount(requestParams);
+                }
                 if(isDeleted){
                     Toast.makeText(getContext(), "Replacement "+brooder_tag+" deleted.", Toast.LENGTH_SHORT).show();
                 }
-                Intent intent_line = new Intent(getActivity(), CreateReplacements.class);
+                Intent intent_line = new Intent(getActivity(), ReplacementInventoryActivity.class);
                 startActivity(intent_line);
 
             }
@@ -101,11 +129,56 @@ public class CullReplacementInventoryDialog extends DialogFragment {
 
         return view;
     }
+
     private String getDate() {
 
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
 
         return formatter.format(date);
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_editPenCount(RequestParams requestParams){
+        APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully edited pen count", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_cullReplacementInventory(RequestParams requestParams){
+        APIHelper.cullReplacementInventory("cullReplacementInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                //     Toast.makeText(context, "Successfully culled brooder inventory", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 }

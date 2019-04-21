@@ -106,7 +106,7 @@ public class CreateGenerationDialog extends DialogFragment {
 
 
                     if(isInserted == true){
-                     //   Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Generation added to database", Toast.LENGTH_SHORT).show();
                         Intent intent_generation = new Intent(getActivity(), CreateGenerationsAndLines.class);
                         startActivity(intent_generation);
 

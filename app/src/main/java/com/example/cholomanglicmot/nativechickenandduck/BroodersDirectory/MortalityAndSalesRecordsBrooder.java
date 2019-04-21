@@ -1,7 +1,10 @@
 package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,14 +18,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.Breeder_Inventory;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.Egg_Production;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.Mortality_Sales;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.RecyclerAdapter_Mortality_and_Sales;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MortalityAndSalesRecordsBrooder extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -101,7 +109,9 @@ public class MortalityAndSalesRecordsBrooder extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
         ///////////////////DATABASE
-
+        if(isNetworkAvailable()){
+            API_getMortalityAndSales();
+        }
 
         Integer brooder_inv_id2=null;
         Cursor cursor_tag = myDb.getDataFromBrooderInventoryWhereTag(breeder_tag);
@@ -149,6 +159,51 @@ public class MortalityAndSalesRecordsBrooder extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getMortalityAndSales(){
+        APIHelper.getMortalityAndSales("getMortalityAndSales/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONMortalityAndSales jsonBrooder = gson.fromJson(rawJsonResponse, JSONMortalityAndSales.class);
+                ArrayList<Mortality_Sales> arrayList_brooder = jsonBrooder.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromMortandSalesRecordsWithID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+                            boolean isInserted = myDb.insertDataMortalityAndSalesWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getDate(), arrayList_brooder.get(i).getBreeder_id(), arrayList_brooder.get(i).getReplaement_id(), arrayList_brooder.get(i).getBrooder_id(), arrayList_brooder.get(i).getType(), arrayList_brooder.get(i).getCategory(), arrayList_brooder.get(i).getPrice(), arrayList_brooder.get(i).getMale_count(), arrayList_brooder.get(i).getFemale_count(), arrayList_brooder.get(i).getTotal(), arrayList_brooder.get(i).getReason(), arrayList_brooder.get(i).getRemarks(), arrayList_brooder.get(i).getDeleted_at());
+                        Toast.makeText(MortalityAndSalesRecordsBrooder.this, "Mortality and Sales Added", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to fetch Mortality and Sales from web ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onSupportNavigateUp() {

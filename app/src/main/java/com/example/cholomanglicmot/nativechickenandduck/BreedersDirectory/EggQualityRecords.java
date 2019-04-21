@@ -1,7 +1,10 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +18,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EggQualityRecords extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -85,6 +94,11 @@ public class EggQualityRecords extends AppCompatActivity {
 
         ///////////////////////////////DATABASE
 
+        if(isNetworkAvailable()){
+            API_updateEggQuality();
+            API_getEggQuality();
+        }
+
         Cursor cur = myDb.getDataFromBreederInvWhereTag(breeder_tag);
         cur.moveToFirst();
         Integer bred = cur.getInt(0);
@@ -101,7 +115,8 @@ public class EggQualityRecords extends AppCompatActivity {
         }else {
             do {
                 Integer breeder_inv_id1 = cursor.getInt(1);
-                if(breeder_inv_id1 == bred) {
+                String deleted_at = cursor.getString(17);
+                if(breeder_inv_id1 == bred && deleted_at == null) {
                     /*Integer id,Integer egg_breeder_inv_id,  String date,          Float weight,           String color,       String shape,                Float length,          Float width,    Float albument_height,  Float albument_weight,   Float yolk_weight,        String yolk_color, Float shell_weight,   Float shell_thickness_top, Float shell_thickness_middle,  Float shell_thickness_bottom*/
                     Egg_Quality egg_quality = new Egg_Quality(cursor.getInt(0), breeder_tag, cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getFloat(4), cursor.getString(5), cursor.getString(6), cursor.getFloat(7), cursor.getFloat(8), cursor.getFloat(9), cursor.getFloat(10), cursor.getFloat(11), cursor.getString(12), cursor.getFloat(13), cursor.getFloat(14), cursor.getFloat(15), cursor.getFloat(16));
 
@@ -119,6 +134,188 @@ public class EggQualityRecords extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addEggQuality(RequestParams requestParams){
+        APIHelper.addEggQuality("addEggQuality", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced egg quality to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getActivity(), "Failed to add egg quality to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+
+    private void API_updateEggQuality(){
+        APIHelper.getEggQuality("getEggQuality/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONEggQuality jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONEggQuality.class);
+                ArrayList<Egg_Quality> arrayListBrooderFeedingWeb = jsonBrooderInventory.getData();
+
+
+                ArrayList<Egg_Quality> arrayListBrooderFeedingLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_feeding = myDb.getAllDataFromEggQuality();
+                cursor_brooder_feeding.moveToFirst();
+                if(cursor_brooder_feeding.getCount() != 0){
+                    do {
+
+                        Egg_Quality egg_quality = new Egg_Quality(cursor_brooder_feeding.getInt(0), null, cursor_brooder_feeding.getInt(1), cursor_brooder_feeding.getString(2), cursor_brooder_feeding.getInt(3), cursor_brooder_feeding.getFloat(4), cursor_brooder_feeding.getString(5), cursor_brooder_feeding.getString(6), cursor_brooder_feeding.getFloat(7), cursor_brooder_feeding.getFloat(8), cursor_brooder_feeding.getFloat(9), cursor_brooder_feeding.getFloat(10), cursor_brooder_feeding.getFloat(11), cursor_brooder_feeding.getString(12), cursor_brooder_feeding.getFloat(13), cursor_brooder_feeding.getFloat(14), cursor_brooder_feeding.getFloat(15), cursor_brooder_feeding.getFloat(16));
+                        arrayListBrooderFeedingLocal.add(egg_quality);
+
+                    } while (cursor_brooder_feeding.moveToNext());
+                }
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderFeedingLocal.size();i++){
+                    id_local.add(arrayListBrooderFeedingLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderFeedingWeb.size();i++){
+                    id_web.add(arrayListBrooderFeedingWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromBreederEggQualWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer breeder_inventory_id = cursor.getInt(1);
+                    String date_collected = cursor.getString(2);
+                    Integer egg_quality_at = cursor.getInt(3);
+                    Float weight = cursor.getFloat(4);
+                    String  color = cursor.getString(5);
+                    String  shape = cursor.getString(6);
+                    Float length = cursor.getFloat(7);
+                    Float width = cursor.getFloat(8);
+                    Float albumen_height = cursor.getFloat(9);
+                    Float albumen_weight = cursor.getFloat(10);
+                    Float yolk_weight = cursor.getFloat(11);
+                    String  yolk_color = cursor.getString(12);
+                    Float shell_weight = cursor.getFloat(13);
+                    Float thickness_top = cursor.getFloat(14);
+                    Float thickness_mid = cursor.getFloat(14);
+                    Float thickness_bot = cursor.getFloat(16);
+                    String deleted_at = cursor.getString(17);
+
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("breeder_inventory_id", breeder_inventory_id.toString());
+                    requestParams.add("date_collected", date_collected);
+                    requestParams.add("egg_quality_at", egg_quality_at.toString());
+                    requestParams.add("weight", weight.toString());
+                    requestParams.add("color", color);
+                    requestParams.add("shape", shape);
+                    requestParams.add("length", length.toString());
+                    requestParams.add("width", width.toString());
+                    requestParams.add("albumen_height", albumen_height.toString());
+                    requestParams.add("albumen_weight", albumen_weight.toString());
+                    requestParams.add("yolk_weight", yolk_weight.toString());
+                    requestParams.add("yolk_color", yolk_color);
+                    requestParams.add("shell_weight", shell_weight.toString());
+                    requestParams.add("thickness_top", thickness_top.toString());
+                    requestParams.add("thickness_mid", thickness_mid.toString());
+                    requestParams.add("thickness_bot", thickness_bot.toString());
+                    requestParams.add("deleted_at", deleted_at);
+
+
+
+
+                    //Toast.makeText(BrooderFeedingRecordsActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addEggQuality(requestParams);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_getEggQuality(){
+        APIHelper.getEggQuality("getEggQuality/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONEggQuality jsonBreeder = gson.fromJson(rawJsonResponse, JSONEggQuality.class);
+                ArrayList<Egg_Quality> arrayList_brooder = jsonBreeder.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBreederEggQualWhereID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+
+                            boolean isInserted = myDb.insertEggQualityRecordsWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getEgg_breeder_inv_id(),arrayList_brooder.get(i).getDate(), arrayList_brooder.get(i).getWeek(), arrayList_brooder.get(i).getWeight(), arrayList_brooder.get(i).getColor(), arrayList_brooder.get(i).getShape(), arrayList_brooder.get(i).getLength(), arrayList_brooder.get(i).getWidth(), arrayList_brooder.get(i).getAlbument_height(), arrayList_brooder.get(i).getAlbument_weight(), arrayList_brooder.get(i).getYolk_weight(), arrayList_brooder.get(i).getYolk_color(), arrayList_brooder.get(i).getShell_weight(), arrayList_brooder.get(i).getShell_thickness_top(), arrayList_brooder.get(i).getShell_thickness_middle(), arrayList_brooder.get(i).getShell_thickness_bottom());
+                        Toast.makeText(EggQualityRecords.this, "Egg Qualities Added", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Breeders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onSupportNavigateUp() {

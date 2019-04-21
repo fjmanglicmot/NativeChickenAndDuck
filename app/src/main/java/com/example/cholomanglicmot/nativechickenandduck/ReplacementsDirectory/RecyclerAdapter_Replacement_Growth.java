@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_GrowthRecords;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -54,7 +53,7 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
 
         holder.brooder_growth_date_added.setText(brooder_growthRecords.getReplacement_growth_date_collected());
         holder.brooder_growth_collection_day.setText(brooder_growthRecords.getReplacement_growth_collection_day().toString());
-        holder.brooder_growth_inventory_tag.setText(brooder_growthRecords.getReplacement_growth_tag().toString());
+        holder.brooder_growth_inventory_tag.setText("Replacement Family "+brooder_growthRecords.getReplacement_growth_inventory_id().toString());
    /*     holder.brooder_growth_male_count.setText(brooder_growthRecords.getReplacement_growth_male_quantity().toString());
         holder.brooder_growth_male_weight.setText(brooder_growthRecords.getReplacement_growth_male_weight().toString());
         holder.brooder_growth_female_count.setText(brooder_growthRecords.getReplacement_growth_female_quantity().toString());
@@ -76,7 +75,12 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
         holder.brooder_growth_deleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeletegGrowthDialogReplacement alertDialog = new DeletegGrowthDialogReplacement();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeletegGrowthDialogReplacement");
+                notifyDataSetChanged();
             }
         });
 

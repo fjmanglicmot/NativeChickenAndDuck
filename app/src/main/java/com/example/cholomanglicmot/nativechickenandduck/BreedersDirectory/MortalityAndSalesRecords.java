@@ -1,7 +1,10 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +18,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
+import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.JSONMortalityAndSales;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MortalityAndSalesRecords extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -90,6 +100,9 @@ public class MortalityAndSalesRecords extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
         ///////////////////DATABASE
+        if(isNetworkAvailable()){
+            API_updateMortalityAndSales();
+        }
         Cursor cursor = myDb.getAllDataFromMortandSalesRecords();
         cursor.moveToFirst();
         if(cursor.getCount() == 0){
@@ -114,6 +127,139 @@ public class MortalityAndSalesRecords extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void API_addMortalityAndSales(RequestParams requestParams){
+        APIHelper.addMortalityAndSales("addMortalityAndSales", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced mortality and sales to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+
+    private void API_updateMortalityAndSales(){
+        APIHelper.getMortalityAndSales("getMortalityAndSales/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONMortalityAndSales jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONMortalityAndSales.class);
+                ArrayList<Mortality_Sales> arrayListBrooderFeedingWeb = jsonBrooderInventory.getData();
+
+
+                ArrayList<Mortality_Sales> arrayListBrooderFeedingLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_feeding = myDb.getAllDataFromMortandSalesRecords();
+                cursor_brooder_feeding.moveToFirst();
+                if(cursor_brooder_feeding.getCount() != 0){
+                    do {
+
+                        Mortality_Sales mortalityAndSalesRecords = new Mortality_Sales(cursor_brooder_feeding.getInt(0), cursor_brooder_feeding.getString(1),null, cursor_brooder_feeding.getInt(2), cursor_brooder_feeding.getInt(3), cursor_brooder_feeding.getInt(4), cursor_brooder_feeding.getString(5),cursor_brooder_feeding.getString(6), cursor_brooder_feeding.getFloat(7), cursor_brooder_feeding.getInt(8), cursor_brooder_feeding.getInt(9),cursor_brooder_feeding.getInt(10),cursor_brooder_feeding.getString(11),cursor_brooder_feeding.getString(12), cursor_brooder_feeding.getString(12));
+                        arrayListBrooderFeedingLocal.add(mortalityAndSalesRecords);
+
+                    } while (cursor_brooder_feeding.moveToNext());
+                }
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderFeedingLocal.size();i++){
+                    id_local.add(arrayListBrooderFeedingLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderFeedingWeb.size();i++){
+                    id_web.add(arrayListBrooderFeedingWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromMortandSalesRecordsWithID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    String date = cursor.getString(1);
+                    Integer breeder_inventory_id = cursor.getInt(2);
+                    Integer replacement_inventory_id = cursor.getInt(3);
+                    Integer brooder_inventory_id = cursor.getInt(4);
+                    String  type = cursor.getString(5);
+                    String  category = cursor.getString(6);
+                    Float price = cursor.getFloat(7);
+                    Integer male = cursor.getInt(8);
+                    Integer female = cursor.getInt(9);
+                    Integer total = cursor.getInt(10);
+                    String reason = cursor.getString(11);
+                    String remarks = cursor.getString(12);
+
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("date", date);
+                    requestParams.add("breeder_inventory_id", breeder_inventory_id.toString());
+                    requestParams.add("replacement_inventory_id", replacement_inventory_id.toString());
+                    requestParams.add("brooder_inventory_id", brooder_inventory_id.toString());
+                    requestParams.add("type", type);
+                    requestParams.add("category", category);
+                    requestParams.add("price", price.toString());
+                    requestParams.add("male", male.toString());
+                    requestParams.add("female", female.toString());
+                    requestParams.add("total", total.toString());
+                    requestParams.add("reason", reason);
+                    requestParams.add("remarks", remarks);
+
+
+
+
+                    //Toast.makeText(BrooderFeedingRecordsActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addMortalityAndSales(requestParams);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onSupportNavigateUp() {

@@ -45,15 +45,17 @@ public class ViewBrooderFeedingDialog extends DialogFragment {
 
         save = view.findViewById(R.id.save);
 
-        textView.setText(brooder_tag);
+       // textView.setText(brooder_tag);
 
 
         Cursor cursor = myDb.getAllDataFromBrooderFeedingRecordsWhereFeedingID(brooder_feeding_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
-
+            Integer feeding_id = cursor.getInt(4);
             Integer offered_int = cursor.getInt(0);
             Integer refused_int = cursor.getInt(1);
+
+            textView.setText("Brooder Family "+brooder_ID.toString());
 
             offered.setText(offered_int.toString());
             refused.setText(refused_int.toString());

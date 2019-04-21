@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -20,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
@@ -33,12 +37,16 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.CreateReplacements;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 //import com.squareup.picasso.Picasso;
@@ -244,7 +252,18 @@ public class CreateBreeders extends AppCompatActivity {
 
         ///////////////////////-----DATABASE
 
+        if (isNetworkAvailable()) {
+            //if internet is available, load data from web database
 
+
+            //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
+            API_updateBreeder();
+            API_updateBreederInventory();
+            API_getBreeder();
+            API_getBreederInventory();
+
+
+        }
         Cursor cursorBreederInv = myDb.getAllDataFromBreederInventory();
         cursorBreederInv.moveToFirst();
         if(cursorBreederInv.getCount()==0){
@@ -268,11 +287,14 @@ public class CreateBreeders extends AppCompatActivity {
 
                 do{
                     for(int i=0;i<arrayListBreeders.size();i++){
-                        if(arrayListBreeders.get(i).getId().equals(cursorBreederInv.getInt(1))){
-                                                                            /*              Integer id,             Integer brooder_inv_brooder_id, S   tring brooder_inv_pen,      String brooder_inv_brooder_tag,      String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity   brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at, String family, String line, String generation) {
-                             */
-                            Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getInt(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9));
-                            arrayListBreederInventory2.add(breeder_inventory);
+                        if(arrayListBreeders.get(i).getId() == cursorBreederInv.getInt(1) && arrayListBreeders.get(i).getDeleted_at() == null){
+
+                            String deleted_at = cursorBreederInv.getString(9);
+                            if(deleted_at == null){
+                                Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getInt(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9));
+                                arrayListBreederInventory2.add(breeder_inventory);
+                            }
+
                             /*
                                                                                      BREEDER_INV_COL_0 = "ID";          BREEDER_INV_BREEDER_ID";     "BREEDER_INV_PEN_NUMBER";       "BREEDER_INV_BREEDER_TAG";              "BREEDER_INV_BATCHING_DATE";    = "BREEDER_INV_NUMBER_MALE";     BREEDER_INV_NUMBER_FEMALE";    BREEDER_INV_TOTAL";    "BREEDER_INV_LAST_UPDATE";              "BREEDER_INV_DELETED_AT";*/                        }
                     }
@@ -305,5 +327,314 @@ public class CreateBreeders extends AppCompatActivity {
         builder.show();
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getBreeder(){
+        APIHelper.getBreeder("getBreeder/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
+                Gson gson = new Gson();
+                JSONBreeder jsonBreeder = gson.fromJson(rawJsonResponse, JSONBreeder.class);
+                ArrayList<Breeders> arrayList_brooder = jsonBreeder.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBreedersWhereID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+                        boolean isInserted = myDb.insertDataBreederWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getFamily_number(),arrayList_brooder.get(i).getFemale_family_number(), arrayList_brooder.get(i).getDate_added(), arrayList_brooder.get(i).getDeleted_at());
+                        Toast.makeText(CreateBreeders.this, "Breeders Added", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Breeders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_getBreederInventory(){
+        APIHelper.getBreederInventory("getBreederInventory/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBreederInventory jsonBreederInventory = gson.fromJson(rawJsonResponse, JSONBreederInventory.class);
+                ArrayList<Breeder_Inventory> arrayList_brooderInventory = jsonBreederInventory.getData();
+
+                for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBreederInventoryWhereID(arrayList_brooderInventory.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+                        boolean isInserted = myDb.insertDataBreederInventoryWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_id(), arrayList_brooderInventory.get(i).getBrooder_inv_pen(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_tag(),arrayList_brooderInventory.get(i).getBrooder_inv_batching_date(),arrayList_brooderInventory.get(i).getBrooder_male_quantity(),arrayList_brooderInventory.get(i).getBrooder_female_quantity(),arrayList_brooderInventory.get(i).getBrooder_total_quantity(), arrayList_brooderInventory.get(i).getBrooder_inv_last_update(), arrayList_brooderInventory.get(i).getBrooder_inv_deleted_at());
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addBreederInventory(RequestParams requestParams){
+        APIHelper.addBreederInventory("addBreederInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced breeder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to sync breeder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateBreederInventory(){
+
+        APIHelper.getBreederInventory("getBreederInventory/", new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBreederInventory jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONBreederInventory.class);
+                ArrayList<Breeder_Inventory> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Breeder_Inventory> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromBreederInventory();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Breeder_Inventory brooder_inventory = new Breeder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                        arrayListBrooderInventoryLocal.add(brooder_inventory);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromBreederInventoryWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer broodergrower_id = cursor.getInt(1);
+                    Integer pen_id = cursor.getInt(2);
+                    String broodergrower_tag = cursor.getString(3);
+                    String batching_date = cursor.getString(4);
+                    Integer number_male = cursor.getInt(5);
+                    Integer number_female = cursor.getInt(6);
+                    Integer total = cursor.getInt(7);
+                    String  last_update = cursor.getString(8);
+                    String deleted_at = cursor.getString(9);
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("breeder_id", broodergrower_id.toString());
+                    requestParams.add("pen_id", pen_id.toString());
+                    requestParams.add("breeder_tag", broodergrower_tag);
+                    requestParams.add("batching_date", batching_date);
+                    requestParams.add("number_male", number_male.toString());
+                    requestParams.add("number_female", number_female.toString());
+                    requestParams.add("total", total.toString());
+                    requestParams.add("last_update", last_update);
+                    requestParams.add("deleted_at", deleted_at);
+
+                    //Toast.makeText(CreateBreeders.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addBreederInventory(requestParams);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Breeders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+
+    private void API_addBreeder(RequestParams requestParams){
+        APIHelper.addBreederFamily("addBreederFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced breeder to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to sync breeder to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateBreeder(){
+
+        APIHelper.getBreeder("getBreeder/", new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBreeder jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONBreeder.class);
+                ArrayList<Breeders> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Breeders> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromBreeders();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Breeders brooder_inventory = new Breeders(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1),cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3), cursor_brooder_inventory.getString(4));
+                        arrayListBrooderInventoryLocal.add(brooder_inventory);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+                Integer female_family_id;
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromBreedersWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer family_id = cursor.getInt(1);
+                    female_family_id = cursor.getInt(2);
+                    if(female_family_id == 0){
+                        female_family_id = null;
+                    }
+                    String date_added = cursor.getString(3);
+                    String deleted_at = cursor.getString(4);
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("family_id", family_id.toString());
+                    requestParams.add("female_family_id", female_family_id.toString());
+                    requestParams.add("date_added", date_added);
+                    requestParams.add("deleted_at", deleted_at);
+
+                    //Toast.makeText(BrooderInventoryActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addBreeder(requestParams);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
 }

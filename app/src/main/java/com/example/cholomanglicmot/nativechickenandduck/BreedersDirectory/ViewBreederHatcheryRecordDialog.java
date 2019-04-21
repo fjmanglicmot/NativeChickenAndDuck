@@ -1,8 +1,11 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,9 +25,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
@@ -50,6 +58,8 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
     ArrayList<Pen> arrayListPen = new ArrayList<>();
     ArrayList<Pen> arrayListPen2 = new ArrayList<>();
     Integer brooder_pen_id;
+    Integer batching_week2;
+    String formatted;
 
     @Nullable
     @Override
@@ -200,6 +210,16 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
             }
         });
+
+        ///GET BATCHING WEEK FROM DATABASE
+        Cursor cursor1 = myDb.getAllDataFromFarms();
+        cursor1.moveToFirst();
+
+        if(cursor1.getCount() != 0){
+
+            batching_week2 = cursor1.getInt(4);
+
+        }
         edit_date_hatched.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,9 +231,12 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                 DatePickerDialog mDatePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        calendar.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
+                        formatted = format1.format(calendar.getTime());
                         selectedMonth++;
-                        edit_date_hatched.setText(selectedDay + "/" + selectedMonth + "/" + selectedYear);
-                        calendar2.set(selectedYear, selectedMonth, selectedDay);
+                        edit_date_hatched.setText(selectedYear + "-" + selectedMonth + "-" + selectedDay);
+
                     }
                 }, year, month, day);
                 mDatePicker.show();
@@ -260,7 +283,8 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                     edit_date_hatched.setVisibility(View.GONE);
                     edit_no_of_fertile.setVisibility(View.GONE);
                     edit_no_hatched.setVisibility(View.GONE);
-
+                    yes.setVisibility(View.GONE);
+                    brooder_switch_other_day.setChecked(false);
                     edit_date_set.setText(date_set.getText().toString());
                     edit_quantity.setText(quantity.getText().toString());
                     edit_date_hatched.setText(date_hatched.getText().toString());
@@ -328,52 +352,52 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
                                 }
                                 boolean isInserted = myDb.insertDataBrooder(familyID, edit_date_hatched.getText().toString(), null);
 
-                              /*  RequestParams requestParams = new RequestParams();
-                                requestParams.add("BROODER_FAMILY", familyID.toString());
-                                requestParams.add("BROODER_DATE_ADDED", brooder_date_added.getText().toString());
-                                requestParams.add("BROODER_DELETED_AT", "1/1/2019");
-
-                                API_addBrooder(requestParams);
-*/
+                                if(isNetworkAvailable()) {
 
 
-                                Cursor cursor_pen = myDb.getAllDataFromPen();
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("family_id", familyID.toString());
+                                    requestParams.add("date_added", edit_date_hatched.getText().toString());
+                                    requestParams.add("deleted_at", null);
+
+                                    API_addBrooder(requestParams);
+
+                                }
+                                Integer total=0;
+                                Integer current=0;
+                                Integer brooder_pen_id=0;
+                                Cursor cursor_pen = myDb.getAllDataFromPenWhere(brooder_pen);
                                 cursor_pen.moveToFirst();
-                                if (cursor_pen.getCount() == 0) {
-                                } else {
-                                    do {
-                                        if (cursor_pen != null) {
-                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
-                                            arrayListPen.add(pen);
-                                        }
-                                    } while (cursor_pen.moveToNext());
-                                }
-                                for (int i = 0; i < arrayListPen.size(); i++) {
-                                    if (arrayListPen.get(i).getPen_number().equals(brooder_pen)) {
-                                        arrayListPen2.add(arrayListPen.get(i));
-                                    }
+                                if (cursor_pen.getCount() != 0) {
+                                    brooder_pen_id = cursor_pen.getInt(0);
+                                    total = cursor_pen.getInt(4);
+                                    current = cursor_pen.getInt(5);
                                 }
 
-                                int total = arrayListPen2.get(0).getPen_inventory();
-                                int current = arrayListPen2.get(0).getPen_capacity();
 
                                 //GET ID OF INSERTED BROODER
 
                                 Cursor cursor1 = myDb.getIDFromBroodersWhere(familyID);
                                 cursor1.moveToFirst();
-
-
                                 Integer id = cursor1.getInt(0);
 
-                                Cursor cursor_pen1 = myDb.getAllDataFromPenWhere(brooder_pen);
-                                if(cursor_pen1.getCount() != 0){
-                                    brooder_pen_id = cursor_pen1.getInt(0);
+
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen_id, generateBrooderTag(), formatted, null, null, Integer.parseInt(edit_no_hatched.getText().toString()), edit_date_hatched.getText().toString(), null);
+
+                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", total,Integer.parseInt(edit_no_hatched.getText().toString()) + current);
+
+                                Integer current_count = (Integer.parseInt(edit_no_hatched.getText().toString())+current);
+                                if(isNetworkAvailable()){
+
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("pen_number", brooder_pen);
+                                    requestParams.add("pen_current", current_count.toString());
+
+
+
+                                    API_editPenCount(requestParams);
                                 }
 
-                                // boolean isInventoryInserted = myDb.insertDataBrooderInventory(id,brooder_pen, "QUEBAI"+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+m, brooder_date_added.getText().toString()+m, null,null,Integer.parseInt(brooder_total_number.getText().toString()),null,null);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(id, brooder_pen_id, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
-
-                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", Integer.parseInt(edit_no_hatched.getText().toString()) + total, current);
                                 if (isPenUpdated && isInventoryInserted && isInserted) {
                                     Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();
                                     Intent intent_line = new Intent(getActivity(), HatcheryRecords.class);
@@ -387,36 +411,60 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
                             } else { //KUNG MAY LAMAN YUNG DATABASE BASED SA VALUES KANINA
 
-                                Cursor cursor_pen = myDb.getAllDataFromPen();
+                                Cursor cursor_pen = myDb.getAllDataFromPenWhere(brooder_pen);
                                 cursor_pen.moveToFirst();
-                                if (cursor_pen.getCount() == 0) {
-                                    //
-                                } else {
-                                    do {
-                                        if (cursor_pen != null) {
-                                            Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(6), cursor_pen.getInt(7));
-                                            arrayListPen.add(pen);
-
-                                        }
-
-                                    } while (cursor_pen.moveToNext());
+                                Integer total=0;
+                                Integer current=0;
+                                Integer brooder_pen_id=0;
+                                if(cursor_pen.getCount() != 0){
+                                    brooder_pen_id = cursor_pen.getInt(0);
+                                    total = cursor_pen.getInt(4);
+                                    current = cursor_pen.getInt(5);
                                 }
 
 
-                                for (int i = 0; i < arrayListPen.size(); i++) {
-                                    if (arrayListPen.get(i).getPen_number().equals(brooder_pen)) {
-                                        arrayListPen2.add(arrayListPen.get(i));
-                                    }
+
+                                Integer brooder_id = cursorBrooderChecker.getInt(0);
+
+                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", total,Integer.parseInt(edit_no_hatched.getText().toString()) + current);
+                                Integer current_count = (Integer.parseInt(edit_no_hatched.getText().toString())+current);
+                                if(isNetworkAvailable()){
+
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("pen_number", brooder_pen);
+                                    requestParams.add("pen_current", current_count.toString());
+
+
+
+                                    API_editPenCount(requestParams);
                                 }
 
-                                int total = arrayListPen2.get(0).getPen_inventory();
-                                int current = arrayListPen2.get(0).getPen_capacity();
+                                String brooder_tag2 = generateBrooderTag();
+                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id, brooder_pen_id, brooder_tag2, formatted, null, null, Integer.parseInt(edit_no_hatched.getText().toString()), edit_date_hatched.getText().toString(), null);
+                                Integer id_0=null;
+                                Cursor cursor3 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag2);
+                                cursor3.moveToFirst();
+                                if(cursor3.getCount() != 0){
+                                    id_0 = cursor3.getInt(0);
+                                }
+                                if(isNetworkAvailable()){
+
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.add("id", id_0.toString());
+                                    requestParams.add("broodergrower_id", brooder_id.toString());
+                                    requestParams.add("pen_id", brooder_pen_id.toString());
+                                    requestParams.add("broodergrower_tag", brooder_tag2);
+                                    requestParams.add("batching_date", formatted);
+                                    requestParams.add("number_male", null);
+                                    requestParams.add("number_female", null);
+                                    requestParams.add("total", edit_no_hatched.getText().toString());
+                                    requestParams.add("last_update", edit_date_hatched.getText().toString());
+                                    requestParams.add("deleted_at", null);
 
 
-                                int brooder_id = cursorBrooderChecker.getInt(0);
-                                boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", (Integer.parseInt(edit_no_hatched.getText().toString()) + total), current);
-                                boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id, brooder_pen_id, "QUEBAI" + Integer.parseInt(outside_generation_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_line_spinner.getSelectedItem().toString()) + Integer.parseInt(outside_family_spinner.getSelectedItem().toString()) + m, edit_date_hatched.getText().toString(), null, null, Integer.parseInt(edit_no_hatched.getText().toString()), null, null);
 
+                                    API_addBrooderInventory(requestParams);
+                                }
 
                                 if (isPenUpdated && isInventoryInserted) {
                                     Toast.makeText(getActivity(), "Successfully added to database", Toast.LENGTH_SHORT).show();/*String.format("%04d" , Integer.parseInt(mInput_generation_number.getText().toString()));*/
@@ -463,7 +511,92 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
 
         return view;
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addBrooderInventory(RequestParams requestParams){
+        APIHelper.addBrooderInventory("addBrooderInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getActivity(), "Successfully added brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getActivity(), "Failed to add brooder inventory to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private String generateBrooderTag() {
+        String tag= null;
+        String code = null;
+        String timestamp;
+
+
+        Cursor cursor = myDb.getAllDataFromFarms();
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            code = cursor.getString(2);
+        }
+        Random rd = new Random();
+
+        Date date= new Date();
+
+        Long time = date.getTime();
+        time = time/1000;
+        int random = rd.nextInt(100);
+        tag = code+Integer.toHexString(random)+time.toString();
+       // Toast.makeText(context, tag, Toast.LENGTH_SHORT).show();
+        return tag;
+
+    }
+    private void API_editPenCount(RequestParams requestParams){
+        APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully edited pen count", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addBrooder(RequestParams requestParams){
+        APIHelper.addBrooderFamily("addBrooderFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                //      Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
     private void loadSpinnerDataForGeneration() {
 
         DatabaseHelper db = new DatabaseHelper(getContext());

@@ -119,6 +119,9 @@ public class APIHelper {
     public static void getPhenoMorphoValues(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
     }
+    public static void getMortalityAndSales(String url, AsyncHttpResponseHandler responseHandler){
+        client.get(getAbsoluteUrl(url), responseHandler);
+    }
 
     //Brooder
     public static void getBrooder(String url, AsyncHttpResponseHandler responseHandler){
@@ -187,6 +190,45 @@ public class APIHelper {
         client.patch(getAbsoluteUrl(url), request, responseHandler);
     }
     public static void editBreederInventoryMaleFemale(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+
+
+
+    //DELETE
+    public static void cullGeneration(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void cullBrooderInventory(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void cullReplacementInventory(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void cullBreederInventory(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+
+    public static void deleteBrooderFeedingRecord(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void deleteReplacementFeedingRecord(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void deleteBreederFeedingRecord(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+
+
+
+
+    public static void deleteEggProduction(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void deleteHatchery(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
+        client.patch(getAbsoluteUrl(url), request, responseHandler);
+    }
+    public static void deleteEggQuality(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
         client.patch(getAbsoluteUrl(url), request, responseHandler);
     }
     //URL

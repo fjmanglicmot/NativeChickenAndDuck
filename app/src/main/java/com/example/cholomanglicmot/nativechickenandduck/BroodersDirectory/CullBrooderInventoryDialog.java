@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.icu.text.SimpleDateFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,13 +18,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CullBrooderInventoryDialog extends DialogFragment {
 
@@ -86,14 +93,35 @@ public class CullBrooderInventoryDialog extends DialogFragment {
             public void onClick(View view) {
                 //update  is_active column of selected inventory to 0 or false
                 String date = getDate();
-                Toast.makeText(getActivity(), date, Toast.LENGTH_SHORT).show();
+
                 boolean isDeleted = myDb.cullBrooderInventory(brooder_tag, date);
+                if(isNetworkAvailable()){
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("tag", brooder_tag);
+                    requestParams.add("date", getDate());
+
+
+
+                    API_cullBrooderInventory(requestParams);
+                }
                 //update brooder pen
                 boolean isUpdateed = myDb.updateDataPen1(brooder_pen, pen_number,pen_capacity-total);
+                Integer current_count = pen_capacity-total;
+                if(isNetworkAvailable()){
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("pen_number", pen_number);
+                    requestParams.add("pen_current", current_count.toString());
+
+
+
+                    API_editPenCount(requestParams);
+                }
                 if(isDeleted){
                     Toast.makeText(getContext(), "Brooder "+brooder_tag+" deleted.", Toast.LENGTH_SHORT).show();
                 }
-                Intent intent_line = new Intent(getActivity(), CreateBrooders.class);
+                Intent intent_line = new Intent(getActivity(), BrooderInventoryActivity.class);
                 startActivity(intent_line);
 
             }
@@ -102,22 +130,13 @@ public class CullBrooderInventoryDialog extends DialogFragment {
 
         return view;
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     private String getDate() {
-
-/*
-        Calendar cal = Calendar.getInstance();
-        Date date=cal.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        String formattedDate=dateFormat.format(date);
-        Date date= new Date();
-
-        long time = date.getTime();
-        time = time/1000;
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(time * 1000);
-        String date1 = DateFormat.format("YYYY-MM-dd", cal).toString();
-        return date1;
-*/
 
 
 
@@ -127,5 +146,43 @@ public class CullBrooderInventoryDialog extends DialogFragment {
         Date date = new Date(System.currentTimeMillis());
         //System.out.println(formatter.format(date));
         return formatter.format(date);
+    }
+    private void API_editPenCount(RequestParams requestParams){
+        APIHelper.editPenCount("editPenCount", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully edited pen count", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_cullBrooderInventory(RequestParams requestParams){
+        APIHelper.cullBrooderInventory("cullBrooderInventory", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+           //     Toast.makeText(context, "Successfully culled brooder inventory", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(context, "Failed to add Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 }

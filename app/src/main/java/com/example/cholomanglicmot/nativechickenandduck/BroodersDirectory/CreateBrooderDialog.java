@@ -217,8 +217,6 @@ public class CreateBrooderDialog extends DialogFragment {
                 StringBuffer buffer = new StringBuffer();
 
 
-                int m = random.nextInt(100); //GAWAN MO NG RANDOMIZER NA TULAD NG KAY SHANNON
-
 
 
                 if(!generation_spinner.getSelectedItem().toString().isEmpty() && !line_spinner.getSelectedItem().toString().isEmpty() && !family_spinner.getSelectedItem().toString().isEmpty() && !brooder_total_number.getText().toString().isEmpty() &&!brooder_estimated_date_of_hatch.getText().toString().isEmpty() && !brooder_date_added.getText().toString().isEmpty() ){
@@ -257,28 +255,6 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         }
 
-                        Cursor cursor_pen = myDb.getAllDataFromPen();
-                        cursor_pen.moveToFirst();
-                        if(cursor_pen.getCount() == 0){
-                        }else{
-                            do{
-                                if(cursor_pen != null){
-                                    /*   Pen pen = new Pen(cursor.getInt(0),cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(1), cursor.getInt(6));*/
-                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(1), cursor_pen.getInt(6));
-                                    arrayListPen.add(pen);
-                                }
-                            }while (cursor_pen.moveToNext());
-                        }
-
-
-                        for (int i = 0; i<arrayListPen.size();i++){
-                            if(arrayListPen.get(i).getPen_number().equals(brooder_pen)){
-                                arrayListPen2.add(arrayListPen.get(i));
-                            }
-                        }
-
-                        int total = arrayListPen2.get(0).getPen_inventory();
-                        int current = arrayListPen2.get(0).getPen_capacity();
 
                         //GET ID OF INSERTED BROODER
 
@@ -318,6 +294,16 @@ public class CreateBrooderDialog extends DialogFragment {
                             API_addBrooderInventory(requestParams);
                         }
 
+                        Integer total = 0;
+                        Integer current = 0;
+
+                        Cursor cur2 = myDb.getAllDataFromPenWhere(brooder_pen);
+                        cur2.moveToFirst();
+                        if(cur2.getCount() != 0){
+                            total = cur2.getInt(4);
+                            current = cur2.getInt(5);
+                        }
+
 
                         boolean isPenUpdated = myDb.updatePen(brooder_pen, "Brooder", total,(Integer.parseInt(brooder_total_number.getText().toString())+current));
                         Integer current_count = (Integer.parseInt(brooder_total_number.getText().toString())+current);
@@ -343,31 +329,16 @@ public class CreateBrooderDialog extends DialogFragment {
 
                     }else{ //KUNG MAY LAMAN YUNG DATABASE BASED SA VALUES KANINA
 
-                        Cursor cursor_pen = myDb.getAllDataFromPen();
-                        cursor_pen.moveToFirst();
-                        if(cursor_pen.getCount() == 0){
-                            //
-                        }else{
-                            do{
-                                if(cursor_pen != null){
-                                    /*   Pen pen = new Pen(cursor.getInt(0),cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(1), cursor.getInt(6));*/
-                                    Pen pen = new Pen(cursor_pen.getInt(0),cursor_pen.getString(2), cursor_pen.getString(3), cursor_pen.getInt(4), cursor_pen.getInt(5), cursor_pen.getInt(1), cursor_pen.getInt(6));
-                                    arrayListPen.add(pen);
 
-                                }
+                        Integer total = 0;
+                        Integer current = 0;
 
-                            }while(cursor_pen.moveToNext());
+                        Cursor cursor2 = myDb.getAllDataFromPenWhere(brooder_pen);
+                        cursor2.moveToFirst();
+                        if(cursor2.getCount() != 0){
+                            total = cursor2.getInt(4);
+                            current = cursor2.getInt(5);
                         }
-
-
-                        for (int i = 0; i<arrayListPen.size();i++){
-                            if(arrayListPen.get(i).getPen_number().equals(brooder_pen)){
-                                arrayListPen2.add(arrayListPen.get(i));
-                            }
-                        }
-
-                        int total = arrayListPen2.get(0).getPen_inventory();
-                        int current = arrayListPen2.get(0).getPen_capacity();
 
 
 
@@ -394,10 +365,10 @@ public class CreateBrooderDialog extends DialogFragment {
 
                         boolean isInventoryInserted = myDb.insertDataBrooderInventory(brooder_id,brooder_pen_id, brooder_tag2, formatted, null,null,Integer.parseInt(brooder_total_number.getText().toString()),brooder_date_added.getText().toString(),null);
                         Integer id_0=null;
-                        Cursor cursor2 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag2);
-                        cursor2.moveToFirst();
-                        if(cursor2.getCount() != 0){
-                            id_0 = cursor2.getInt(0);
+                        Cursor cursor3 = myDb.getDataFromBrooderInventoryWhereTag(brooder_tag2);
+                        cursor3.moveToFirst();
+                        if(cursor3.getCount() != 0){
+                            id_0 = cursor3.getInt(0);
                         }
                         if(isNetworkAvailable){
 

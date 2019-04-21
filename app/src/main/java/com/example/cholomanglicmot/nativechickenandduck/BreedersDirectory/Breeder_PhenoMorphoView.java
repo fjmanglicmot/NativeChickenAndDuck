@@ -1,13 +1,13 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 /*                              inv_id, pheno_date, pheno_sex, pheno_tag, pheno_record, morphos);*/
 public class Breeder_PhenoMorphoView {
-    private Integer id;
-    private String gender;
-    private String tag;
-    private String pheno_record;
-    private String morpho_record;
-    private String date;
-    private String deleted_at;
+    public Integer id;
+    public String gender;
+    public String tag;
+    public String pheno_record;
+    public String morpho_record;
+    public String date;
+    public String deleted_at;
 
 
 
@@ -16,7 +16,7 @@ public class Breeder_PhenoMorphoView {
 
     }
 
-    Breeder_PhenoMorphoView(Integer id, String gender, String tag, String pheno_record, String morpho_record, String date, String deleted_at){
+    public Breeder_PhenoMorphoView(Integer id, String gender, String tag, String pheno_record, String morpho_record, String date, String deleted_at){
 
         this.setId(id);
         this.setGender(gender);

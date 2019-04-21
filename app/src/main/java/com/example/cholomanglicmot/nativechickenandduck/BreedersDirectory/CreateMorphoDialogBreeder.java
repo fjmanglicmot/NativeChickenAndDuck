@@ -33,8 +33,9 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
     private String replacement_inv_tag, pheno_record,pheno_sex,pheno_tag, pheno_date;
     TextView replacement_tag;
     private Button mActionOk;
-
+    Integer id_0;
     DatabaseHelper myDb;
+    String inv_id;
 
     ArrayList<Breeder_PhenoMorphoRecords> arrayListPhenoMorpho = new ArrayList<>();
     ArrayList<Breeder_PhenoMorphoRecords>arrayList_temp = new ArrayList<>();
@@ -136,9 +137,13 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
 
 
                     boolean isInserted2 = myDb.insertPhenoMorphoRecords(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);
-                    Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag,pheno_record,morphos,pheno_date);
-                    cursor.moveToFirst();
-                    Integer id_0 = cursor.getInt(0);
+
+                    if(isInserted2){
+                        Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag,pheno_record,morphos,pheno_date);
+                        cursor.moveToFirst();
+                        id_0 = cursor.getInt(0);
+                    }
+
                     if(isNetworkAvailable()) {
 
 
@@ -159,7 +164,7 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
 
                         // buffer.append(cursor.getInt(0)+"\n");
                         boolean isInserted1 = myDb.insertPhenoMorphos(null, inv_id, id_0, null);
-                        if(isNetworkAvailable()) {
+                     /*   if(isNetworkAvailable()) {
 
 
                             RequestParams requestParams = new RequestParams();
@@ -172,7 +177,7 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
                             API_addPhenoMorphos(requestParams);
 
                         }
-
+*/
                         if (isInserted1 != true){
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                         }
@@ -249,6 +254,15 @@ public class CreateMorphoDialogBreeder extends DialogFragment{
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 //                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+                RequestParams requestParams = new RequestParams();
+                requestParams.add("replacement_inventory_id", null);
+                requestParams.add("breeder_inventory_id", inv_id);
+                requestParams.add("values_id", id_0.toString());
+                requestParams.add("deleted_at", null);
+
+
+                API_addPhenoMorphos(requestParams);
+
             }
 
             @Override

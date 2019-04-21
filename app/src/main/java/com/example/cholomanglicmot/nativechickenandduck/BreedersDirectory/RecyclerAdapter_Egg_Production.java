@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_FeedingRecords;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -75,7 +74,12 @@ public class RecyclerAdapter_Egg_Production extends RecyclerView.Adapter<Recycle
         holder.deleted_at.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+ position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeleteEggProduction alertDialog = new DeleteEggProduction();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeleteEggProduction");
+                notifyDataSetChanged();
             }
         });
 

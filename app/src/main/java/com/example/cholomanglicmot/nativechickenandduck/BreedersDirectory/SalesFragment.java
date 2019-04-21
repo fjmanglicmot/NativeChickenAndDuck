@@ -92,7 +92,7 @@ public class SalesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!date_sold.getText().toString().isEmpty() && !male_sold.getText().toString().isEmpty() && !female_sold.getText().toString().isEmpty() && !price.getText().toString().isEmpty()){
-                    boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), breeder_id,null,null,"breeder","sold", Integer.parseInt(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
+                    boolean isInserted = myDb.insertDataMortalityAndSales(date_sold.getText().toString(), breeder_id,null,null,"breeder","sold", Float.parseFloat(price.getText().toString()), Integer.parseInt(male_sold.getText().toString()), Integer.parseInt(female_sold.getText().toString()), Integer.parseInt(male_sold.getText().toString())+Integer.parseInt(female_sold.getText().toString()), null, remarks.getText().toString(), null);
 
 
                     if(isNetworkAvailable()){

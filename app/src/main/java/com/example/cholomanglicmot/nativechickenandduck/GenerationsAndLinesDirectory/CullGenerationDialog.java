@@ -3,6 +3,8 @@ package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDire
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,13 +15,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class CullGenerationDialog extends DialogFragment {
 
@@ -70,9 +77,19 @@ public class CullGenerationDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 //update  is_active column of selected inventory to 0 or false
+                boolean isGenerationCulled = myDb.cullGeneration(generation_id);
+                if(isNetworkAvailable()){
 
-                Intent intent_line = new Intent(getActivity(), CreateGenerationsAndLines.class);
-                startActivity(intent_line);
+                    API_cullGeneration(generation_id);
+                }
+                //then cull all chicken that has this generation
+                if(isGenerationCulled){
+                    Intent intent_line = new Intent(getActivity(), CreateGenerationsAndLines.class);
+                    startActivity(intent_line);
+                }else{
+                    Toast.makeText(getActivity(), "Failed to cull generation", Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
@@ -86,5 +103,32 @@ public class CullGenerationDialog extends DialogFragment {
         Date date = new Date(System.currentTimeMillis());
 
         return formatter.format(date);
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_cullGeneration(Integer generation_id){
+        APIHelper.getGeneration("cullGeneration/"+generation_id, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response) {
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getApplicationContext(), "Failed ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
 }

@@ -45,8 +45,8 @@ public class ViewReplacementFeedingDialog extends DialogFragment {
         date = view.findViewById(R.id.date);//galing sa brooder table
 
         save = view.findViewById(R.id.save);
+        textView.setText("Replacement Family "+brooder_ID.toString());
 
-        textView.setText(brooder_tag);
 /*REPLACEMENT_FEEDING_AMOUNT_OFFERED,REPLACEMENT_FEEDING_AMOUNT_REFUSED,REPLACEMENT_FEEDING_REMARKS,REPLACEMENT_FEEDING_DATE_COLLECTED*/
 
         Cursor cursor = myDb.getAllDataFromReplacementFeedingRecordsWhereFeedingID(brooder_feeding_id);

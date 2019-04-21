@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.util.ArrayList;
@@ -47,16 +47,21 @@ public class RecyclerAdapter_Brooder_Feeding extends RecyclerView.Adapter<Recycl
 
         final Brooder_FeedingRecords brooder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
         final Bundle args = new Bundle();
+        DatabaseHelper myDb;
+        myDb = new DatabaseHelper(context);
+        String tag=null;
+
+
+
+
+
         args.putInt("Brooder Inventory ID", brooder_feedingRecords.getBrooder_feeding_inventory_id());
         args.putString("Brooder Tag", brooder_feedingRecords.getBrooder_tag());
         args.putInt("Brooder Feeding ID", brooder_feedingRecords.getId());
+        args.putInt("Feeding ID", brooder_feedingRecords.getId());
 
-       // args.putString("Brooder Pen", brooder_feedingRecords.getBrooder_inv_pen());
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());
-        holder.brooder_feeding_tag.setText(brooder_feedingRecords.getBrooder_tag());
-       // holder.brooder_feeding_offered.setText(brooder_feedingRecords.getBrooder_feeding_offered().toString());
-      //  holder.brooder_feeding_refused.setText(brooder_feedingRecords.getBrooder_feeding_refused().toString());
-     //   holder.brooder_feeding_remarks.setText(brooder_feedingRecords.getBrooder_feeding_remarks());
+        holder.brooder_feeding_tag.setText("Brooder Family "+brooder_feedingRecords.getBrooder_feeding_inventory_id().toString());
 
         holder.view_feeding.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +77,12 @@ public class RecyclerAdapter_Brooder_Feeding extends RecyclerView.Adapter<Recycl
         holder.brooder_feeding_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeleteFeedingDialog alertDialog = new DeleteFeedingDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeleteFeedingDialog");
+                notifyDataSetChanged();
             }
         });
 

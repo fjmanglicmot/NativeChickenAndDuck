@@ -48,7 +48,7 @@ public class ViewReplacementGrowthDialog extends DialogFragment {
         total_weight = view.findViewById(R.id.total_weight);//galing sa brooder tabl
         save = view.findViewById(R.id.save);
 
-        textView.setText(replacement_tag);
+        textView.setText("Replacement Family "+replacement_id.toString());
 
 
         Cursor cursor = myDb.getAllDataFromReplacementGrowthRecordsWhereGrowthID(replacement_id);

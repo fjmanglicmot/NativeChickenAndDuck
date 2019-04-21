@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_FeedingRecords;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -51,10 +50,11 @@ public class RecyclerAdapter_Replacement_Feeding extends RecyclerView.Adapter<Re
         args.putInt("Replacement Inventory ID", brooder_feedingRecords.getReplacement_feeding_inventory_id());
         args.putString("Replacement Tag", brooder_feedingRecords.getReplacement_feeding_tag());
         args.putInt("Replacement Feeding ID", brooder_feedingRecords.getId());
+        args.putInt("Feeding ID", brooder_feedingRecords.getId());
 
 
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getReplacement_feeding_date_collected());
-        holder.brooder_feeding_tag.setText(brooder_feedingRecords.getReplacement_feeding_tag());
+        holder.brooder_feeding_tag.setText("Replacement Family "+brooder_feedingRecords.getReplacement_feeding_inventory_id());
         holder.brooder_feeding_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +69,12 @@ public class RecyclerAdapter_Replacement_Feeding extends RecyclerView.Adapter<Re
         holder.brooder_feeding_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeleteFeedingDialogReplacement alertDialog = new DeleteFeedingDialogReplacement();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeleteFeedingDialogReplacement");
+                notifyDataSetChanged();
             }
         });
 

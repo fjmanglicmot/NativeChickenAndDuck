@@ -1,7 +1,10 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +18,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class EggProductionRecords extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -90,6 +99,11 @@ public class EggProductionRecords extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         ///////////////////////////////DATABASE
+
+        if(isNetworkAvailable()){
+            API_getEggProduction();
+            API_updateEggProduction();
+        }
         Cursor cur = myDb.getDataFromBreederInvWhereTag(breeder_tag);
         cur.moveToFirst();
         Integer bred = cur.getInt(0);
@@ -109,7 +123,8 @@ public class EggProductionRecords extends AppCompatActivity {
                 Integer total_intact = cursor_brooder_feeding_records.getInt(3);
                 Float average_weight = total_weight/total_intact;
                 Integer breeder_inv_id1 = cursor_brooder_feeding_records.getInt(1);
-                if(breeder_inv_id1 == bred) {
+                String deleted_at = cursor_brooder_feeding_records.getString(8);
+                if(breeder_inv_id1 == bred && deleted_at == null) {
                     Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding_records.getInt(0), cursor_brooder_feeding_records.getInt(1), cursor_brooder_feeding_records.getString(2), breeder_tag, cursor_brooder_feeding_records.getInt(3), cursor_brooder_feeding_records.getFloat(4), average_weight, cursor_brooder_feeding_records.getInt(5), cursor_brooder_feeding_records.getInt(6), cursor_brooder_feeding_records.getString(7), cursor_brooder_feeding_records.getString(8));
 
                     arrayListBrooderGrowthRecords.add(egg_production);
@@ -127,6 +142,171 @@ public class EggProductionRecords extends AppCompatActivity {
 
 
 
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_getEggProduction(){
+        APIHelper.getEggProduction("getEggProduction/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONEggProduction jsonBreeder = gson.fromJson(rawJsonResponse, JSONEggProduction.class);
+                ArrayList<Egg_Production> arrayList_brooder = jsonBreeder.getData();
+
+                for (int i = 0; i < arrayList_brooder.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromEggProductionWhereID(arrayList_brooder.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+                                                                                                 /* public boolean insertEggProductionRecordsWithID(Integer id,Integer breeder_inv_id, String date, Integer intact, Float weight, Integer broken, Integer rejects, String remarks, String deleted_at){
+ */
+                        boolean isInserted = myDb.insertEggProductionRecordsWithID(arrayList_brooder.get(i).getId(), arrayList_brooder.get(i).getEgg_breeder_inv_id(),arrayList_brooder.get(i).getDate(), arrayList_brooder.get(i).getIntact(), arrayList_brooder.get(i).getWeight(), arrayList_brooder.get(i).getBroken(), arrayList_brooder.get(i).getRejects(), arrayList_brooder.get(i).getRemarks(), arrayList_brooder.get(i).getDeleted_at());
+                        Toast.makeText(EggProductionRecords.this, "Egg Production Added", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Breeders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_addEggProduction(RequestParams requestParams){
+        APIHelper.addEggProduction("addEggProduction", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced egg production record to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateEggProduction(){
+        APIHelper.getEggProduction("getEggProduction/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONEggProduction jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONEggProduction.class);
+                ArrayList<Egg_Production> arrayListBrooderFeedingWeb = jsonBrooderInventory.getData();
+
+
+                ArrayList<Egg_Production> arrayListBrooderFeedingLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_feeding = myDb.getAllDataFromEggProduction();
+                cursor_brooder_feeding.moveToFirst();
+                if(cursor_brooder_feeding.getCount() != 0){
+                    do {
+                        Float total_weight = cursor_brooder_feeding.getFloat(4);
+                        Integer total_intact = cursor_brooder_feeding.getInt(3);
+                        Float average_weight = total_weight/total_intact;
+                        Integer breeder_inv_id1 = cursor_brooder_feeding.getInt(1);
+                        String deleted_at = cursor_brooder_feeding.getString(8);
+                        Egg_Production egg_production = new Egg_Production(cursor_brooder_feeding.getInt(0), cursor_brooder_feeding.getInt(1), cursor_brooder_feeding.getString(2), breeder_tag, cursor_brooder_feeding.getInt(3), cursor_brooder_feeding.getFloat(4), average_weight, cursor_brooder_feeding.getInt(5), cursor_brooder_feeding.getInt(6), cursor_brooder_feeding.getString(7), cursor_brooder_feeding.getString(8));
+                        arrayListBrooderFeedingLocal.add(egg_production);
+
+                    } while (cursor_brooder_feeding.moveToNext());
+                }
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderFeedingLocal.size();i++){
+                    id_local.add(arrayListBrooderFeedingLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderFeedingWeb.size();i++){
+                    id_web.add(arrayListBrooderFeedingWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromEggProductionWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer breeder_inventory_id = cursor.getInt(1);
+                    String date_collected = cursor.getString(2);
+                    Integer total_eggs_intact = cursor.getInt(3);
+                    Float total_egg_weight = cursor.getFloat(4);
+                    Integer total_broken = cursor.getInt(5);
+                    Integer total_rejects = cursor.getInt(6);
+                    String remarks = cursor.getString(7);
+                    String deleted_at = cursor.getString(8);
+
+
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("breeder_inventory_id", breeder_inventory_id.toString());
+                    requestParams.add("date_collected", date_collected);
+                    requestParams.add("total_eggs_intact", total_eggs_intact.toString());
+                    requestParams.add("total_egg_weight", total_egg_weight.toString());
+                    requestParams.add("total_broken", total_broken.toString());
+                    requestParams.add("total_rejects", total_rejects.toString());
+                    requestParams.add("remarks", remarks);
+                    requestParams.add("deleted_at", deleted_at);
+
+
+                    //Toast.makeText(BrooderFeedingRecordsActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addEggProduction(requestParams);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     @Override
     public boolean onSupportNavigateUp() {

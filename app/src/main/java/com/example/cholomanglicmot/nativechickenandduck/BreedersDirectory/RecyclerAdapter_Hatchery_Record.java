@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_FeedingRecords;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -58,7 +57,10 @@ public class RecyclerAdapter_Hatchery_Record extends RecyclerView.Adapter<Recycl
        /* holder.quantity.setText(hatchery_records.getEggs_set().toString());
         holder.age.setText("ID "+hatchery_records.getId().toString());
         holder.fertile.setText(hatchery_records.getFertile().toString());*/
-        holder.hatched.setText(hatchery_records.getDate_hatched().toString());
+       if(hatchery_records.getDate_hatched() != null){
+           holder.hatched.setText(hatchery_records.getDate_hatched());
+       }
+
        // holder.number_hatched.setText(hatchery_records.getHatched().toString());
         holder.view_record.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +77,12 @@ public class RecyclerAdapter_Hatchery_Record extends RecyclerView.Adapter<Recycl
         holder.deleted_at.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+ position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeleteHatchery alertDialog = new DeleteHatchery();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeleteHatchery");
+                notifyDataSetChanged();
             }
         });
 

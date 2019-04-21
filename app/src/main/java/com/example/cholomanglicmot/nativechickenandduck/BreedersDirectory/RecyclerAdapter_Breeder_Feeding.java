@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_FeedingRecords;
 import com.example.cholomanglicmot.nativechickenandduck.R;
@@ -51,6 +50,8 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
         args.putInt("Breeder Inventory ID", breeder_feedingRecords.getBrooder_feeding_inventory_id());
         args.putString("Breeder Tag", breeder_feedingRecords.getBrooder_feeding_tag());
         args.putInt("Breeder Feeding ID", breeder_feedingRecords.getId());
+
+
         holder.brooder_feeding_date.setText(breeder_feedingRecords.getBrooder_feeding_date_collected());
 
         holder.brooder_feeding_view.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +69,12 @@ public class RecyclerAdapter_Breeder_Feeding extends RecyclerView.Adapter<Recycl
         holder.brooder_feeding_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "Deleted at "+position, Toast.LENGTH_SHORT).show();
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DeleteFeedingDialogBreeder alertDialog = new DeleteFeedingDialogBreeder();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "DeleteFeedingDialogBreeder");
+                notifyDataSetChanged();
             }
         });
 

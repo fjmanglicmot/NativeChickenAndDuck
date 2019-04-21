@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.breeder_row_layout,parent, false);
         context = parent.getContext();
+
         RecyclerViewHolder recyclerViewHolder = new RecyclerViewHolder(view);
 
         return recyclerViewHolder;
@@ -43,13 +45,29 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
 
-
-
         final Breeder_Inventory breeders = arrayList.get(position);
 
         final Bundle args = new Bundle();
         args.putString("Breeder Tag", breeders.getBrooder_inv_brooder_tag());
+        args.putInt("Breeder ID", breeders.getId());
+        args.putInt("Breeder Pen ID", breeders.getBrooder_inv_pen());
+        DatabaseHelper myDb;
+        myDb = new DatabaseHelper(context);
 
+        Integer brooder_id = arrayList.get(position).getBrooder_inv_brooder_id();
+
+        Integer fam_id = myDb.getFamIDFromBreeders(brooder_id);
+
+        String famLineGen = myDb.getFamLineGen(fam_id);
+        String delims = " ";
+        String[] tokens = famLineGen.split(delims);
+        String fam = tokens[0];
+        String line = tokens[1];
+        String gen = tokens[2];
+
+        holder.breeder_family.setText(fam);
+        holder.breeder_line.setText(line);
+        holder.breeder_generation.setText(gen);
 
         holder.breeder_number.setText(breeders.getBrooder_inv_brooder_tag());
 
@@ -135,6 +153,17 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
                 context.startActivity(intent_replacement_pheno_morpho_records);
             }
         });
+        holder.cull_breeder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentActivity activity = (FragmentActivity)(context);
+                FragmentManager fm = activity.getSupportFragmentManager();
+                CullBreederInventoryDialog alertDialog = new CullBreederInventoryDialog();
+                alertDialog.setArguments(args);
+                alertDialog.show(fm, "CullBreederInventoryDialog");
+                notifyDataSetChanged();
+            }
+        });
 
     }
 
@@ -162,6 +191,8 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
         ImageButton open_egg_quality_records;
         ImageButton open_pheno_morpho_records;
         ImageButton open_mortality_and_sales;
+        ImageButton cull_breeder;
+
 
         RecyclerViewHolder(View view){
             super(view);
@@ -180,6 +211,7 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
             open_egg_quality_records =  view.findViewById(R.id.open_egg_quality_records);
             open_pheno_morpho_records =  view.findViewById(R.id.open_pheno_morpho_records);
             open_mortality_and_sales =  view.findViewById(R.id.open_mortality_and_sales);
+            cull_breeder =  view.findViewById(R.id.cull_breeder);
 
         }
 

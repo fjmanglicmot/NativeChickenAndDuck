@@ -40,7 +40,7 @@ public class CreateMorphoDialog extends DialogFragment{
     ArrayList<Replacement_PhenoMorphoRecords>arrayList_temp = new ArrayList<>();
     ArrayList<Replacement_Inventory>arrayListReplacementInventory = new ArrayList<>();
     ArrayList<Replacement_Inventory>arrayListReplacementInventory1 = new ArrayList<>();
-
+    Integer inv_id, id_0 ;
 
 
     @Nullable
@@ -127,13 +127,16 @@ public class CreateMorphoDialog extends DialogFragment{
 
                     String morphos  = morpho.toString();
 
-                    Integer inv_id = arrayListReplacementInventory1.get(0).getId();
+                    inv_id = arrayListReplacementInventory1.get(0).getId();
 
 
                     boolean isInserted2 = myDb.insertPhenoMorphoRecords(pheno_sex, pheno_tag, pheno_record, morphos, pheno_date, null);
-                    Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag,pheno_record,morphos,pheno_date);
-                    cursor.moveToFirst();
-                    Integer id_0 = cursor.getInt(0);
+                    if(isInserted2){
+                        Cursor cursor = myDb.getDataFromPhenoMorphoValuesWhere(pheno_sex, pheno_tag,pheno_record,morphos,pheno_date);
+                        cursor.moveToFirst();
+                        id_0 = cursor.getInt(0);
+                    }
+
                     if(isNetworkAvailable()) {
 
 
@@ -152,7 +155,7 @@ public class CreateMorphoDialog extends DialogFragment{
 
                        // buffer.append(cursor.getInt(0)+"\n");
                         boolean isInserted1 = myDb.insertPhenoMorphos(inv_id, null, id_0, null);
-                        if(isNetworkAvailable()) {
+               /*         if(isNetworkAvailable()) {
 
 
                             RequestParams requestParams = new RequestParams();
@@ -165,7 +168,7 @@ public class CreateMorphoDialog extends DialogFragment{
                             API_addPhenoMorphos(requestParams);
 
                         }
-
+*/
                         if (isInserted1 != true){
                             Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                         }
@@ -240,6 +243,14 @@ public class CreateMorphoDialog extends DialogFragment{
             @Override
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 //                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+                RequestParams requestParams = new RequestParams();
+                requestParams.add("replacement_inventory_id", inv_id.toString());
+                requestParams.add("breeder_inventory_id", null);
+                requestParams.add("values_id", id_0.toString());
+                requestParams.add("deleted_at", null);
+
+
+                API_addPhenoMorphos(requestParams);
             }
 
             @Override

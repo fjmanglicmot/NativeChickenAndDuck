@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -184,6 +185,7 @@ public class CreateReplacements extends AppCompatActivity {
 
             //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
             API_getReplacement();
+            API_updateReplacement();
 
 
         }
@@ -224,6 +226,112 @@ public class CreateReplacements extends AppCompatActivity {
                 = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addReplacement(RequestParams requestParams){
+        APIHelper.addReplacementFamily("addReplacementFamily", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced replacements to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updateReplacement(){
+
+        APIHelper.getReplacement("getReplacement/", new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONReplacement jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONReplacement.class);
+                ArrayList<Replacements> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Replacements> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromReplacements();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Replacements brooder_inventory = new Replacements(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3));
+                        arrayListBrooderInventoryLocal.add(brooder_inventory);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromReplacementsWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer family_id = cursor.getInt(1);
+                    String date_added = cursor.getString(2);
+                    String deleted_at = cursor.getString(3);
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("family_id", family_id.toString());
+                    requestParams.add("date_added", date_added);
+                    requestParams.add("deleted_at", deleted_at);
+
+                    //Toast.makeText(BrooderInventoryActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addReplacement(requestParams);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+               // Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     private void API_getReplacement(){
         APIHelper.getReplacement("getReplacement/", new BaseJsonHttpResponseHandler<Object>() {

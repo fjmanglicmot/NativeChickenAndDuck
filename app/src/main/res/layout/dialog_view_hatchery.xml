@@ -42,7 +42,11 @@
                     android:hint=""
                     android:inputType="number"
                     android:textSize="15sp"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
                 <TextView
                     android:id="@+id/date_set"
                     android:layout_width="wrap_content"
@@ -143,32 +147,38 @@
                     android:textSize="15sp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:text="Date Hatched"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
+
                 <EditText
                     android:id="@+id/edit_date_hatched"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="number"
                     android:textSize="15sp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/date_hatched"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/textView"
-
 
 
                     android:textSize="15sp" />

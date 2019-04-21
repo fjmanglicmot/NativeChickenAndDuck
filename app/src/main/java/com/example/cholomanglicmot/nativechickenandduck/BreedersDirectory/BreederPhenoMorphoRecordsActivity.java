@@ -1,19 +1,30 @@
 package com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.JSONPhenoMorphoValues;
 import com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory.Replacement_PhenoMorphoRecords;
+import com.google.gson.Gson;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -74,6 +85,9 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
         //////DATABASE
         ///////////////////////////////DATABASE
 
+        if(isNetworkAvailable()){
+            API_updatePhenoMorphoValues();
+        }
 
         ////inventory
         Cursor cursor_inventory = myDb.getDataFromBreederInvWhereTag(breeder_tag);
@@ -99,6 +113,122 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
 
 
     }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addPhenoMorphoValues(RequestParams requestParams){
+        APIHelper.addPhenoMorphoValues("addPhenoMorphoValues", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+//                Toast.makeText(getContext(), "Successfully added to web", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updatePhenoMorphoValues(){
+        APIHelper.getPhenoMorphoValues("getPhenoMorphoValues/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONPhenoMorphoValues jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONPhenoMorphoValues.class);
+                ArrayList<Breeder_PhenoMorphoView> arrayListBrooderFeedingWeb = jsonBrooderInventory.getData();
+
+
+                ArrayList<Breeder_PhenoMorphoView> arrayListBrooderFeedingLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_feeding = myDb.getAllDataFromPhenoMorphoRecords();
+                cursor_brooder_feeding.moveToFirst();
+                if(cursor_brooder_feeding.getCount() != 0){
+                    do {
+
+                        Breeder_PhenoMorphoView replacement_phenoMorphoView = new Breeder_PhenoMorphoView(cursor_brooder_feeding.getInt(0), cursor_brooder_feeding.getString(1), cursor_brooder_feeding.getString(2),cursor_brooder_feeding.getString(3),cursor_brooder_feeding.getString(4),cursor_brooder_feeding.getString(5),cursor_brooder_feeding.getString(6) );
+                        arrayListBrooderFeedingLocal.add(replacement_phenoMorphoView);
+
+                    } while (cursor_brooder_feeding.moveToNext());
+                }
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderFeedingLocal.size();i++){
+                    id_local.add(arrayListBrooderFeedingLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderFeedingWeb.size();i++){
+                    id_web.add(arrayListBrooderFeedingWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromPhenoMorphoRecordsWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    String gender = cursor.getString(1);
+                    String tag = cursor.getString(2);
+                    String phenotypic = cursor.getString(3);
+                    String morphometric = cursor.getString(4);
+                    String date_collected = cursor.getString(5);
+                    String deleted_at = cursor.getString(6);
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("gender", gender);
+                    requestParams.add("tag", tag);
+                    requestParams.add("phenotypic", phenotypic);
+                    requestParams.add("morphometric", morphometric);
+                    requestParams.add("date_collected", date_collected);
+                    requestParams.add("deleted_at", deleted_at);
+
+                    //Toast.makeText(BrooderFeedingRecordsActivity.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addPhenoMorphoValues(requestParams);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
     @Override
     public boolean onSupportNavigateUp() {
         Intent intent_brooders = new Intent(BreederPhenoMorphoRecordsActivity.this, CreateBreeders.class);
@@ -116,4 +246,5 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
         startActivity(intent_brooders);
 
     }
+
 }

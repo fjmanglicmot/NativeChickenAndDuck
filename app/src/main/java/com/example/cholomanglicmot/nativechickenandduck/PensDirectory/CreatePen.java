@@ -39,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class CreatePen extends AppCompatActivity {
     RecyclerView.Adapter recycler_adapter;
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Pen> arrayList = new ArrayList<>();
+    String farmID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,15 +240,21 @@ public class CreatePen extends AppCompatActivity {
 
 
 
+        Cursor c = myDb.getAllDataFromFarms();
+        c.moveToFirst();
 
+        if(c.getCount() != 0){
+            Integer farm_ID = c.getInt(0);
+            farm_id = farm_ID.toString();
+        }
         boolean isNetworkAvailable = isNetworkAvailable();
         if(isNetworkAvailable){
             //if internet is available, load data from web database
 
 
+            API_updatePen(farm_id);
+            API_getPen(farm_id);
 
-
-            API_getFarmID(email);
 
 
 
@@ -282,6 +290,119 @@ public class CreatePen extends AppCompatActivity {
                 = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void API_addPen(RequestParams requestParams){
+        APIHelper.addPen("addPen", requestParams, new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+                Toast.makeText(getApplicationContext(), "Successfully synced pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to sync Pen to web", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_updatePen(String farm_id){
+
+        APIHelper.getPen("getPen/"+farm_id, new BaseJsonHttpResponseHandler<Object>() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONPen jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONPen.class);
+                ArrayList<Pen> arrayListBrooderInventoryWeb = jsonBrooderInventory.getData();
+
+                ArrayList<Pen> arrayListBrooderInventoryLocal = new ArrayList<>();
+
+                Cursor cursor_brooder_inventory = myDb.getAllDataFromPen();
+                cursor_brooder_inventory.moveToFirst();
+                if(cursor_brooder_inventory.getCount() != 0){
+                    do {
+
+                        Pen pen = new Pen(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getString(2), cursor_brooder_inventory.getString(3), cursor_brooder_inventory.getInt(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(6));
+                        arrayListBrooderInventoryLocal.add(pen);
+                    } while (cursor_brooder_inventory.moveToNext());
+                }
+
+
+
+
+                //arrayListBrooderInventoryLocal contains all data from local database
+                //arrayListBrooderInventoryWeb   contains all data from web database
+
+                //put the ID of each brooder inventory to another arraylist
+                ArrayList<Integer> id_local = new ArrayList<>();
+                ArrayList<Integer> id_web = new ArrayList<>();
+                ArrayList<Integer> id_to_sync = new ArrayList<>();
+
+                for(int i=0;i<arrayListBrooderInventoryLocal.size();i++){
+                    id_local.add(arrayListBrooderInventoryLocal.get(i).getId());
+                }
+                for(int i=0;i<arrayListBrooderInventoryWeb.size();i++){
+                    id_web.add(arrayListBrooderInventoryWeb.get(i).getId());
+                }
+
+
+                for (int i=0;i<id_local.size();i++){
+                    if(!id_web.contains(id_local.get(i))){ //if id_web does not contain the current value of i, add it the an arraylist
+                        id_to_sync.add(id_local.get(i));
+                    }
+                }
+
+
+                for(int i=0;i<id_to_sync.size();i++){
+
+                    Cursor cursor = myDb.getAllDataFromPenWhereID(id_to_sync.get(i));
+                    cursor.moveToFirst();
+                    Integer id = cursor.getInt(0);
+                    Integer farm_id = cursor.getInt(1);
+                    String number = cursor.getString(2);
+                    String type = cursor.getString(3);
+                    Integer total_capacity = cursor.getInt(4);
+                    Integer current_capacity = cursor.getInt(5);
+                    Integer is_active = cursor.getInt(6);
+
+
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.add("id", id.toString());
+                    requestParams.add("farm_id", farm_id.toString());
+                    requestParams.add("number", number);
+                    requestParams.add("type", type);
+                    requestParams.add("total_capacity", total_capacity.toString());
+                    requestParams.add("current_capacity", current_capacity.toString());
+                    requestParams.add("is_active", is_active.toString());
+
+
+                    //Toast.makeText(CreateBreeders.this, id_to_sync.get(i).toString(), Toast.LENGTH_SHORT).show();
+
+                    API_addPen(requestParams);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                //Toast.makeText(getApplicationContext(), "Failed to sync pens from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
     }
     private void API_getPen(String farm_id){
         APIHelper.getPen("getPen/"+farm_id, new BaseJsonHttpResponseHandler<Object>() {
@@ -320,34 +441,7 @@ public class CreatePen extends AppCompatActivity {
             }
         });
     }
-    private void API_getFarmID(String email){
-        APIHelper.getFarmID("getFarmID/"+email, new BaseJsonHttpResponseHandler<Object>() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
-
-                farm_id = rawJsonResponse;
-
-                farm_id = farm_id.replaceAll("\\[", "").replaceAll("\\]","");
-
-                API_getPen(farm_id);
-                //  Toast.makeText(CreateGenerationsAndLines.this, "Generation and Lines loaded from database", Toast.LENGTH_SHORT).show();
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
-
-                Toast.makeText(getApplicationContext(), "Failed ", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
-                return null;
-            }
-        });
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

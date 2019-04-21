@@ -73,7 +73,7 @@ public class EggsSalesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!date_egg_sold.getText().toString().isEmpty() && !number_sold.getText().toString().isEmpty() && !price.getText().toString().isEmpty()){
-                    boolean isInserted = myDb.insertDataMortalityAndSales(date_egg_sold.getText().toString(), null,null,null,"breeder", "sold", Integer.parseInt(price.getText().toString()), null,null,null,null, remarks.getText().toString(), null);
+                    boolean isInserted = myDb.insertDataMortalityAndSales(date_egg_sold.getText().toString(), null,null,null,"breeder", "sold", Float.parseFloat(price.getText().toString()), null,null,null,null, remarks.getText().toString(), null);
                     if(isInserted == true){
                         Toast.makeText(getActivity(),"Added to database", Toast.LENGTH_SHORT).show();
                         getActivity().onBackPressed();
