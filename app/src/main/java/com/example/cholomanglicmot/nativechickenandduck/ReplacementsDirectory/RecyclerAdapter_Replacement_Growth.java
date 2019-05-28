@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -14,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_GrowthRecords;
+import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.util.ArrayList;
@@ -47,13 +49,23 @@ public class RecyclerAdapter_Replacement_Growth extends RecyclerView.Adapter<Rec
 
         final Replacement_GrowthRecords brooder_growthRecords = arrayListBrooderGrowthRecords.get(position);
         final Bundle args = new Bundle();
+        DatabaseHelper myDb;
+        myDb = new DatabaseHelper(context);
+        String brooder_tag=null;
         args.putInt("Replacement Inventory ID", brooder_growthRecords.getReplacement_growth_inventory_id());
-        args.putString("Replacement Tag", brooder_growthRecords.getReplacement_growth_tag());
+        //args.putString("Replacement Tag", brooder_growthRecords.getReplacement_growth_tag());
         args.putInt("Replacement Growth ID", brooder_growthRecords.getId());
+
+        Cursor cursor = myDb.getAllDataFromReplacementInventoryWhereID(brooder_growthRecords.getReplacement_growth_inventory_id());
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            brooder_tag = cursor.getString(3);
+        }
+
 
         holder.brooder_growth_date_added.setText(brooder_growthRecords.getReplacement_growth_date_collected());
         holder.brooder_growth_collection_day.setText(brooder_growthRecords.getReplacement_growth_collection_day().toString());
-        holder.brooder_growth_inventory_tag.setText("Replacement Family "+brooder_growthRecords.getReplacement_growth_inventory_id().toString());
+        holder.brooder_growth_inventory_tag.setText(brooder_tag);
    /*     holder.brooder_growth_male_count.setText(brooder_growthRecords.getReplacement_growth_male_quantity().toString());
         holder.brooder_growth_male_weight.setText(brooder_growthRecords.getReplacement_growth_male_weight().toString());
         holder.brooder_growth_female_count.setText(brooder_growthRecords.getReplacement_growth_female_quantity().toString());

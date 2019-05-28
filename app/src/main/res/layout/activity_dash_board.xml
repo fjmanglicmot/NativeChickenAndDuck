@@ -34,6 +34,7 @@ android:fitsSystemWindows="true">
 
                 <LinearLayout
                     android:layout_marginTop="20dp"
+                    android:paddingBottom="30dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -58,9 +59,10 @@ android:fitsSystemWindows="true">
                             android:layout_weight="1"
                             android:orientation="vertical">
                             <TextView
+                                android:layout_marginBottom="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Inventory"
+                                android:text="INVENTORY"
                                 android:gravity="center"/>
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -75,8 +77,10 @@ android:fitsSystemWindows="true">
                                     android:layout_weight="1"
 
                                     >
+
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginBottom="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
@@ -84,7 +88,7 @@ android:fitsSystemWindows="true">
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Male"/>
+                                            android:text="MALE"/>
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -96,18 +100,17 @@ android:fitsSystemWindows="true">
                                                 android:layout_height="wrap_content"
                                                 android:gravity="center"
                                                 android:text="Na"/>
-                                            <TextView
-                                                android:paddingTop="5dp"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="wrap_content"
-                                                android:gravity="center"
-                                                />
+
 
 
                                         </LinearLayout>
                                     </LinearLayout>
 
                                 </LinearLayout>
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="#A9A9A9" />
                                 <LinearLayout
                                     android:layout_weight="1"
                                     android:layout_width="match_parent"
@@ -118,12 +121,13 @@ android:fitsSystemWindows="true">
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
+
                                         <TextView
 
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Female"/>
+                                            android:text="FEMALE" />
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -135,12 +139,6 @@ android:fitsSystemWindows="true">
                                                 android:layout_height="wrap_content"
                                                 android:gravity="center"
                                                 android:text="Na"/>
-                                            <TextView
-                                                android:paddingTop="5dp"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="wrap_content"
-                                                android:gravity="center"
-                                                />
 
 
                                         </LinearLayout>
@@ -151,7 +149,7 @@ android:fitsSystemWindows="true">
 
 
                         </LinearLayout>
-                        <LinearLayout
+                        <!--<LinearLayout
 
                             android:layout_width="match_parent"
                             android:layout_weight="1"
@@ -295,9 +293,9 @@ android:fitsSystemWindows="true">
                                 </LinearLayout>
                             </LinearLayout>
 
-                        </LinearLayout>
+                        </LinearLayout>-->
                     </LinearLayout>
-                    <TextView
+                    <!--<TextView
                         android:paddingTop="40dp"
                         android:gravity="center"
                         android:layout_width="match_parent"
@@ -338,14 +336,37 @@ android:fitsSystemWindows="true">
                             android:layout_height="wrap_content"
                             android:text="Total Refused: 0.000 kg"
                             android:layout_weight="1"/>
-                    </LinearLayout>
+                    </LinearLayout>-->
                     <TextView
-                        android:paddingTop="40dp"
                         android:gravity="center"
+                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="EGG PRODUCTION"
                         android:textSize="15sp"/>
+                    <TextView
+                        android:id="@+id/last_checked"
+                        android:gravity="center"
+                        android:textStyle="italic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Last Checked: "
+                        android:textSize="13sp"/>
+                    <TextView
+                        android:paddingTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="HEN DAY"
+                        android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/hen_day"
+                        android:paddingTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NaN %"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:gravity="center"/>
 
                     <LinearLayout
                         android:layout_marginTop="10dp"
@@ -375,7 +396,7 @@ android:fitsSystemWindows="true">
 
                                     >
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
@@ -383,7 +404,7 @@ android:fitsSystemWindows="true">
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Intact"/>
+                                            android:text="INTACT"/>
                                         <TextView
                                             android:id="@+id/intact"
                                             android:paddingTop="5dp"
@@ -395,13 +416,19 @@ android:fitsSystemWindows="true">
                                     </LinearLayout>
 
                                 </LinearLayout>
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="#A9A9A9" />
                                 <LinearLayout
-                                    android:layout_weight="1"
+                                    android:orientation="horizontal"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:layout_weight="1"
+
                                     >
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
@@ -409,9 +436,39 @@ android:fitsSystemWindows="true">
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Total Weight"/>
+                                            android:text="BROKEN"/>
                                         <TextView
-                                            android:id="@+id/weight"
+                                            android:id="@+id/broken"
+                                            android:paddingTop="5dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Na"/>
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="#A9A9A9" />
+                                <LinearLayout
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    >
+                                    <LinearLayout
+                                        android:layout_margin="10dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="REJECTED"/>
+                                        <TextView
+                                            android:id="@+id/rejected"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -420,11 +477,12 @@ android:fitsSystemWindows="true">
 
                                     </LinearLayout>
                                 </LinearLayout>
+
                             </LinearLayout>
 
 
                         </LinearLayout>
-                        <LinearLayout
+                       <!-- <LinearLayout
 
                             android:layout_width="match_parent"
                             android:layout_weight="1"
@@ -493,25 +551,11 @@ android:fitsSystemWindows="true">
                                     </LinearLayout>
                                 </LinearLayout>
                             </LinearLayout>
-                        </LinearLayout>
+                        </LinearLayout>-->
                     </LinearLayout>
 
 
-                    <TextView
-                        android:paddingTop="20dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Approx. Hen-Day Egg Production"
-                        android:gravity="center"/>
-                    <TextView
-                        android:paddingTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="NaN %"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:gravity="center"/>
-                    <TextView
+                    <!--<TextView
                         android:paddingTop="40dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -554,31 +598,34 @@ android:fitsSystemWindows="true">
                             </LinearLayout>
 
                         </LinearLayout>
+
                         <LinearLayout
-                            android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
+                            android:orientation="horizontal"
 
                             >
+
                             <LinearLayout
-                                android:paddingTop="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical">
+                                android:orientation="vertical"
+                                android:paddingTop="10dp">
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:text="Hatchability\n" />
+
                                 <TextView
                                     android:id="@+id/hatchability"
-                                    android:paddingTop="5dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:text="NaN %"/>
+                                    android:paddingTop="5dp"
+                                    android:text="NaN %" />
 
                             </LinearLayout>
 
@@ -608,7 +655,7 @@ android:fitsSystemWindows="true">
 
                             </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </LinearLayout>-->
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -624,32 +671,33 @@ android:fitsSystemWindows="true">
 
 
 
-            #fffbed
+
             <android.support.v7.widget.CardView
-                app:cardBackgroundColor="#fffbed"
-                android:layout_margin="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+                android:layout_margin="20dp"
+                app:cardBackgroundColor="#fffbed">
 
                 <LinearLayout
-                    android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="GROWERS AND REPLACEMENTS"
-                        android:textStyle="bold"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
                     <LinearLayout
-                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
                         <LinearLayout
 
@@ -657,74 +705,82 @@ android:fitsSystemWindows="true">
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Inventory"
-                                android:gravity="center"/>
+                                android:gravity="center"
+                                android:text="Inventory" />
+
                             <LinearLayout
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="20dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                >
+                                android:orientation="horizontal">
 
                                 <LinearLayout
-                                    android:orientation="horizontal"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:orientation="horizontal"
 
                                     >
+
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="vertical">
+                                        android:orientation="vertical"
+                                        >
+
                                         <TextView
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Male"/>
+                                            android:text="Male" />
+
                                         <TextView
-                                            android:id="@+id/male_count_brooder"
+                                            android:id="@+id/male_count_replacement"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
                                             android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
+                                            android:text="Na" />
 
                                     </LinearLayout>
 
                                 </LinearLayout>
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="#A9A9A9" />
                                 <LinearLayout
-                                    android:layout_weight="1"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    >
+                                    android:layout_weight="1">
+
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="vertical">
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Female"/>
-                                        <TextView
-                                            android:id="@+id/female_count_brooder"
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Na"/>
-                                        <TextView
+                                        android:orientation="vertical"
+                                        >
 
-                                            android:paddingTop="5dp"
+                                        <TextView
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text=""/>
+                                            android:text="Female" />
+
+                                        <TextView
+                                            android:id="@+id/female_count_replacement"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:paddingTop="5dp"
+                                            android:text="Na" />
+
 
                                     </LinearLayout>
                                 </LinearLayout>
@@ -732,11 +788,12 @@ android:fitsSystemWindows="true">
 
 
                         </LinearLayout>
-                        <LinearLayout
+
+                       <!-- <LinearLayout
 
                             android:layout_width="match_parent"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
@@ -744,78 +801,87 @@ android:fitsSystemWindows="true">
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:text="Mortality and Sales" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                >
+                                android:orientation="horizontal">
 
                                 <LinearLayout
-                                    android:orientation="horizontal"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:orientation="horizontal"
 
                                     >
+
                                     <LinearLayout
-                                        android:paddingTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="vertical">
+                                        android:orientation="vertical"
+                                        android:paddingTop="10dp">
+
                                         <TextView
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Mortality"/>
+                                            android:text="Mortality" />
+
                                         <TextView
                                             android:id="@+id/male_count_replacement_mort"
-                                            android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Na"/>
+                                            android:paddingTop="5dp"
+                                            android:text="Na" />
+
                                         <TextView
                                             android:id="@+id/female_count_replacement_mort"
-                                            android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Na"/>
+                                            android:paddingTop="5dp"
+                                            android:text="Na" />
 
                                     </LinearLayout>
 
                                 </LinearLayout>
+
                                 <LinearLayout
-                                    android:orientation="horizontal"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
+                                    android:orientation="horizontal"
 
                                     >
+
                                     <LinearLayout
-                                        android:paddingTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:orientation="vertical">
+                                        android:orientation="vertical"
+                                        android:paddingTop="10dp">
+
                                         <TextView
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Sales"/>
+                                            android:text="Sales" />
+
                                         <TextView
                                             android:id="@+id/male_count_replacement_sales"
-                                            android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Na"/>
+                                            android:paddingTop="5dp"
+                                            android:text="Na" />
+
                                         <TextView
                                             android:id="@+id/female_count_replacement_sales"
-                                            android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Na"/>
+                                            android:paddingTop="5dp"
+                                            android:text="Na" />
 
                                     </LinearLayout>
 
@@ -823,54 +889,56 @@ android:fitsSystemWindows="true">
 
                             </LinearLayout>
 
-                        </LinearLayout>
+                        </LinearLayout>-->
                     </LinearLayout>
 
-                    <TextView
-                        android:paddingTop="40dp"
+                    <!--<TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:paddingTop="40dp"
                         android:text="FEED CONSUMPTION"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp" />
+
                     <TextView
-                        android:paddingTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Consumption"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:text="Consumption" />
+
                     <TextView
                         android:id="@+id/replacement_feeding_consumed"
-                        android:paddingTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="10dp"
                         android:text="0.000 kg"
-                        android:textStyle="bold"
                         android:textSize="20sp"
-                        android:gravity="center"/>
+                        android:textStyle="bold" />
 
                     <LinearLayout
-                        android:paddingBottom="50dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingBottom="50dp">
+
                         <TextView
                             android:id="@+id/replacement_feeding_offered"
-                            android:gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Total Offered: 0.000 kg"
-                            android:layout_weight="1"/>
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Total Offered: 0.000 kg" />
+
                         <TextView
                             android:id="@+id/replacement_feeding_refused"
-                            android:gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Total Refused: 0.000 kg"
-                            android:layout_weight="1"/>
-                    </LinearLayout>
-
-
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Total Refused: 0.000 kg" />
+                    </LinearLayout>-->
 
 
                 </LinearLayout>
@@ -921,6 +989,8 @@ android:fitsSystemWindows="true">
                                 android:text="Inventory"
                                 android:gravity="center"/>
                             <LinearLayout
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="20dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
@@ -934,7 +1004,7 @@ android:fitsSystemWindows="true">
 
                                     >
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
@@ -944,7 +1014,7 @@ android:fitsSystemWindows="true">
                                             android:gravity="center"
                                             android:text="Male"/>
                                         <TextView
-                                            android:id="@+id/male_count_replacement"
+                                            android:id="@+id/male_count_brooder"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -954,13 +1024,17 @@ android:fitsSystemWindows="true">
                                     </LinearLayout>
 
                                 </LinearLayout>
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="#A9A9A9" />
                                 <LinearLayout
                                     android:layout_weight="1"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     >
                                     <LinearLayout
-                                        android:paddingTop="10dp"
+                                        android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:orientation="vertical">
@@ -970,19 +1044,13 @@ android:fitsSystemWindows="true">
                                             android:gravity="center"
                                             android:text="Female"/>
                                         <TextView
-                                            android:id="@+id/female_count_replacement"
+                                            android:id="@+id/female_count_brooder"
                                             android:paddingTop="5dp"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
                                             android:text="Na"/>
-                                        <TextView
 
-                                            android:paddingTop="5dp"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text=""/>
 
                                     </LinearLayout>
                                 </LinearLayout>
@@ -990,7 +1058,7 @@ android:fitsSystemWindows="true">
 
 
                         </LinearLayout>
-                        <LinearLayout
+                        <!--<LinearLayout
 
                             android:layout_width="match_parent"
                             android:layout_weight="1"
@@ -1081,10 +1149,10 @@ android:fitsSystemWindows="true">
 
                             </LinearLayout>
 
-                        </LinearLayout>
+                        </LinearLayout>-->
                     </LinearLayout>
 
-                    <TextView
+                    <!--<TextView
                         android:paddingTop="40dp"
                         android:gravity="center"
                         android:layout_width="match_parent"
@@ -1130,7 +1198,7 @@ android:fitsSystemWindows="true">
 
 
 
-
+-->
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

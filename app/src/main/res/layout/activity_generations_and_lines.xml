@@ -59,6 +59,9 @@
                 android:background="@color/white"
                 android:layout_margin="15dp"
                 >
+                <android.support.design.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                 <TableLayout
                     android:id="@+id/breeder_gen_table"
                     android:layout_width="match_parent"
@@ -123,29 +126,24 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:orientation="horizontal">
+
 
 
                     <io.github.yavski.fabspeeddial.FabSpeedDial
                         android:id="@+id/fabSpeedDial"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="16dp"
                         app:fabBackgroundTint="@color/turmeric"
                         app:fabGravity="bottom_end"
                         app:fabMenu="@menu/generation_and_lines_fab"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:miniFabBackgroundTint="@color/gold"
                         app:miniFabDrawableTint="@color/white"
                         app:miniFabTitleTextColor="#727272" />
 
-                </android.support.constraint.ConstraintLayout>
+            </android.support.design.widget.CoordinatorLayout>
 
             </android.support.v7.widget.CardView>
 

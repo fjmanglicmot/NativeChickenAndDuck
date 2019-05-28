@@ -167,7 +167,7 @@ public class CreateEggQualityDialog extends DialogFragment{
 
                     if(cursor.getCount() != 0){
                         do{
-                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
+                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12));
                             arrayListBrooderInventory.add(breeder_inventory);
 
                         }while(cursor.moveToNext());

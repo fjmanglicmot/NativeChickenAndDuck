@@ -104,7 +104,9 @@ public class ProjectAdapter extends BaseExpandableListAdapter {
             case "Farm Settings":
                 parent_imageview.setImageResource(R.drawable.ic_settings_black_24dp);
                 break;
-
+            case "Log Out":
+                parent_imageview.setImageResource(R.drawable.ic_power_settings_new_black_24dp);
+                break;
         }
 
 

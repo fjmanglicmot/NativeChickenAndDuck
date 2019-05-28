@@ -10,156 +10,160 @@
 
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <include
-            layout="@layout/navigation_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:id="@+id/pen_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+            <include
+                layout="@layout/navigation_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Pens"
-                android:textColor="#000"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-<!--            <EditText
+            <LinearLayout
+                android:id="@+id/pen_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="6dp"
-                android:drawableLeft="@drawable/ic_search_black_24dp"
-                android:hint="Search"
-                android:inputType="text"
-                android:textSize="15dp" />-->
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/pen_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:layout_margin="15dp"
-                >
-                <TableLayout
-                    android:id="@+id/breeder_gen_table"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="*"
-                    android:layout_marginBottom="10dp">
+                android:orientation="horizontal">
 
 
-                <TableRow
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp">
-                    >
-
-                <TextView
-
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:text="Type"
-                    android:gravity="center"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:text="Number"
-                    android:gravity="center"
-                    android:textStyle="bold" />
-
-                <TextView
-
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:text="Content"
-                    android:gravity="center"
-                    android:textStyle="bold" />
-                    <TextView
-
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:text="Capacity"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:text="Edit"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-                </TableRow>
-                </TableLayout>
-
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="40dp"
-                    >
-
-                </android.support.v7.widget.RecyclerView>
-
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:orientation="horizontal">
+                    android:layout_margin="10dp"
+                    android:text="Pens"
+                    android:textColor="#000"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <!--            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="0dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="6dp"
+                                android:drawableLeft="@drawable/ic_search_black_24dp"
+                                android:hint="Search"
+                                android:inputType="text"
+                                android:textSize="15dp" />-->
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/pen_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:layout_margin="15dp"
+                    >
+
+
+                <android.support.design.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TableLayout
+                        android:id="@+id/breeder_gen_table"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="*"
+                        android:layout_marginBottom="10dp">
+
+
+                        <TableRow
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp">
+                            >
+
+                            <TextView
+
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:text="Type"
+                                android:gravity="center"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:text="Number"
+                                android:gravity="center"
+                                android:textStyle="bold" />
+
+                            <TextView
+
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:text="Content"
+                                android:gravity="center"
+                                android:textStyle="bold" />
+                            <TextView
+
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:text="Capacity"
+                                android:gravity="center"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:text="Edit"
+                                android:gravity="center"
+                                android:textStyle="bold" />
+                        </TableRow>
+                    </TableLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="40dp"
+                        >
+
+                    </android.support.v7.widget.RecyclerView>
 
 
 
-                    <!--                 <Button
-                        android:id="@+id/show_data_button"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="20dp"
-                        android:background="@drawable/ic_keyboard_arrow_right_black_24dp" />-->
-                    <ImageButton
+                        <android.support.design.widget.FloatingActionButton
+                            android:layout_gravity="end|bottom"
+                            android:id="@+id/open_dialog"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_marginBottom="28dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/floatingbutton"
+                            android:src="@drawable/ic_add_black_24dp"
+                            app:backgroundTint="@color/turmeric"
 
-                        android:id="@+id/open_dialog"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_marginBottom="28dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/floatingbutton"
-                        android:src="@drawable/ic_add_black_24dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                            />
 
-                </android.support.constraint.ConstraintLayout>
+                </android.support.design.widget.CoordinatorLayout>
 
-            </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
+
+
+
+
+            </LinearLayout>
+
+
+
 
 
 
@@ -167,12 +171,6 @@
         </LinearLayout>
 
 
-
-
-
-
-
-    </LinearLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

@@ -23,11 +23,17 @@ public class Breeder_Inventory {
     private String brooder_inv_last_update;
     @SerializedName("deleted_at")
     private String brooder_inv_deleted_at;
+    @SerializedName("breeder_code")
+    private String breeder_code;
+    @SerializedName("male_wingband")
+    private String male_wingband;
+    @SerializedName("female_wingband")
+    private String female_wingband;
 
     public Breeder_Inventory(){
     }
 
-    public Breeder_Inventory(Integer id, Integer brooder_inv_brooder_id, Integer brooder_inv_pen, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity, Integer brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at) {
+    public Breeder_Inventory(Integer id, Integer brooder_inv_brooder_id, Integer brooder_inv_pen, String brooder_inv_brooder_tag, String brooder_inv_batching_date, Integer brooder_male_quantity, Integer brooder_female_quantity, Integer brooder_total_quantity, String brooder_inv_last_update, String brooder_inv_deleted_at, String breeder_code, String male_wingband, String female_wingband) {
         this.setId(id);
         this.setBrooder_inv_brooder_id(brooder_inv_brooder_id);
         this.setBrooder_inv_pen(brooder_inv_pen);
@@ -38,12 +44,37 @@ public class Breeder_Inventory {
         this.setBrooder_total_quantity(brooder_total_quantity);
         this.setBrooder_inv_last_update(brooder_inv_last_update);
         this.setBrooder_inv_deleted_at(brooder_inv_deleted_at);
+        this.setBreeder_code(breeder_code);
+        this.setMale_wingband(male_wingband);
+        this.setFemale_wingband(female_wingband);
 
 
 
     }
 
+    public String getBreeder_code() {
+        return breeder_code;
+    }
 
+    public void setBreeder_code(String breeder_code) {
+        this.breeder_code = breeder_code;
+    }
+
+    public String getMale_wingband() {
+        return male_wingband;
+    }
+
+    public void setMale_wingband(String male_wingband) {
+        this.male_wingband = male_wingband;
+    }
+
+    public String getFemale_wingband() {
+        return female_wingband;
+    }
+
+    public void setFemale_wingband(String female_wingband) {
+        this.female_wingband = female_wingband;
+    }
 
     public Integer getId() {
         return id;

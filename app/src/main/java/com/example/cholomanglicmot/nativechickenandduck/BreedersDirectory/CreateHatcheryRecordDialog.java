@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -62,6 +65,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
     Integer brooder_pen_id, batching_week2;
     String brooder_tag2,formatted;
     Integer age_weeks = 0;
+    Integer farm_id=0;
 
 
 
@@ -150,9 +154,26 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
         });
 
 
+        FirebaseAuth mAuth;
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms();
+        Cursor cursor1 = myDb.getAllDataFromFarms(farm_id);
         cursor1.moveToFirst();
 
         if(cursor1.getCount() != 0){
@@ -234,7 +255,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
 
                     if(cursor.getCount() != 0){
                         do{
-                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
+                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9),cursor.getString(10),cursor.getString(11),cursor.getString(12));
                             arrayListBrooderInventory.add(breeder_inventory);
 
                         }while(cursor.moveToNext());
@@ -675,7 +696,7 @@ public class CreateHatcheryRecordDialog extends DialogFragment{
         String timestamp;
 
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             code = cursor.getString(2);

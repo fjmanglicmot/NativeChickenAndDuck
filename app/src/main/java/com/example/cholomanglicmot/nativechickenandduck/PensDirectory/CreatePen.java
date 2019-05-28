@@ -8,7 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -55,10 +58,11 @@ public class CreatePen extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    private ImageButton create_pen;
+    private FloatingActionButton create_pen;
     private Button show_data_button;
     private Button delete_pen_table;
     String farm_id;
+    Integer farm_id2=0;
     ArrayList<Pen> arrayList_pen;
 
     LinkedHashMap<String, List<String>> Project_category;
@@ -72,6 +76,8 @@ public class CreatePen extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Pen> arrayList = new ArrayList<>();
     String farmID;
+    ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +123,28 @@ public class CreatePen extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
 
+        // starting recycler view
+
+       // RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (dy < 0) {
+                    create_pen.show();
+
+                } else if (dy > 0) {
+                    create_pen.hide();
+                }
+            }
+        });
+
 
 
         create_pen.setOnClickListener(new View.OnClickListener() {
@@ -130,59 +158,7 @@ public class CreatePen extends AppCompatActivity {
         });
 
 
-      /*  Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //  Toast.makeText(getBaseContext(),Project_category.get(Project_list.get(groupPosition)).get(childPosition) + " from category" + Project_list.get(groupPosition) + "is selected", Toast.LENGTH_SHORT).show();
 
-                String string = Project_category.get(Project_list.get(groupPosition)).get(childPosition);
-                switch (string){
-                    case "Generation":
-                        Intent intent_breeder_generation = new Intent(CreatePen.this, BreederGeneration.class);
-                        startActivity(intent_breeder_generation);
-                        break;
-                    case "Family Records":
-                        Intent intent_breeder_family_records = new Intent(CreatePen.this, BreederFamilyRecords.class);
-                        startActivity(intent_breeder_family_records);
-                        break;
-                    case "Daily Records":
-                        Intent intent_breeder_daily_records = new Intent(CreatePen.this, BreederDailyRecords.class);
-                        startActivity(intent_breeder_daily_records);
-                        break;
-                    case "Hatchery Records":
-                        Intent intent_breeder_hatchery_records = new Intent(CreatePen.this, BreederHatcheryRecords.class);
-                        startActivity(intent_breeder_hatchery_records);
-                        break;
-                    case "Egg Quality Records":
-                        Intent intent_breeder_egg_quality_records = new Intent(CreatePen.this, BreederEggQualityRecords.class);
-                        startActivity(intent_breeder_egg_quality_records);
-                        break;
-                    case "Add Replacement Stocks":
-                        Intent intent_replacement_individual_record_add = new Intent(CreatePen.this, ReplacementIndividualRecordAdd.class);
-                        startActivity(intent_replacement_individual_record_add);
-                        break;
-                    case "Phenotypic and Morphometric":
-                        Intent intent_replacement_phenotypic_morphometric = new Intent(CreatePen.this, ReplacementPhenotypicMorphometric.class);
-                        startActivity(intent_replacement_phenotypic_morphometric);
-                        break;
-                    case "Feeding Record":
-                        Intent intent_replacement_feeding_record = new Intent(CreatePen.this, ReplacementFeedingRecord.class);
-                        startActivity(intent_replacement_feeding_record);
-                        break;
-                    case "Growth Performance":
-                        Intent intent_brooder_growth_performance = new Intent(CreatePen.this, BroodersGrowthPerformance.class);
-                        startActivity(intent_brooder_growth_performance);
-                        break;
-                    case "Feeding Records":
-                        Intent intent_brooder_feeding_records = new Intent(CreatePen.this, BrooderFeedingRecords.class);
-                        startActivity(intent_brooder_feeding_records);
-                        break;
-                }
-                return false;
-            }
-
-
-        });*/
 
         Exp_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -225,6 +201,13 @@ public class CreatePen extends AppCompatActivity {
                         Intent intent = new Intent(CreatePen.this, MainActivity.class);
                         startActivity(intent);
                         break;
+                    case "Log Out":
+                        LogOutDialog dialogFragment = new LogOutDialog();
+
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                        dialogFragment.show(ft, "dialog");
+
                 }
                 return false;
             }
@@ -240,13 +223,13 @@ public class CreatePen extends AppCompatActivity {
 
 
 
-        Cursor c = myDb.getAllDataFromFarms();
-        c.moveToFirst();
-
-        if(c.getCount() != 0){
-            Integer farm_ID = c.getInt(0);
-            farm_id = farm_ID.toString();
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id2 = cursor_farm_id.getInt(0);
         }
+
+        farm_id = farm_id2.toString();
         boolean isNetworkAvailable = isNetworkAvailable();
         if(isNetworkAvailable){
             //if internet is available, load data from web database
@@ -466,6 +449,8 @@ public class CreatePen extends AppCompatActivity {
         startActivity(getIntent());
 
     }
+
+
 
 
 }

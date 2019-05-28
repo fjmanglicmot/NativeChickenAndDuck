@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +46,7 @@ public class HatcheryRecords extends AppCompatActivity {
     ArrayList<Hatchery_Records> arrayListBrooderGrowthRecords = new ArrayList<>();
     ArrayList<Breeder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Breeder_Inventory>arrayList_temp = new ArrayList<>();
-    ImageButton create_egg_prod;
+    FloatingActionButton create_egg_prod;
     TextView replacement_pheno_inv_id;
     String breeder_tag;
 
@@ -91,7 +92,23 @@ public class HatcheryRecords extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (dy < 0) {
+                    create_egg_prod.show();
+
+                } else if (dy > 0) {
+                    create_egg_prod.hide();
+                }
+            }
+        });
 
         if(isNetworkAvailable()){
             API_getHatcheryRecords();

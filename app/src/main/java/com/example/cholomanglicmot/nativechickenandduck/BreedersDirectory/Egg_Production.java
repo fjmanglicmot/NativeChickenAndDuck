@@ -25,11 +25,13 @@ public class Egg_Production {
     private String remarks;
     @SerializedName("deleted_at")
     private String deleted_at;
+    @SerializedName("female_inventory")
+    private String female_inventory;
 
     Egg_Production(){
 
     }
-    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, String tag, Integer intact, Float weight,Float average_weight, Integer broken, Integer rejects, String remarks, String deleted_at){
+    Egg_Production(Integer id, Integer egg_breeder_inv_id, String date, String tag, Integer intact, Float weight,Float average_weight, Integer broken, Integer rejects, String remarks, String deleted_at, String female_inventory){
         this.setId(id);
         this.setEgg_breeder_inv_id(egg_breeder_inv_id);
         this.setDate(date);
@@ -41,6 +43,15 @@ public class Egg_Production {
         this.setRejects(rejects);
         this.setRemarks(remarks);
         this.setDeleted_at(deleted_at);
+        this.setFemale_inventory(female_inventory);
+    }
+
+    public String getFemale_inventory() {
+        return female_inventory;
+    }
+
+    public void setFemale_inventory(String female_inventory) {
+        this.female_inventory = female_inventory;
     }
 
     public Float getAverage_weight() {

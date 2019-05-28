@@ -157,6 +157,9 @@ public class CreateBrooderDialog extends DialogFragment {
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
 
                         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        if(batching_week2 == null){
+                            batching_week2 = 0;
+                        }
                         calendar.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
                         formatted = format1.format(calendar.getTime());
                         selectedMonth++;
@@ -194,7 +197,6 @@ public class CreateBrooderDialog extends DialogFragment {
 
 
 
-
         Cursor cursor = myDb.getAllDataFromPenWhere(brooder_pen);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
@@ -202,7 +204,7 @@ public class CreateBrooderDialog extends DialogFragment {
         }
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms();
+        Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
         cursor1.moveToFirst();
 
         if(cursor1.getCount() != 0){
@@ -423,7 +425,7 @@ public class CreateBrooderDialog extends DialogFragment {
         String timestamp;
 
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        Cursor cursor = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             code = cursor.getString(2);
@@ -450,7 +452,7 @@ public class CreateBrooderDialog extends DialogFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+       //         Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -498,7 +500,7 @@ public class CreateBrooderDialog extends DialogFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(context, "Failed to get Farm ID ", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(context, "Failed to get Farm ID ", Toast.LENGTH_SHORT).show();
             }
 
             @Override

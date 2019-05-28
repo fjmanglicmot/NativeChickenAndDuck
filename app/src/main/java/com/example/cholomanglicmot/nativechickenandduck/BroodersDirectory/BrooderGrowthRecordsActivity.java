@@ -7,12 +7,12 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +42,7 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
     ArrayList<Brooder_GrowthRecords> arrayListBrooderGrowthRecords = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Brooder_Inventory>arrayList_temp = new ArrayList<>();
-    ImageButton create_brooder_feeding_records;
+    FloatingActionButton create_brooder_feeding_records;
     Integer brooder_pen_id;
 
     Map<Integer, Integer> inventory_dictionary = new HashMap<Integer, Integer>();
@@ -225,7 +225,23 @@ public class BrooderGrowthRecordsActivity extends AppCompatActivity {
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (dy < 0) {
+                    create_brooder_feeding_records.show();
+
+                } else if (dy > 0) {
+                    create_brooder_feeding_records.hide();
+                }
+            }
+        });
 
 
     }

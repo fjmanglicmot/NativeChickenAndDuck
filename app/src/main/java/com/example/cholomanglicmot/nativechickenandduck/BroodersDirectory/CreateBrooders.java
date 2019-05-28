@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -171,6 +173,12 @@ public class CreateBrooders extends AppCompatActivity {
                         Intent intent = new Intent(CreateBrooders.this, MainActivity.class);
                         startActivity(intent);
                         break;
+                    case "Log Out":
+                        LogOutDialog dialogFragment = new LogOutDialog();
+
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                        dialogFragment.show(ft, "dialog");
                 }
                 return false;
             }

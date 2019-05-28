@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -60,6 +63,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
     Integer brooder_pen_id;
     Integer batching_week2;
     String formatted;
+    Integer farm_id=0;
 
     @Nullable
     @Override
@@ -212,7 +216,25 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
         });
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms();
+        FirebaseAuth mAuth;
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
+
+        Cursor cursor1 = myDb.getAllDataFromFarms(farm_id);
         cursor1.moveToFirst();
 
         if(cursor1.getCount() != 0){
@@ -542,7 +564,7 @@ public class ViewBreederHatcheryRecordDialog extends DialogFragment {
         String timestamp;
 
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             code = cursor.getString(2);

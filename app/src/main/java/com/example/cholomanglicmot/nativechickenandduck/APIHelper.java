@@ -9,7 +9,7 @@ import com.loopj.android.http.RequestParams;
 
 public class APIHelper {
 
-    private final static String BASE_URL = "http://192.168.254.105:8080/api/";
+    private final static String BASE_URL = "http://192.168.254.104:8080/api/";
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public APIHelper(){
@@ -168,6 +168,9 @@ public class APIHelper {
         client.get(getAbsoluteUrl(url), responseHandler);
     }
     public static void getEggQuality(String url, AsyncHttpResponseHandler responseHandler){
+        client.get(getAbsoluteUrl(url), responseHandler);
+    }
+    public static void getDashBreederInventory(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
     }
 

@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.ReplacementsDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -14,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.Brooder_FeedingRecords;
+import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
 
 import java.util.ArrayList;
@@ -47,14 +49,23 @@ public class RecyclerAdapter_Replacement_Feeding extends RecyclerView.Adapter<Re
 
         final Replacement_FeedingRecords brooder_feedingRecords = arrayListBrooderFeedingRecords.get(position);
         final Bundle args = new Bundle();
+        DatabaseHelper myDb;
+        myDb = new DatabaseHelper(context);
+        String brooder_tag=null;
         args.putInt("Replacement Inventory ID", brooder_feedingRecords.getReplacement_feeding_inventory_id());
-        args.putString("Replacement Tag", brooder_feedingRecords.getReplacement_feeding_tag());
+        //args.putString("Replacement Tag", brooder_feedingRecords.getReplacement_feeding_tag());
         args.putInt("Replacement Feeding ID", brooder_feedingRecords.getId());
         args.putInt("Feeding ID", brooder_feedingRecords.getId());
 
+        Cursor cursor = myDb.getAllDataFromReplacementInventoryWhereID(brooder_feedingRecords.getReplacement_feeding_inventory_id());
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            brooder_tag = cursor.getString(3);
+        }
+
 
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getReplacement_feeding_date_collected());
-        holder.brooder_feeding_tag.setText("Replacement Family "+brooder_feedingRecords.getReplacement_feeding_inventory_id());
+        holder.brooder_feeding_tag.setText(brooder_tag);
         holder.brooder_feeding_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

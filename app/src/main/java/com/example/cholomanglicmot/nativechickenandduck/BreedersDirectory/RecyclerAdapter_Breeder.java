@@ -57,7 +57,6 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
         Integer brooder_id = arrayList.get(position).getBrooder_inv_brooder_id();
 
         Integer fam_id = myDb.getFamIDFromBreeders(brooder_id);
-
         String famLineGen = myDb.getFamLineGen(fam_id);
         String delims = " ";
         String[] tokens = famLineGen.split(delims);

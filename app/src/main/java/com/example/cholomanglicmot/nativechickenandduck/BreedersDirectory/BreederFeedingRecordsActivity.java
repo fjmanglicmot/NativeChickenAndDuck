@@ -7,12 +7,12 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +42,7 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
     ArrayList<Breeder_FeedingRecords> arrayListBrooderFeedingRecords = new ArrayList<>();//create constructor first for brooder feeding records
     ArrayList<Breeder_Inventory>arrayListBrooderInventory = new ArrayList<>();
     ArrayList<Breeder_Inventory>arrayList_temp = new ArrayList<>();
-    ImageButton create_brooder_feeding_records;
+    FloatingActionButton create_brooder_feeding_records;
     Integer brooder_pen,breeder_inv_id;
     String breeder_tag;
 
@@ -101,7 +101,23 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (dy < 0) {
+                    create_brooder_feeding_records.show();
+
+                } else if (dy > 0) {
+                    create_brooder_feeding_records.hide();
+                }
+            }
+        });
         ///////////////////////////////DATABASE
         if(isNetworkAvailable()){
             API_getBreederFeeding();

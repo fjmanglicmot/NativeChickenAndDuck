@@ -17,6 +17,7 @@ public class DataProvider {
         List<String> Create_Breeders = new ArrayList<String>();
         List<String> Create_Brooders = new ArrayList<String>();
         List<String> Create_Replacements = new ArrayList<String>();
+        List<String> Log_Out = new ArrayList<>();
         //no child
 
   /*      List<String> Breeder = new ArrayList<String>();
@@ -53,8 +54,9 @@ public class DataProvider {
         ProjectDetails.put("Brooders", Create_Brooders);
 
 
-        ProjectDetails.put("Reports", Reports);
+      /*  ProjectDetails.put("Reports", Reports);*/
         ProjectDetails.put("Farm Settings", Farm_Settings);
+        ProjectDetails.put("Log Out", Log_Out);
 
 
 

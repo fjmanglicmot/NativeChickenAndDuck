@@ -31,7 +31,7 @@ import java.util.Calendar;
 import cz.msebera.android.httpclient.Header;
 
 public class CreateEggProductionDialog extends DialogFragment{
-    private EditText date_collected, intact,weight,broken, rejected,remarks;
+    private EditText date_collected, intact,weight,broken, rejected,remarks, female_inventory;
     private Button mActionOk;
     DatabaseHelper myDb;
     Calendar calendar;
@@ -55,6 +55,7 @@ public class CreateEggProductionDialog extends DialogFragment{
         broken= view.findViewById(R.id.broken);
         rejected= view.findViewById(R.id.rejected);
         remarks= view.findViewById(R.id.remarks);
+        female_inventory= view.findViewById(R.id.female_inventory);
 
 
         date_collected.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +96,7 @@ public class CreateEggProductionDialog extends DialogFragment{
 
                     if(cursor.getCount() != 0){
                         do{
-                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9));
+                            Breeder_Inventory breeder_inventory = new  Breeder_Inventory(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getString(8),cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12));
                             arrayListBrooderInventory.add(breeder_inventory);
 
                         }while(cursor.moveToNext());
@@ -109,7 +110,7 @@ public class CreateEggProductionDialog extends DialogFragment{
                     }
 
 ////////////////////////
-                    boolean isInserted = myDb.insertEggProductionRecords(arrayList_temp.get(0).getId(), date_collected.getText().toString(), Integer.parseInt(intact.getText().toString()), Float.parseFloat(weight.getText().toString()), Integer.parseInt(broken.getText().toString()), Integer.parseInt(rejected.getText().toString()), remarks.getText().toString(), null);
+                    boolean isInserted = myDb.insertEggProductionRecords(arrayList_temp.get(0).getId(), date_collected.getText().toString(), Integer.parseInt(intact.getText().toString()), Float.parseFloat(weight.getText().toString()), Integer.parseInt(broken.getText().toString()), Integer.parseInt(rejected.getText().toString()), remarks.getText().toString(), null, female_inventory.getText().toString());
 
                     boolean isNetworkAvailable = isNetworkAvailable();
                     if(isNetworkAvailable){
@@ -124,6 +125,7 @@ public class CreateEggProductionDialog extends DialogFragment{
                         requestParams.add("total_rejects", rejected.getText().toString());
                         requestParams.add("remarks", remarks.getText().toString());
                         requestParams.add("deleted_at", null);
+                        requestParams.add("female_inventory", female_inventory.getText().toString());
 
 
 

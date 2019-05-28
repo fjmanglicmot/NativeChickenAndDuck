@@ -49,13 +49,23 @@ public class ViewBrooderFeedingDialog extends DialogFragment {
 
 
         Cursor cursor = myDb.getAllDataFromBrooderFeedingRecordsWhereFeedingID(brooder_feeding_id);
+        String brooder_inv_string=null;
+
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
+
             Integer feeding_id = cursor.getInt(4);
             Integer offered_int = cursor.getInt(0);
             Integer refused_int = cursor.getInt(1);
+            Integer brooder_inv = cursor.getInt(5);
+            Cursor cursor1 = myDb.getAllDataFromBrooderInventoryWhereID(brooder_inv);
+            cursor1.moveToFirst();
+            if(cursor1.getCount() != 0){
+                brooder_inv_string = cursor1.getString(3);
+            }
 
-            textView.setText("Brooder Family "+brooder_ID.toString());
+
+            textView.setText(brooder_inv_string);
 
             offered.setText(offered_int.toString());
             refused.setText(refused_int.toString());

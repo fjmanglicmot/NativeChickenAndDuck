@@ -229,9 +229,12 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     }else {
                         do {
 
-                            Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
-                            arrayListBrooderInventory.add(brooder_inventory);
+                            String deleted_at = cursor_brooder_inventory.getString(9);
+                            if(deleted_at == null){
+                                Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_brooder_inventory.getInt(0),cursor_brooder_inventory.getInt(1), cursor_brooder_inventory.getInt(2), cursor_brooder_inventory.getString(3),cursor_brooder_inventory.getString(4), cursor_brooder_inventory.getInt(5), cursor_brooder_inventory.getInt(6),cursor_brooder_inventory.getInt(7), cursor_brooder_inventory.getString(8), cursor_brooder_inventory.getString(9));
+                                arrayListBrooderInventory.add(brooder_inventory);
 
+                            }
 
                         } while (cursor_brooder_inventory.moveToNext());
                     }
@@ -268,10 +271,10 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                     ArrayList<Integer> arrayListBrooder = new ArrayList<>();
                     for(int i = 0;i<arrayList_temp.size();i++){
-                        if(arrayListBrooder.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
+                        if(arrayListBrooder.contains(arrayList_temp.get(i).getId())){
                             //do nothing
                         }else{
-                            arrayListBrooder.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
+                            arrayListBrooder.add(arrayList_temp.get(i).getId());
                         }
                     }
 
@@ -290,23 +293,23 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                     ArrayList<Integer> arrayList = new ArrayList<>();
 
                     for (int i=0;i<arrayList_temp.size();i++){
-                        if(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()) != null && !arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
+                        if(inventory_dictionary.get(arrayList_temp.get(i).getId()) != null && !arrayList.contains(arrayList_temp.get(i).getId())){
                             ArrayList<Float> arrayList2 = new ArrayList<>();
                             arrayList2.add((float)arrayList_temp.get(i).getBrooder_total_quantity());
                             arrayList2.add((float)arrayList_temp.get(i).getBrooder_male_quantity());
                             arrayList2.add((float)arrayList_temp.get(i).getBrooder_female_quantity());
-                            inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),arrayList2);
-                            arrayList.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
-                        }else if(arrayList.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
+                            inventory_dictionary.put(arrayList_temp.get(i).getId(),arrayList2);
+                            arrayList.add(arrayList_temp.get(i).getId());
+                        }else if(arrayList.contains(arrayList_temp.get(i).getId())){
 
 
                             ArrayList<Float> arrayList3 = new ArrayList<>();
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(0)+arrayList_temp.get(i).getBrooder_total_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(1)+arrayList_temp.get(i).getBrooder_male_quantity());
-                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(2)+arrayList_temp.get(i).getBrooder_female_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(0)+arrayList_temp.get(i).getBrooder_total_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(1)+arrayList_temp.get(i).getBrooder_male_quantity());
+                            arrayList3.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(2)+arrayList_temp.get(i).getBrooder_female_quantity());
 
 
-                            inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),arrayList3);
+                            inventory_dictionary.put(arrayList_temp.get(i).getId(),arrayList3);
                         }
                     }
                     //buffer.append("inventory_dictionary  "+inventory_dictionary.toString()+"\n\n");
@@ -347,16 +350,16 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
 
                     ArrayList<Integer> arrayList1 = new ArrayList<>();
                     for (int i=0;i<arrayList_temp.size();i++){
-                        if(arrayList1.contains(arrayList_temp.get(i).getBrooder_inv_brooder_id())){
+                        if(arrayList1.contains(arrayList_temp.get(i).getId())){
                             //skip
                         }else{
 
                             ArrayList<Float> multiplier = new ArrayList<>();
-                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(0)*multiplierTotalWeight);
-                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(1)*multiplierMaleWeight);
-                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getBrooder_inv_brooder_id()).get(2)*multiplierFemaleWeight);
-                            inventory_dictionary.put(arrayList_temp.get(i).getBrooder_inv_brooder_id(),multiplier);
-                            arrayList1.add(arrayList_temp.get(i).getBrooder_inv_brooder_id());
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(0)*multiplierTotalWeight);
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(1)*multiplierMaleWeight);
+                            multiplier.add(inventory_dictionary.get(arrayList_temp.get(i).getId()).get(2)*multiplierFemaleWeight);
+                            inventory_dictionary.put(arrayList_temp.get(i).getId(),multiplier);
+                            arrayList1.add(arrayList_temp.get(i).getId());
                         }
                     }
 
@@ -372,7 +375,7 @@ public class CreateBrooderGrowthRecordDialog extends DialogFragment {
                         Float female = entry.getValue().get(2);
 
                         for(int i=0;i<arrayList_temp.size();i++){
-                            if (arrayList_temp.get(i).getBrooder_inv_brooder_id().equals(key)){
+                            if (arrayList_temp.get(i).getId().equals(key)){
                                 if(male == 0){
                                     total1 = total;
                                 }else{

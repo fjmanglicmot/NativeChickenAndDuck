@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -37,6 +40,7 @@ public class EditFarmDialog extends DialogFragment {
     String input_farm_name;
     String input_farm_address;
     Integer input_batching_week,id;
+    Integer farm_id=0;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,11 +52,29 @@ public class EditFarmDialog extends DialogFragment {
         context = getActivity().getApplicationContext();
         myDb = new DatabaseHelper(getContext());
 
-      
+        ///GET BATCHING WEEK FROM DATABASE
+        FirebaseAuth mAuth;
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
+
 
         String fname=null,faddress=null;
         Integer bweek=0;
-        Cursor cursor = myDb.getAllDataFromFarms();  //ang laman lang ng table na to ay isa
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);  //ang laman lang ng table na to ay isa
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             id = cursor.getInt(0);

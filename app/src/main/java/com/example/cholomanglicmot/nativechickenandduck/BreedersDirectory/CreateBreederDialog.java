@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.PensDirectory.Pen;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -45,7 +48,7 @@ import cz.msebera.android.httpclient.Header;
 public class CreateBreederDialog extends DialogFragment {
 
     private static final String TAG = "CreateFamilyDialog";
-    private EditText estimated_date_of_hatch,outside_date_transferred,outside_male_quantity, outside_female_quantity, quantity,female_quantity, date_transferred;
+    private EditText estimated_date_of_hatch,outside_date_transferred,outside_male_quantity, outside_female_quantity, quantity,female_quantity, date_transferred,male_wingband2,female_wingband2, male_wingband, female_wingband;
 
     private Button mActionOk;
     DatabaseHelper myDb;
@@ -68,6 +71,8 @@ public class CreateBreederDialog extends DialogFragment {
     String formatted=null;
     String brooder_tag2=null;
     Context context;
+    String farmid=null;
+    Integer farm_id=0;
     ArrayList<Breeders> arrayListBreeder = new ArrayList<>();
     @Nullable
     @Override
@@ -105,6 +110,11 @@ public class CreateBreederDialog extends DialogFragment {
         female_quantity = view.findViewById(R.id.female_quantity);
         date_transferred = view.findViewById(R.id.date_transferred);
 
+        //breeder_code = view.findViewById(R.id.breeder_code);
+        male_wingband = view.findViewById(R.id.male_wingband);
+        female_wingband = view.findViewById(R.id.female_wingband);
+        male_wingband2 = view.findViewById(R.id.male_wingband2);
+        female_wingband2 = view.findViewById(R.id.female_wingband2);
 
 
         loadSpinnerDataForPen();
@@ -263,7 +273,7 @@ public class CreateBreederDialog extends DialogFragment {
 
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms();
+        Cursor cursor1 = myDb.getAllDataFromFarms(farm_id);
         cursor1.moveToFirst();
 
         if(cursor1.getCount() != 0){
@@ -285,6 +295,9 @@ public class CreateBreederDialog extends DialogFragment {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        if(batching_week2 == null){
+                            batching_week2 = 0;
+                        }
                         calendar.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
                         formatted = format1.format(calendar.getTime());
                         selectedMonth++;
@@ -345,9 +358,29 @@ public class CreateBreederDialog extends DialogFragment {
             }
         });
 
+        FirebaseAuth mAuth;
 
+        mAuth = FirebaseAuth.getInstance();
 
+        FirebaseUser user = mAuth.getCurrentUser();
 
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
+
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            farmid = cursor.getString(2);
+        }
 
 
         boolean isNetworkAvailable = isNetworkAvailable();
@@ -413,7 +446,7 @@ public class CreateBreederDialog extends DialogFragment {
                             pen_id = cursor5.getInt(0);
                         }
                         brooder_tag2 = generateBrooderTag();
-                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(outside_male_quantity.getText().toString()), Integer.parseInt(outside_female_quantity.getText().toString()),Integer.parseInt(outside_female_quantity.getText().toString())+Integer.parseInt(outside_male_quantity.getText().toString()),outside_date_transferred.getText().toString(),null);
+                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(outside_male_quantity.getText().toString()), Integer.parseInt(outside_female_quantity.getText().toString()),Integer.parseInt(outside_female_quantity.getText().toString())+Integer.parseInt(outside_male_quantity.getText().toString()),outside_date_transferred.getText().toString(),null, farmid.toString()+outside_generation_spinner.getSelectedItem().toString()+outside_line_spinner.getSelectedItem().toString()+outside_family_spinner.getSelectedItem().toString()+outside_date_transferred.getText().toString(),"["+ male_wingband2.getText().toString()+"]", "["+female_wingband2.getText().toString()+"]");
                         Integer id_0=null;
                         Cursor cursor2 = myDb.getDataFromBreederInvWhereTag(brooder_tag2);
                         cursor2.moveToFirst();
@@ -433,7 +466,9 @@ public class CreateBreederDialog extends DialogFragment {
                             requestParams.add("total", breeder_total.toString());
                             requestParams.add("last_update", outside_date_transferred.getText().toString());
                             requestParams.add("deleted_at", null);
-
+                            requestParams.add("breeder_code", farmid.toString()+outside_generation_spinner.getSelectedItem().toString()+outside_line_spinner.getSelectedItem().toString()+outside_family_spinner.getSelectedItem().toString()+outside_date_transferred.getText().toString());
+                            requestParams.add("male_wingband", "["+male_wingband2.getText().toString() + "]");
+                            requestParams.add("female_wingband", "["+female_wingband2.getText().toString()+ "]");
 
 
                             API_addBreederInventory(requestParams);
@@ -688,7 +723,8 @@ public class CreateBreederDialog extends DialogFragment {
                             pen_id = cursor5.getInt(0);
                         }
                         brooder_tag2 = generateBrooderTag();
-                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(quantity.getText().toString()), Integer.parseInt(female_quantity.getText().toString()),Integer.parseInt(female_quantity.getText().toString())+Integer.parseInt(quantity.getText().toString()),date_transferred.getText().toString(),null);
+
+                        boolean isInventoryInserted = myDb.insertDataBreederInventory(id, pen_id, brooder_tag2, formatted,Integer.parseInt(quantity.getText().toString()), Integer.parseInt(female_quantity.getText().toString()),Integer.parseInt(female_quantity.getText().toString())+Integer.parseInt(quantity.getText().toString()),date_transferred.getText().toString(),null, farmid.toString()+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+date_transferred.getText().toString(), "["+male_wingband.getText().toString()+"]", "["+female_wingband.getText().toString()+ "]");
 
 
                         Integer id_0=null;
@@ -710,6 +746,10 @@ public class CreateBreederDialog extends DialogFragment {
                             requestParams.add("total", breeder_total.toString());
                             requestParams.add("last_update", date_transferred.getText().toString());
                             requestParams.add("deleted_at", null);
+                            requestParams.add("breeder_code", farmid.toString()+generation_spinner.getSelectedItem().toString()+line_spinner.getSelectedItem().toString()+family_spinner.getSelectedItem().toString()+date_transferred.getText().toString());
+                            requestParams.add("male_wingband", "["+male_wingband.getText().toString()+ "]");
+                            requestParams.add("female_wingband", "["+female_wingband.getText().toString()+ "]");
+
 
 
 
@@ -782,7 +822,7 @@ public class CreateBreederDialog extends DialogFragment {
         String timestamp;
 
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             code = cursor.getString(2);
@@ -934,7 +974,7 @@ public class CreateBreederDialog extends DialogFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Failed to add to web", Toast.LENGTH_SHORT).show();
             }
 
             @Override

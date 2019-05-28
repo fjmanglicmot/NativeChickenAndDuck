@@ -211,6 +211,9 @@ public class CreateReplacementDialog extends DialogFragment {
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
 
                         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        if(batching_week2 == null){
+                            batching_week2 = 0;
+                        }
                         calendar2.set(selectedYear,selectedMonth,selectedDay+7*batching_week2);
                         formatted = format1.format(calendar2.getTime());
                         selectedMonth++;
@@ -249,7 +252,7 @@ public class CreateReplacementDialog extends DialogFragment {
 
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms();
+        Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
         cursor1.moveToFirst();
 
         if(cursor1.getCount() != 0){
@@ -457,7 +460,7 @@ public class CreateReplacementDialog extends DialogFragment {
                             }
 
 
-                            boolean isInventoryInserted = myDb.insertDataReplacementInventory(id,replacement_pen_id2, replacement_tag, formatted, 0,0,Integer.parseInt(replacement_total.getText().toString()),replacement_date_added.getText().toString(),null);
+                            boolean isInventoryInserted = myDb.insertDataReplacementInventory(id,replacement_pen_id, replacement_tag, formatted, 0,0,Integer.parseInt(replacement_total.getText().toString()),replacement_date_added.getText().toString(),null);
 
 
                             if(isNetworkAvailable) {
@@ -795,7 +798,7 @@ public class CreateReplacementDialog extends DialogFragment {
         String timestamp;
 
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        Cursor cursor = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             code = cursor.getString(2);

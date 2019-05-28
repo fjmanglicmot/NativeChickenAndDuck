@@ -3,6 +3,7 @@ package com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 /**
@@ -28,6 +31,7 @@ public class AccountFragment extends Fragment {
     String farm_code1, farm_name1, farm_address1;
     Integer batching_week1;
     Context context;
+    Integer farm_id=0;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -47,8 +51,26 @@ public class AccountFragment extends Fragment {
         farm_address = view.findViewById(R.id.farm_address);
         batching_week = view.findViewById(R.id.batching_week);
 
+        ///GET BATCHING WEEK FROM DATABASE
+        FirebaseAuth mAuth;
 
-        Cursor cursor = myDb.getAllDataFromFarms();
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
+
+        Cursor cursor = myDb.getAllDataFromFarms(farm_id);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){
             farm_name1 = cursor.getString(1);

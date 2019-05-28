@@ -31,7 +31,7 @@ public class ViewReplacementGrowthDialog extends DialogFragment {
         final Integer replacement_id = getArguments().getInt("Replacement Inventory ID");
         final String replacement_tag = getArguments().getString("Replacement Tag");
         final Integer replacement_growth_id = getArguments().getInt("Replacement Growth ID");
-
+        String brooder_inv_string=null;
 
         myDb = new DatabaseHelper(getContext());
 
@@ -48,7 +48,7 @@ public class ViewReplacementGrowthDialog extends DialogFragment {
         total_weight = view.findViewById(R.id.total_weight);//galing sa brooder tabl
         save = view.findViewById(R.id.save);
 
-        textView.setText("Replacement Family "+replacement_id.toString());
+        //textView.setText("Replacement Family "+replacement_id.toString());
 
 
         Cursor cursor = myDb.getAllDataFromReplacementGrowthRecordsWhereGrowthID(replacement_id);
@@ -61,6 +61,16 @@ public class ViewReplacementGrowthDialog extends DialogFragment {
             Integer total_count_string = cursor.getInt(8);
             Float total_weight_string = cursor.getFloat(9);
             Integer collection_day_string = cursor.getInt(2);
+
+
+            Integer brooder_inv = cursor.getInt(1);
+
+            Cursor cursor1 = myDb.getAllDataFromReplacementInventoryWhereID(brooder_inv);
+            cursor1.moveToFirst();
+            if(cursor1.getCount() != 0){
+                brooder_inv_string = cursor1.getString(3);
+            }
+            textView.setText(brooder_inv_string);
 
 
             date_collected.setText(cursor.getString(3));

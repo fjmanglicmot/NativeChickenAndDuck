@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +28,7 @@ import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -59,7 +60,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    private ImageButton create_generation;
+    //private FabSpeedDial create_generation;
     private Button show_data_button;
     String farm_id;
 
@@ -113,11 +114,10 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
         Project_list =  new ArrayList<String>(Project_category.keySet());
         adapter = new ProjectAdapter(this, Project_category, Project_list);
         Exp_list.setAdapter(adapter);
-        create_generation = findViewById(R.id.open_dialog);
+
         FabSpeedDial fabSpeedDial = findViewById(R.id.fabSpeedDial);
         sample = findViewById(R.id.sample);
-        //show_data_button = findViewById(R.id.show_data_button);
-        //delete_pen_table = findViewById(R.id.delete_pen_table);
+
         myDb = new DatabaseHelper(this);
 
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView1);
@@ -162,59 +162,24 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
             }
         });
 
-     /*   Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //  Toast.makeText(getBaseContext(),Project_category.get(Project_list.get(groupPosition)).get(childPosition) + " from category" + Project_list.get(groupPosition) + "is selected", Toast.LENGTH_SHORT).show();
-
-                String string = Project_category.get(Project_list.get(groupPosition)).get(childPosition);
-                switch (string){
-                    case "Generation":
-                        Intent intent_breeder_generation = new Intent(CreateGenerationsAndLines.this, BreederGeneration.class);
-                        startActivity(intent_breeder_generation);
-                        break;
-                    case "Family Records":
-                        Intent intent_breeder_family_records = new Intent(CreateGenerationsAndLines.this, BreederFamilyRecords.class);
-                        startActivity(intent_breeder_family_records);
-                        break;
-                    case "Daily Records":
-                        Intent intent_breeder_daily_records = new Intent(CreateGenerationsAndLines.this, BreederDailyRecords.class);
-                        startActivity(intent_breeder_daily_records);
-                        break;
-                    case "Hatchery Records":
-                        Intent intent_breeder_hatchery_records = new Intent(CreateGenerationsAndLines.this, BreederHatcheryRecords.class);
-                        startActivity(intent_breeder_hatchery_records);
-                        break;
-                    case "Egg Quality Records":
-                        Intent intent_breeder_egg_quality_records = new Intent(CreateGenerationsAndLines.this, BreederEggQualityRecords.class);
-                        startActivity(intent_breeder_egg_quality_records);
-                        break;
-                    case "Add Replacement Stocks":
-                        Intent intent_replacement_individual_record_add = new Intent(CreateGenerationsAndLines.this, ReplacementIndividualRecordAdd.class);
-                        startActivity(intent_replacement_individual_record_add);
-                        break;
-                    case "Phenotypic and Morphometric":
-                        Intent intent_replacement_phenotypic_morphometric = new Intent(CreateGenerationsAndLines.this, ReplacementPhenotypicMorphometric.class);
-                        startActivity(intent_replacement_phenotypic_morphometric);
-                        break;
-                    case "Feeding Record":
-                        Intent intent_replacement_feeding_record = new Intent(CreateGenerationsAndLines.this, ReplacementFeedingRecord.class);
-                        startActivity(intent_replacement_feeding_record);
-                        break;
-                    case "Growth Performance":
-                        Intent intent_brooder_growth_performance = new Intent(CreateGenerationsAndLines.this, BroodersGrowthPerformance.class);
-                        startActivity(intent_brooder_growth_performance);
-                        break;
-                    case "Feeding Records":
-                        Intent intent_brooder_feeding_records = new Intent(CreateGenerationsAndLines.this, BrooderFeedingRecords.class);
-                        startActivity(intent_brooder_feeding_records);
-                        break;
-                }
-                return false;
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
             }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-        });*/
+                if (dy < 0) {
+                    fabSpeedDial.show();
+
+                } else if (dy > 0) {
+                    fabSpeedDial.hide();
+                }
+            }
+        });
+
 
         Exp_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -259,6 +224,13 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                         Intent intent = new Intent(CreateGenerationsAndLines.this, MainActivity.class);
                         startActivity(intent);
                         break;
+                    case "Log Out":
+                        LogOutDialog dialogFragment = new LogOutDialog();
+
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                        dialogFragment.show(ft, "dialog");
+
                 }
                 return false;
             }

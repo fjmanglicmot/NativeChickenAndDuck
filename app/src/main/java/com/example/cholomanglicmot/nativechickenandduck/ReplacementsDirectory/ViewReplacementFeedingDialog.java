@@ -32,6 +32,7 @@ public class ViewReplacementFeedingDialog extends DialogFragment {
         final Integer brooder_ID = getArguments().getInt("Replacement Inventory ID");
         final String brooder_tag = getArguments().getString("Replacement Tag");
         final Integer brooder_feeding_id = getArguments().getInt("Replacement Feeding ID");
+        String brooder_inv_string=null;
 
 
         myDb = new DatabaseHelper(getContext());
@@ -45,7 +46,7 @@ public class ViewReplacementFeedingDialog extends DialogFragment {
         date = view.findViewById(R.id.date);//galing sa brooder table
 
         save = view.findViewById(R.id.save);
-        textView.setText("Replacement Family "+brooder_ID.toString());
+        //textView.setText("Replacement Family "+brooder_ID.toString());
 
 /*REPLACEMENT_FEEDING_AMOUNT_OFFERED,REPLACEMENT_FEEDING_AMOUNT_REFUSED,REPLACEMENT_FEEDING_REMARKS,REPLACEMENT_FEEDING_DATE_COLLECTED*/
 
@@ -54,7 +55,13 @@ public class ViewReplacementFeedingDialog extends DialogFragment {
         if(cursor.getCount() != 0){
             Integer offered_int = cursor.getInt(0);
             Integer refused_int = cursor.getInt(1);
-
+            Integer brooder_inv = cursor.getInt(5);
+            Cursor cursor1 = myDb.getAllDataFromReplacementInventoryWhereID(brooder_inv);
+            cursor1.moveToFirst();
+            if(cursor1.getCount() != 0){
+                brooder_inv_string = cursor1.getString(3);
+            }
+            textView.setText(brooder_inv_string);
             offered.setText(offered_int.toString());
             refused.setText(refused_int.toString());
             remarks.setText(cursor.getString(2));

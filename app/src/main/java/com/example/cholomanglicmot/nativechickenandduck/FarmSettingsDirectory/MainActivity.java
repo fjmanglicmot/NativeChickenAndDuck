@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FamilyDirectory.CreateFamilies;
@@ -236,8 +237,6 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent_replacements = new Intent(MainActivity.this, CreateReplacements.class);
                         startActivity(intent_replacements);
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
 
                     case "Reports":
                         break;
@@ -246,6 +245,12 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                         startActivity(getIntent());
                         break;
+                    case "Log Out":
+                        LogOutDialog dialogFragment = new LogOutDialog();
+
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                        dialogFragment.show(ft, "dialog");
                 }
                 return false;
             }

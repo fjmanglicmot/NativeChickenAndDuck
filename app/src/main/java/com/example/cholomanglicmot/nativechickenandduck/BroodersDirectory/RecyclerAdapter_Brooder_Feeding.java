@@ -2,6 +2,7 @@ package com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -50,18 +51,25 @@ public class RecyclerAdapter_Brooder_Feeding extends RecyclerView.Adapter<Recycl
         DatabaseHelper myDb;
         myDb = new DatabaseHelper(context);
         String tag=null;
+        String brooder_tag=null;
 
 
 
 
 
         args.putInt("Brooder Inventory ID", brooder_feedingRecords.getBrooder_feeding_inventory_id());
-        args.putString("Brooder Tag", brooder_feedingRecords.getBrooder_tag());
+        //args.putString("Brooder Tag", brooder_feedingRecords.getBrooder_tag());
         args.putInt("Brooder Feeding ID", brooder_feedingRecords.getId());
         args.putInt("Feeding ID", brooder_feedingRecords.getId());
 
+        Cursor cursor = myDb.getAllDataFromBrooderInventoryWhereID(brooder_feedingRecords.getBrooder_feeding_inventory_id());
+        cursor.moveToFirst();
+        if(cursor.getCount() != 0){
+            brooder_tag = cursor.getString(3);
+        }
+
         holder.brooder_feeding_date.setText(brooder_feedingRecords.getBrooder_feeding_date_collected());
-        holder.brooder_feeding_tag.setText("Brooder Family "+brooder_feedingRecords.getBrooder_feeding_inventory_id().toString());
+        holder.brooder_feeding_tag.setText(brooder_tag);
 
         holder.view_feeding.setOnClickListener(new View.OnClickListener() {
             @Override

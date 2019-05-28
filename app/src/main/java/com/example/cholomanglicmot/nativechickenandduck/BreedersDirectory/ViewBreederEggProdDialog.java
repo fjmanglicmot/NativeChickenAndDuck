@@ -17,7 +17,7 @@ import com.example.cholomanglicmot.nativechickenandduck.R;
 public class ViewBreederEggProdDialog extends DialogFragment {
 
     DatabaseHelper myDb;
-    TextView textView, date_collected, intact, total_weight, average_weight, broken, rejected, remarks;
+    TextView textView, date_collected, intact, total_weight, average_weight, broken, rejected, female_inventory, remarks;
 
     Button save;
 
@@ -48,6 +48,7 @@ public class ViewBreederEggProdDialog extends DialogFragment {
         broken = view.findViewById(R.id.broken);//galing sa brooder table
         rejected = view.findViewById(R.id.rejected);//galing sa brooder t
         save = view.findViewById(R.id.save);
+        female_inventory = view.findViewById(R.id.female_inventory);
 
        /*
     public static final String TABLE_EGG_PRODUCTION = "egg_production";
@@ -79,6 +80,9 @@ public class ViewBreederEggProdDialog extends DialogFragment {
             broken.setText(broken_.toString());
             rejected.setText(rejects_.toString());
             remarks.setText(cursor.getString(7));
+            try{
+                female_inventory.setText(cursor.getInt(9));
+            }catch (Exception e){}
 
 
         }

@@ -8,7 +8,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +20,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.FarmSettingsDirectory.MainActivity;
@@ -48,14 +50,13 @@ import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.github.yavski.fabspeeddial.FabSpeedDial;
 
 
 public class CreateFamilies extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    private ImageButton create_family;
+    private FloatingActionButton create_family;
     String farm_id;
     ArrayList<Family> arrayList_family;
     ArrayList<Family1> arrayList_family1;
@@ -114,7 +115,7 @@ public class CreateFamilies extends AppCompatActivity {
         adapter = new ProjectAdapter(this, Project_category, Project_list);
         Exp_list.setAdapter(adapter);
         create_family = findViewById(R.id.open_dialog);
-        FabSpeedDial fabSpeedDial = findViewById(R.id.fabSpeedDial);
+
 
         //delete_pen_table = findViewById(R.id.delete_pen_table);
         myDb = new DatabaseHelper(this);
@@ -137,59 +138,24 @@ public class CreateFamilies extends AppCompatActivity {
 
 
 
-    /*    Exp_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //  Toast.makeText(getBaseContext(),Project_category.get(Project_list.get(groupPosition)).get(childPosition) + " from category" + Project_list.get(groupPosition) + "is selected", Toast.LENGTH_SHORT).show();
-
-                String string = Project_category.get(Project_list.get(groupPosition)).get(childPosition);
-                switch (string){
-                    case "Generation":
-                        Intent intent_breeder_generation = new Intent(CreateFamilies.this, BreederGeneration.class);
-                        startActivity(intent_breeder_generation);
-                        break;
-                    case "Family Records":
-                        Intent intent_breeder_family_records = new Intent(CreateFamilies.this, BreederFamilyRecords.class);
-                        startActivity(intent_breeder_family_records);
-                        break;
-                    case "Daily Records":
-                        Intent intent_breeder_daily_records = new Intent(CreateFamilies.this, BreederDailyRecords.class);
-                        startActivity(intent_breeder_daily_records);
-                        break;
-                    case "Hatchery Records":
-                        Intent intent_breeder_hatchery_records = new Intent(CreateFamilies.this, BreederHatcheryRecords.class);
-                        startActivity(intent_breeder_hatchery_records);
-                        break;
-                    case "Egg Quality Records":
-                        Intent intent_breeder_egg_quality_records = new Intent(CreateFamilies.this, BreederEggQualityRecords.class);
-                        startActivity(intent_breeder_egg_quality_records);
-                        break;
-                    case "Add Replacement Stocks":
-                        Intent intent_replacement_individual_record_add = new Intent(CreateFamilies.this, ReplacementIndividualRecordAdd.class);
-                        startActivity(intent_replacement_individual_record_add);
-                        break;
-                    case "Phenotypic and Morphometric":
-                        Intent intent_replacement_phenotypic_morphometric = new Intent(CreateFamilies.this, ReplacementPhenotypicMorphometric.class);
-                        startActivity(intent_replacement_phenotypic_morphometric);
-                        break;
-                    case "Feeding Record":
-                        Intent intent_replacement_feeding_record = new Intent(CreateFamilies.this, ReplacementFeedingRecord.class);
-                        startActivity(intent_replacement_feeding_record);
-                        break;
-                    case "Growth Performance":
-                        Intent intent_brooder_growth_performance = new Intent(CreateFamilies.this, BroodersGrowthPerformance.class);
-                        startActivity(intent_brooder_growth_performance);
-                        break;
-                    case "Feeding Records":
-                        Intent intent_brooder_feeding_records = new Intent(CreateFamilies.this, BrooderFeedingRecords.class);
-                        startActivity(intent_brooder_feeding_records);
-                        break;
-                }
-                return false;
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
             }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-        });*/
+                if (dy < 0) {
+                    create_family.show();
+
+                } else if (dy > 0) {
+                    create_family.hide();
+                }
+            }
+        });
+
 
         Exp_list.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -226,15 +192,21 @@ public class CreateFamilies extends AppCompatActivity {
                         Intent intent_replacements = new Intent(CreateFamilies.this, CreateReplacements.class);
                         startActivity(intent_replacements);
                         break;
-                    case "Mortality, Culling, and Sales":
-                        break;
 
                     case "Reports":
                         break;
 
                     case "Farm Settings":
-
+                        Intent intent_settings = new Intent(CreateFamilies.this, MainActivity.class);
+                        startActivity(intent_settings);
                         break;
+                    case "Log Out":
+                        LogOutDialog dialogFragment = new LogOutDialog();
+
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                        dialogFragment.show(ft, "dialog");
+
                 }
                 return false;
             }

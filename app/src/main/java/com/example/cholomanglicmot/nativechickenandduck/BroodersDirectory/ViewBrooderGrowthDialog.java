@@ -35,6 +35,7 @@ public class ViewBrooderGrowthDialog extends DialogFragment {
 
         myDb = new DatabaseHelper(getContext());
 
+        String brooder_inv_string=null;
 
 
         textView = view.findViewById(R.id.textView);
@@ -48,7 +49,13 @@ public class ViewBrooderGrowthDialog extends DialogFragment {
         total_weight = view.findViewById(R.id.total_weight);//galing sa brooder tabl
         save = view.findViewById(R.id.save);
 
-        textView.setText("Brooder Family "+ brooder_ID);
+
+        Cursor cursor1 = myDb.getAllDataFromBrooderInventoryWhereID(brooder_ID);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            brooder_inv_string = cursor1.getString(3);
+        }
+        textView.setText(brooder_inv_string);
 
 
         Cursor cursor = myDb.getAllDataFromBrooderGrowthRecordsWhereGrowthID(brooder_growth_id);
