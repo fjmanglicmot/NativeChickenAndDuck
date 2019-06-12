@@ -61,6 +61,8 @@ public class CreateBreeders extends AppCompatActivity {
     private Button show_data_button;
     private Button delete_pen_table;
     Integer farm_id;
+    Integer fam_id=0;
+    String farm_code=null;
 
     LinkedHashMap<String, List<String>> Project_category;
     List<String> Project_list;
@@ -293,6 +295,12 @@ public class CreateBreeders extends AppCompatActivity {
 
 
         }
+
+        Cursor cursor_code = myDb.getAllDataFromFarms(farm_id);
+        cursor_code.moveToFirst();
+        if(cursor_code.getCount() != 0){
+            farm_code = cursor_code.getString(2);
+        }
         Cursor cursorBreederInv = myDb.getAllDataFromBreederInventory();
         cursorBreederInv.moveToFirst();
         if(cursorBreederInv.getCount()==0){
@@ -300,7 +308,21 @@ public class CreateBreeders extends AppCompatActivity {
 
         }else{
             //for getting breeders
-            Cursor cursor = myDb.getAllDataFromBreeders();
+            do{
+                String breeder_tag = cursorBreederInv.getString(3);
+                String is_deleted = cursorBreederInv.getString(12);
+
+                if(breeder_tag.contains(farm_code) && is_deleted == null){
+                    Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getInt(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9),cursorBreederInv.getString(10),cursorBreederInv.getString(11),cursorBreederInv.getString(12));
+
+                    arrayListBreederInventory2.add(breeder_inventory);
+                }
+            }while (cursorBreederInv.moveToNext());
+
+
+
+            ////////////START
+       /*     Cursor cursor = myDb.getAllDataFromBreeders();
             cursor.moveToFirst();
 
             if(cursor.getCount() == 0){
@@ -318,8 +340,9 @@ public class CreateBreeders extends AppCompatActivity {
                     for(int i=0;i<arrayListBreeders.size();i++){
 
                         //getFamLineGen
+                        //boolean isExists = "iPhone".indexOf("i");
                         if(arrayListBreeders.get(i).getId() == cursorBreederInv.getInt(1) && arrayListBreeders.get(i).getDeleted_at() == null){
-                            Integer fam_id=0;
+                        //kunin yung breeder inventory tag tapos para madd sa arraylist, dapat it contains yung given na farm code.
                             Integer brooder_id = arrayListBreeders.get(i).getId();
                             Cursor cursor_fam_id = myDb.getAllDataFromBreedersWhereID(brooder_id);
                             cursor_fam_id.moveToFirst();
@@ -336,15 +359,12 @@ public class CreateBreeders extends AppCompatActivity {
                             //String deleted_at = cursorBreederInv.getString(9);
 
 
-
-
-                            /*
-                                                                                     BREEDER_INV_COL_0 = "ID";          BREEDER_INV_BREEDER_ID";     "BREEDER_INV_PEN_NUMBER";       "BREEDER_INV_BREEDER_TAG";              "BREEDER_INV_BATCHING_DATE";    = "BREEDER_INV_NUMBER_MALE";     BREEDER_INV_NUMBER_FEMALE";    BREEDER_INV_TOTAL";    "BREEDER_INV_LAST_UPDATE";              "BREEDER_INV_DELETED_AT";*/                        }
+                        }
                     }
 
                 }while(cursorBreederInv.moveToNext());
-            }
-
+            }*/
+            ///////// END
 
         }
 
@@ -449,7 +469,7 @@ public class CreateBreeders extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Failed to fetch Breeder Inventory from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override

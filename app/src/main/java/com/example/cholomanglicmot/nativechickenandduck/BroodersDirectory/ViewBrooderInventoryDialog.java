@@ -54,10 +54,15 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
 
         String famLineGen = myDb.getFamLineGen(fam_id);
         String delims = " ";
-        String[] tokens = famLineGen.split(delims);
-        String fam = tokens[0];
-        String line = tokens[1];
-        String gen = tokens[2];
+        try{
+            String[] tokens = famLineGen.split(delims);
+            String fam = tokens[0];
+            String line = tokens[1];
+            String gen = tokens[2];
+            family_number.setText(fam);
+            line_number.setText(line);
+            generation_number.setText(gen);
+        }catch (Exception e){}
 
 
         textView = view.findViewById(R.id.textView);
@@ -77,9 +82,7 @@ public class ViewBrooderInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
-        family_number.setText(fam);
-        line_number.setText(line);
-        generation_number.setText(gen);
+
         Cursor cursor = myDb.getDataFromBrooderInventoryWherePenAndID(brooder_tag, brooder_pen);
         cursor.moveToFirst();
         if(cursor.getCount() != 0){

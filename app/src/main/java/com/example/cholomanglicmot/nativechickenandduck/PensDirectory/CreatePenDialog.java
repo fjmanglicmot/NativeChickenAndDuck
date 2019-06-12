@@ -2,8 +2,10 @@ package com.example.cholomanglicmot.nativechickenandduck.PensDirectory;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -107,7 +111,26 @@ public class CreatePenDialog extends DialogFragment {
 
 
                 if(!mInput_pen_number.getText().toString().isEmpty() && !mInput_pen_capacity.getText().toString().isEmpty() && radioGroup.getCheckedRadioButtonId() != -1 ){
-                    Integer farm_id = 7;
+                    FirebaseAuth mAuth;
+
+                    mAuth = FirebaseAuth.getInstance();
+
+                    FirebaseUser user = mAuth.getCurrentUser();
+
+                    String name = user.getDisplayName();
+
+                    String email = user.getEmail();
+
+                    Uri photo = user.getPhotoUrl();
+                    ////sample farm_id pero dapat kukunin mo to sa database
+                    Integer farm_id =0;
+                    Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+                    cursor_farm_id.moveToFirst();
+                    if(cursor_farm_id.getCount() != 0){
+                        farm_id = cursor_farm_id.getInt(0);
+                    }
+
+
                     Integer is_active = 1;
                     Integer zero = 0;
                     boolean isInserted = myDb.insertDataPen(farm_id,pen_number, selected_pen_type,Integer.parseInt(mInput_pen_capacity.getText().toString()),0, is_active);

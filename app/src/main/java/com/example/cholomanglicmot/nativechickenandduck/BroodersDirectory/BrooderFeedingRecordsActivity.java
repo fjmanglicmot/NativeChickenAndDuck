@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
 import com.example.cholomanglicmot.nativechickenandduck.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -47,7 +50,9 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
     FloatingActionButton create_brooder_feeding_records;
     Integer pen_id , brooder_pen_id;
     String brooder_pen;
-
+    Integer farm_id;
+    Integer fam_id=0;
+    String farm_code=null;
     Map<Integer, Integer> inventory_dictionary = new HashMap<Integer, Integer>();
     ArrayList<Integer> list = new ArrayList<>();
 
@@ -103,6 +108,28 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
 
         ///////////////////////////////DATABASE
 
+        FirebaseAuth mAuth;
+
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        String name = user.getDisplayName();
+
+        String email = user.getEmail();
+
+        Uri photo = user.getPhotoUrl();
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        if(cursor_farm_id.getCount() != 0){
+            farm_id = cursor_farm_id.getInt(0);
+        }
+        Cursor cursor_code = myDb.getAllDataFromFarms(farm_id);
+        cursor_code.moveToFirst();
+        if(cursor_code.getCount() != 0){
+            farm_code = cursor_code.getString(2);
+        }
 
         Cursor cursor = myDb.getAllDataFromPenWhere(brooder_pen);
         cursor.moveToFirst();
@@ -131,9 +158,12 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
 
         }else {
             do {
+                String breeder_tag = cursor_inventory.getString(3);
 
-                Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_inventory.getInt(0),cursor_inventory.getInt(1), cursor_inventory.getInt(2), cursor_inventory.getString(3),cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6),cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
-                arrayListBrooderInventory.add(brooder_inventory);
+                if(breeder_tag.contains(farm_code)) {
+                    Brooder_Inventory brooder_inventory = new Brooder_Inventory(cursor_inventory.getInt(0), cursor_inventory.getInt(1), cursor_inventory.getInt(2), cursor_inventory.getString(3), cursor_inventory.getString(4), cursor_inventory.getInt(5), cursor_inventory.getInt(6), cursor_inventory.getInt(7), cursor_inventory.getString(8), cursor_inventory.getString(9));
+                    arrayListBrooderInventory.add(brooder_inventory);
+                }
             } while (cursor_inventory.moveToNext());
         }
 
@@ -337,7 +367,7 @@ public class BrooderFeedingRecordsActivity extends AppCompatActivity {
 
 
                         boolean isInserted = myDb.insertDataBrooderFeedingRecordsWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getBrooder_feeding_inventory_id(), arrayList_brooderInventory.get(i).getBrooder_feeding_date_collected(), arrayList_brooderInventory.get(i).getBrooder_feeding_offered(),arrayList_brooderInventory.get(i).getBrooder_feeding_refused(),arrayList_brooderInventory.get(i).getBrooder_feeding_remarks(),arrayList_brooderInventory.get(i).getBrooder_feeding_deleted_at());
-
+                        //Toast.makeText(getApplicationContext(), "SUCCESS to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
                     }
 
                 }

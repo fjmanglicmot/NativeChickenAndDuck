@@ -38,7 +38,7 @@ public class BrooderInventoryActivity extends AppCompatActivity {
     ArrayList<Brooder_Inventory> arrayList_temp = new ArrayList<>();
     ArrayList<Brooder_Inventory> arrayList_brooderInventory = new ArrayList<>();
 
-    Integer brooder_pen_id;
+    Integer brooder_pen_id=null;
 
 
     RecyclerView recyclerView;
@@ -48,6 +48,9 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
     Map<Integer, ArrayList<Brooder_Inventory>> brooder_id_dictionary = new HashMap<Integer, ArrayList<Brooder_Inventory>>();
     ArrayList<Brooder_Inventory> arrayList_brooder_inv_dict_list = new ArrayList<>();
+    Integer farm_id;
+    Integer fam_id=0;
+    String farm_code=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +83,6 @@ public class BrooderInventoryActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        Cursor cursor1 = myDb.getAllDataFromPenWhere(brooder_pen);
-        cursor1.moveToFirst();
-        if(cursor1.getCount() != 0){
-            brooder_pen_id = cursor1.getInt(0);
-        }
-
 
 
         boolean isNetworkAvailable = isNetworkAvailable();
@@ -100,7 +97,6 @@ public class BrooderInventoryActivity extends AppCompatActivity {
 
         }
 
-
             Cursor cursor_brooder_inventory = myDb.getAllDataFromBrooderInventory(); //para sa pagstore ng data sa arraylist
             cursor_brooder_inventory.moveToFirst();
             if(cursor_brooder_inventory.getCount() == 0){
@@ -114,11 +110,37 @@ public class BrooderInventoryActivity extends AppCompatActivity {
                     arrayListBrooderInventory.add(brooder_inventory);
                 } while (cursor_brooder_inventory.moveToNext());
             }
+            cursor_brooder_inventory.close();
+
+/*    do{
+                String breeder_tag = cursorBreederInv.getString(3);
+
+                if(breeder_tag.contains(farm_code)){
+                    Breeder_Inventory breeder_inventory = new Breeder_Inventory(cursorBreederInv.getInt(0), cursorBreederInv.getInt(1), cursorBreederInv.getInt(2), cursorBreederInv.getString(3), cursorBreederInv.getString(4), cursorBreederInv.getInt(5), cursorBreederInv.getInt(6), cursorBreederInv.getInt(7),cursorBreederInv.getString(8), cursorBreederInv.getString(9),cursorBreederInv.getString(10),cursorBreederInv.getString(11),cursorBreederInv.getString(12));
+
+                    arrayListBreederInventory2.add(breeder_inventory);
+                }
+            }while (cursorBreederInv.moveToNext());*/
+         /*   Toast.makeText(this, brooder_pen_id.toString(), Toast.LENGTH_SHORT).show();*/
+  /*      Cursor cursor1 = myDb.getAllDataFromPenWhere(brooder_pen);
+        cursor1.moveToFirst();
+        if(cursor1.getCount() != 0){
+            brooder_pen_id = cursor1.getInt(0);
+        }*/
+        //Toast.makeText(this, brooder_pen_id.toString(), Toast.LENGTH_SHORT).show();
 
 
-
-            for (int i=0;i<arrayListBrooderInventory.size();i++){
-                if(arrayListBrooderInventory.get(i).getBrooder_inv_pen() == brooder_pen_id && arrayListBrooderInventory.get(i).getBrooder_inv_deleted_at() == null){
+        for (int i=0;i<arrayListBrooderInventory.size();i++){
+            Cursor cursor1 = myDb.getAllDataFromPenWhere(brooder_pen);
+            cursor1.moveToFirst();
+            if(cursor1.getCount() != 0){
+                brooder_pen_id = cursor1.getInt(0);
+            }
+            Toast.makeText(this, brooder_pen_id.toString(), Toast.LENGTH_SHORT).show();
+            cursor1.close();
+               // String breeder_tag = arrayListBrooderInventory.get(i).getBrooder_inv_brooder_tag();
+                Integer brooder_pen_id_2 = brooder_pen_id;
+                if(arrayListBrooderInventory.get(i).getBrooder_inv_pen().equals(brooder_pen_id) && arrayListBrooderInventory.get(i).getBrooder_inv_deleted_at() == null){
 
                     arrayList_temp.add(arrayListBrooderInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
 

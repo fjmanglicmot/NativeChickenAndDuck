@@ -80,6 +80,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
     Map<String, ArrayList<String>> line_dictionary = new HashMap<String, ArrayList<String>>();
     ArrayList<String> list = new ArrayList<String>();
     Context context;
+    String generation_number = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,7 +253,6 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
 
 
-
         if(isNetworkAvailable()){
             //if internet is available, load data from web database
 
@@ -282,16 +282,21 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
                 cursor.moveToFirst();
                 do {
+                            Integer farm_id_checker = cursor.getInt(0);
+                            //Integer farm_id_from_db = Integer.parseInt(farm_id);
+                           // if(farm_id_checker == farm_id_from_db){
+                                Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
 
-                            Generation generation = new Generation(cursor.getString(2), cursor.getInt(4), cursor.getInt(0), cursor.getInt(1), cursor.getInt(3), cursor.getString(5));
+                                arrayList.add(generation);
+                          // }
 
-                            arrayList.add(generation);
 
 
 
 
 
                 } while (cursor.moveToNext());
+                cursor.close();
 
                 line_cursor.moveToFirst();
                 if (line_cursor.getCount() == 0) {
@@ -299,7 +304,7 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
                      Toast.makeText(this,"No lines", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    String generation_number = null;
+
                     do {
                         Cursor cursor1 = myDb.getDataFromGenerationWhereID(line_cursor.getInt(3));
                         cursor1.moveToFirst();
@@ -327,7 +332,6 @@ public class CreateGenerationsAndLines extends AppCompatActivity {
 
 
         }
-
 
 
     }

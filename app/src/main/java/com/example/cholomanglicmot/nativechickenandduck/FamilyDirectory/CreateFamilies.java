@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.cholomanglicmot.nativechickenandduck.APIHelper;
 import com.example.cholomanglicmot.nativechickenandduck.BreedersDirectory.CreateBreeders;
 import com.example.cholomanglicmot.nativechickenandduck.BroodersDirectory.CreateBrooders;
+import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.DashBoardActivity;
 import com.example.cholomanglicmot.nativechickenandduck.DashboardDirectory.LogOutDialog;
 import com.example.cholomanglicmot.nativechickenandduck.DataProvider;
 import com.example.cholomanglicmot.nativechickenandduck.DatabaseHelper;
@@ -77,7 +78,12 @@ public class CreateFamilies extends AppCompatActivity {
     Map<String, ArrayList<String>> line_dictionary = new HashMap<String, ArrayList<String>>();
     ArrayList<String> list = new ArrayList<String>();
     StringBuffer buffer = new StringBuffer();
-
+    String line_number = null;
+    String generation_number = null;
+    Integer generation_id;
+    boolean addGeneration=false;
+    String validation_farm_id_string=null;
+    Integer farm_id_INT;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,7 +170,7 @@ public class CreateFamilies extends AppCompatActivity {
 
                 switch(string2){
                     case "Dashboard":
-                        Intent intent_main = new Intent(CreateFamilies.this, MainActivity.class);
+                        Intent intent_main = new Intent(CreateFamilies.this, DashBoardActivity.class);
                         startActivity(intent_main);
                         break;
 
@@ -233,6 +239,11 @@ public class CreateFamilies extends AppCompatActivity {
 
 
         }
+
+        Cursor cursor_farm_id = myDb.getFarmIDFromUsers(email);
+        cursor_farm_id.moveToFirst();
+        farm_id_INT = cursor_farm_id.getInt(0);
+
             Cursor cursor = myDb.getAllDataFromFamily();
             cursor.moveToFirst();
 
@@ -245,31 +256,47 @@ public class CreateFamilies extends AppCompatActivity {
 
 //BASTA MAY MALI PARIN DITO, YUNG SA LINE AT GENERATION
                 do {
-                    String line_number = null;
-                    String generation_number = new String();
-                    Cursor cursor1 = myDb.getDataFromLineWhereID(cursor.getInt(3));
+
+
+                    Integer validation_farm_id=0;
+                    Integer line_id = cursor.getInt(3);
+                    Cursor cursor1 = myDb.getDataFromLineWhereID(line_id);
+
 
                     cursor1.moveToFirst();
 
                     if(cursor1.getCount() != 0){
 
-                        line_number = cursor1.getString(1);
-                        Integer generation_id = cursor1.getInt(3);
+                        do{
+                            line_number = cursor1.getString(1);
+                            generation_id = cursor1.getInt(3);
 
-                        Cursor cursor2 = myDb.getDataFromGenerationWhereID(generation_id);
-                        cursor2.moveToFirst();
+                            Cursor cursor2 = myDb.getDataFromGenerationWhereID(generation_id);
+                            cursor2.moveToFirst();
+//ANG GAWIN MO NA LANG DITO, GAMITIN MO YUNG FARM_ID
+                            if(cursor2.getCount() != 0){
+                                validation_farm_id = cursor2.getInt(1);
+                                //validation_farm_id_string = validation_farm_id.toString();
+                                generation_number = cursor2.getString(2);
+                                //addGeneration = true;
+                            }
 
-                        if(cursor2.getCount() != 0){
-                            generation_number = cursor2.getString(2);
-                        }
+                        }while(cursor1.moveToNext());
+
+
 
                     }
 
                     Integer is_active = cursor.getInt(2);
-                    if(is_active == 1){
-                        Family family = new Family(cursor.getString(1), line_number, generation_number);
+                    String family_number = cursor.getString(1);
+                    //String validation_farm_id_string = validation_farm_id.toString();
+
+                    if(is_active == 1 && line_number != null && generation_number != null/*&& validation_farm_id ==farm_id_INT*/ /*&& validation_farm_id_string.equals(farm_id)*/){
+                        Family family = new Family(family_number, line_number, generation_number);
                         arrayList.add(family);
+
                     }
+                    //addGeneration = false;
 
                 }while (cursor.moveToNext());
 
@@ -372,7 +399,7 @@ public class CreateFamilies extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
-                Toast.makeText(getApplicationContext(), "Failed to fetch Pens from web database ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Failed to fetch families from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override

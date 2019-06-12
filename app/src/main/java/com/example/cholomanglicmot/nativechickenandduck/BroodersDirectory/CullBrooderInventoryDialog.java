@@ -122,6 +122,7 @@ public class CullBrooderInventoryDialog extends DialogFragment {
                     Toast.makeText(getContext(), "Brooder "+brooder_tag+" deleted.", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent_line = new Intent(getActivity(), BrooderInventoryActivity.class);
+                intent_line.putExtra("Brooder Pen",pen_number);
                 startActivity(intent_line);
 
             }

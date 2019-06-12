@@ -252,14 +252,6 @@ public class CreateReplacementDialog extends DialogFragment {
 
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
-        cursor1.moveToFirst();
-
-        if(cursor1.getCount() != 0){
-
-            batching_week2 = cursor1.getInt(4);
-
-        }
 
         Cursor cursor = myDb.getAllDataFromPenWhere(replacement_pen);
         cursor.moveToFirst();
@@ -849,6 +841,14 @@ public class CreateReplacementDialog extends DialogFragment {
                 farm_id = rawJsonResponse;
 
                 farm_id = farm_id.replaceAll("\\[", "").replaceAll("\\]","");
+                Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
+                cursor1.moveToFirst();
+
+                if(cursor1.getCount() != 0){
+
+                    batching_week2 = cursor1.getInt(4);
+
+                }
 
 
 

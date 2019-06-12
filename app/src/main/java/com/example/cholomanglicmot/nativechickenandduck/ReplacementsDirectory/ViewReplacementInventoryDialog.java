@@ -51,10 +51,16 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
         Integer fam_id = myDb.getFamIDFromReplacements(brooder_id);
         String famLineGen = myDb.getFamLineGen(fam_id);
         String delims = " ";
-        String[] tokens = famLineGen.split(delims);
-        String fam = tokens[0];
-        String line = tokens[1];
-        String gen = tokens[2];
+        try{
+            String[] tokens = famLineGen.split(delims);
+            String fam = tokens[0];
+            String line = tokens[1];
+            String gen = tokens[2];
+            family_number.setText(fam);
+            line_number.setText(line);
+            generation_number.setText(gen);
+        }catch (Exception e){}
+
 
 
 
@@ -75,9 +81,7 @@ public class ViewReplacementInventoryDialog extends DialogFragment {
         save = view.findViewById(R.id.save);
 
         textView.setText(brooder_tag);
-        family_number.setText(fam);
-        line_number.setText(line);
-        generation_number.setText(gen);
+
 
         //hanapin mo yung pen id ng brooder tag
 

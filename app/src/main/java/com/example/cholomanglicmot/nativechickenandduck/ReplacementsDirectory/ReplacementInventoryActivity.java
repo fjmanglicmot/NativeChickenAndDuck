@@ -120,7 +120,7 @@ public class ReplacementInventoryActivity extends AppCompatActivity {
 
 
         for (int i=0;i<arrayListReplacementInventory.size();i++){
-            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen() == replacement_pen_id && arrayListReplacementInventory.get(i).getReplacement_inv_deleted_at() == null) {
+            if(arrayListReplacementInventory.get(i).getReplacement_inv_pen().equals(replacement_pen_id)  && arrayListReplacementInventory.get(i).getReplacement_inv_deleted_at() == null) {
 
                 arrayList_temp.add(arrayListReplacementInventory.get(i)); //arrayList_temp ay naglalaman ng lahat ng brooder_inv sa loob ng pen na napili
 
@@ -257,22 +257,25 @@ public class ReplacementInventoryActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
 
                 Gson gson = new Gson();
-                JSONReplacementInventory jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONReplacementInventory.class);
-                arrayList_brooderInventory = jsonBrooderInventory.getData();
+                try{
+                    JSONReplacementInventory jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONReplacementInventory.class);
+                    arrayList_brooderInventory = jsonBrooderInventory.getData();
 
-                for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
-                    //check if generation to be inserted is already in the database
-                    Cursor cursor = myDb.getAllDataFromReplacementInventoryWhereID(arrayList_brooderInventory.get(i).getId());
-                    cursor.moveToFirst();
+                    for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
+                        //check if generation to be inserted is already in the database
+                        Cursor cursor = myDb.getAllDataFromReplacementInventoryWhereID(arrayList_brooderInventory.get(i).getId());
+                        cursor.moveToFirst();
 
-                    if (cursor.getCount() == 0) {
+                        if (cursor.getCount() == 0) {
 
 
-                        boolean isInserted = myDb.insertDataReplacementInventoryWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getReplacement_inv_replacement_id(), arrayList_brooderInventory.get(i).getReplacement_inv_pen(), arrayList_brooderInventory.get(i).getReplacement_inv_replacement_tag(),arrayList_brooderInventory.get(i).getReplacement_inv_batching_date(),arrayList_brooderInventory.get(i).getReplacement_male_quantity(),arrayList_brooderInventory.get(i).getReplacement_female_quantity(),arrayList_brooderInventory.get(i).getReplacement_total_quantity(), arrayList_brooderInventory.get(i).getReplacement_inv_last_update(), arrayList_brooderInventory.get(i).getReplacement_inv_deleted_at());
+                            boolean isInserted = myDb.insertDataReplacementInventoryWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getReplacement_inv_replacement_id(), arrayList_brooderInventory.get(i).getReplacement_inv_pen(), arrayList_brooderInventory.get(i).getReplacement_inv_replacement_tag(),arrayList_brooderInventory.get(i).getReplacement_inv_batching_date(),arrayList_brooderInventory.get(i).getReplacement_male_quantity(),arrayList_brooderInventory.get(i).getReplacement_female_quantity(),arrayList_brooderInventory.get(i).getReplacement_total_quantity(), arrayList_brooderInventory.get(i).getReplacement_inv_last_update(), arrayList_brooderInventory.get(i).getReplacement_inv_deleted_at());
+
+                        }
 
                     }
 
-                }
+                }catch (Exception e){}
 
             }
 

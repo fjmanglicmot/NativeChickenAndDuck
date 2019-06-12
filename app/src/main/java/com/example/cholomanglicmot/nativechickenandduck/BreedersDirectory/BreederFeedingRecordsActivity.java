@@ -134,6 +134,7 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
         Cursor cur = myDb.getDataFromBreederInvWhereTag(breeder_tag);
         cur.moveToFirst();
         Integer bred = cur.getInt(0);
+        cur.close();
         ArrayList<Breeder_FeedingRecords> arrayList_breeder_feeding = new ArrayList<>();
         Cursor cursor_feeding = myDb.getAllDataFromBreederFeedingRecords();
         cursor_feeding.moveToFirst();
@@ -148,7 +149,7 @@ public class BreederFeedingRecordsActivity extends AppCompatActivity {
                 }
             }while(cursor_feeding.moveToNext());
         }
-
+        cursor_feeding.close();
         recycler_adapter = new RecyclerAdapter_Breeder_Feeding(arrayList_breeder_feeding);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();

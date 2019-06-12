@@ -65,7 +65,7 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
         if(cursor.getCount() != 0){
             replacement_pen_number = cursor.getString(2);
         }
-
+        cursor.close();
         text_pen = findViewById(R.id.pheno_title);
         text_pen.setText("Phenotypic & Morphometric Data | Pen "+replacement_pen_number);
 
@@ -105,7 +105,7 @@ public class BreederPhenoMorphoRecordsActivity extends AppCompatActivity {
             } while (cursor_inventory.moveToNext());
         }
 
-
+        cursor_inventory.close();
         recycler_adapter = new RecyclerAdapter_Breeder_PhenoMorpho(arrayListReplacementInventory);
         recyclerView.setAdapter(recycler_adapter);
         recycler_adapter.notifyDataSetChanged();

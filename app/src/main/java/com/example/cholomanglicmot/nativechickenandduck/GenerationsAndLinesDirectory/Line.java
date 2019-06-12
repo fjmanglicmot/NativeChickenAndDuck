@@ -1,7 +1,7 @@
 package com.example.cholomanglicmot.nativechickenandduck.GenerationsAndLinesDirectory;
 
 import com.google.gson.annotations.SerializedName;
-
+/**/
 public class Line {
     @SerializedName("id")
     private Integer id;

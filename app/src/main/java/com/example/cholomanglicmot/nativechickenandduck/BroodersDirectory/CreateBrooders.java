@@ -81,6 +81,7 @@ public class CreateBrooders extends AppCompatActivity {
     ArrayList<Brooders_Pen> arrayList = new ArrayList<>();
     ArrayList<Brooder_Inventory> arrayList2 = new ArrayList<>();
     ArrayList<Brooders> arrayList3 = new ArrayList<>();
+    ArrayList<Brooder_Inventory> arrayList_brooderInventory = new ArrayList<>();
 
     //RecyclerAdapter_Brooder_Pen recyclerAdapter_brooder_pen;
 
@@ -201,6 +202,7 @@ public class CreateBrooders extends AppCompatActivity {
 
             //HARDCODED KASI WALA KA PANG DATABASE NA NANDUN EMAIL MO
             API_updateBrooder();
+            API_getBrooderInventory();
             API_updateBrooderInventory();
             API_getBrooder();
 
@@ -281,6 +283,43 @@ public class CreateBrooders extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
 
                 Toast.makeText(getApplicationContext(), "Failed to fetch Brooders from web database ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected Object parseResponse(String rawJsonData, boolean isFailure) throws Throwable{
+                return null;
+            }
+        });
+    }
+    private void API_getBrooderInventory(){
+        APIHelper.getBrooderInventory("getBrooderInventory/", new BaseJsonHttpResponseHandler<Object>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Object response){
+
+                Gson gson = new Gson();
+                JSONBrooderInventory jsonBrooderInventory = gson.fromJson(rawJsonResponse, JSONBrooderInventory.class);
+                arrayList_brooderInventory = jsonBrooderInventory.getData();
+
+                for (int i = 0; i < arrayList_brooderInventory.size(); i++) {
+                    //check if generation to be inserted is already in the database
+                    Cursor cursor = myDb.getAllDataFromBrooderInventoryWhereID(arrayList_brooderInventory.get(i).getId());
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() == 0) {
+
+
+                        boolean isInserted = myDb.insertDataBrooderInventoryWithID(arrayList_brooderInventory.get(i).getId(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_id(), arrayList_brooderInventory.get(i).getBrooder_inv_pen(), arrayList_brooderInventory.get(i).getBrooder_inv_brooder_tag(),arrayList_brooderInventory.get(i).getBrooder_inv_batching_date(),arrayList_brooderInventory.get(i).getBrooder_male_quantity(),arrayList_brooderInventory.get(i).getBrooder_female_quantity(),arrayList_brooderInventory.get(i).getBrooder_total_quantity(), arrayList_brooderInventory.get(i).getBrooder_inv_last_update(), arrayList_brooderInventory.get(i).getBrooder_inv_deleted_at());
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonResponse, Object response){
+
+                Toast.makeText(getApplicationContext(), "Failed to fetch Brooders Inventory from web database ", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -448,7 +487,7 @@ public class CreateBrooders extends AppCompatActivity {
                     } while (cursor_brooder_inventory.moveToNext());
                 }
 
-
+                cursor_brooder_inventory.close();
 
 
                 //arrayListBrooderInventoryLocal contains all data from local database

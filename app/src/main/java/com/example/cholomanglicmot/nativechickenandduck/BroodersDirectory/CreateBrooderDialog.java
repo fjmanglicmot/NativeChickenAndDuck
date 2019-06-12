@@ -204,14 +204,7 @@ public class CreateBrooderDialog extends DialogFragment {
         }
 
         ///GET BATCHING WEEK FROM DATABASE
-        Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
-        cursor1.moveToFirst();
 
-        if(cursor1.getCount() != 0){
-
-            batching_week2 = cursor1.getInt(4);
-
-        }
 
         mActionOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -491,6 +484,14 @@ public class CreateBrooderDialog extends DialogFragment {
                 farm_id = farm_id.replaceAll("\\[", "").replaceAll("\\]","");
 
                 API_getFarmBatchingWeek(farm_id);
+                Cursor cursor1 = myDb.getAllDataFromFarms(Integer.parseInt(farm_id));
+                cursor1.moveToFirst();
+
+                if(cursor1.getCount() != 0){
+
+                    batching_week2 = cursor1.getInt(4);
+
+                }
 
                 //  Toast.makeText(CreateGenerationsAndLines.this, "Generation and Lines loaded from database", Toast.LENGTH_SHORT).show();
 

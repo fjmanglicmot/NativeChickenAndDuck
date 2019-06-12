@@ -1,7 +1,6 @@
 package com.example.cholomanglicmot.nativechickenandduck;
 
 
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -9,15 +8,19 @@ import com.loopj.android.http.RequestParams;
 
 public class APIHelper {
 
-    private final static String BASE_URL = "http://192.168.254.104:8080/api/";
+    //private final static String BASE_URL = "http://192.168.254.102:8080/api/";
+    private final static String BASE_URL = "http://nativepoultry.pab-is.cf/api/";
+
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public APIHelper(){
 
     }
+
     //Brooder
     public static void addBrooderFamily(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
         client.post(getAbsoluteUrl(url), request, responseHandler);
+
     }
     public static void addBrooderInventory(String url, RequestParams request, AsyncHttpResponseHandler responseHandler){
         client.post(getAbsoluteUrl(url), request, responseHandler);
@@ -97,78 +100,101 @@ public class APIHelper {
     }
     public static void getFarmBatchingWeek(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getPen(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getGeneration(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getLine(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getFamily(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getFamilyForDisplay(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getPhenoMorphos(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getPhenoMorphoValues(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getMortalityAndSales(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
 
     //Brooder
     public static void getBrooder(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getBrooderInventory(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getBrooderFeeding(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getBrooderGrowth(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
 
     //Replacement
     public static void getReplacement(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getReplacementInventory(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getReplacementFeeding(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getReplacementGrowth(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
 
     //Breeder
     public static void getBreeder(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getBreederInventory(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getBreederFeeding(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getEggProduction(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getHatcheryRecords(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getEggQuality(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);
+        client.setEnableRedirects(true);
     }
     public static void getDashBreederInventory(String url, AsyncHttpResponseHandler responseHandler){
         client.get(getAbsoluteUrl(url), responseHandler);

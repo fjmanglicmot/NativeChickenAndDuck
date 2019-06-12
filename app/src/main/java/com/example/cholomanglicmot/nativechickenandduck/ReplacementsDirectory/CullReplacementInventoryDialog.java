@@ -121,6 +121,7 @@ public class CullReplacementInventoryDialog extends DialogFragment {
                     Toast.makeText(getContext(), "Replacement "+brooder_tag+" deleted.", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent_line = new Intent(getActivity(), ReplacementInventoryActivity.class);
+                intent_line.putExtra("Replacement Pen",pen_number);
                 startActivity(intent_line);
 
             }

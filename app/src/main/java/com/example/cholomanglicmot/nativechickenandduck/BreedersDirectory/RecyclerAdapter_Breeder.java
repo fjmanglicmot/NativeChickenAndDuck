@@ -59,110 +59,113 @@ public class RecyclerAdapter_Breeder extends RecyclerView.Adapter<RecyclerAdapte
         Integer fam_id = myDb.getFamIDFromBreeders(brooder_id);
         String famLineGen = myDb.getFamLineGen(fam_id);
         String delims = " ";
-        String[] tokens = famLineGen.split(delims);
-        String fam = tokens[0];
-        String line = tokens[1];
-        String gen = tokens[2];
+        try{
+            String[] tokens = famLineGen.split(delims);
+            String fam = tokens[0];
+            String line = tokens[1];
+            String gen = tokens[2];
 
-        holder.breeder_family.setText(fam);
-        holder.breeder_line.setText(line);
-        holder.breeder_generation.setText(gen);
+            holder.breeder_family.setText(fam);
+            holder.breeder_line.setText(line);
+            holder.breeder_generation.setText(gen);
+        }catch (Exception e){}
+            holder.breeder_number.setText(breeders.getBrooder_inv_brooder_tag());
 
-        holder.breeder_number.setText(breeders.getBrooder_inv_brooder_tag());
+            holder.breeder_male_count.setText(breeders.getBrooder_male_quantity().toString());
+            holder.breeder_female_count.setText(breeders.getBrooder_female_quantity().toString());
+            holder.breeder_total_count.setText(breeders.getBrooder_total_quantity().toString());
 
-        holder.breeder_male_count.setText(breeders.getBrooder_male_quantity().toString());
-        holder.breeder_female_count.setText(breeders.getBrooder_female_quantity().toString());
-        holder.breeder_total_count.setText(breeders.getBrooder_total_quantity().toString());
+            holder.breeder_batching_date.setText(breeders.getBrooder_inv_batching_date());
 
-        holder.breeder_batching_date.setText(breeders.getBrooder_inv_batching_date());
+            holder.add_breeders.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //createdialog
+                    FragmentActivity activity = (FragmentActivity)(context);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    AddBreederDialog alertDialog = new AddBreederDialog();
+                    alertDialog.setArguments(args);
+                    alertDialog.show(fm, "AddBreederDialog");
+                    notifyDataSetChanged();
 
-        holder.add_breeders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //createdialog
-                FragmentActivity activity = (FragmentActivity)(context);
-                FragmentManager fm = activity.getSupportFragmentManager();
-                AddBreederDialog alertDialog = new AddBreederDialog();
-                alertDialog.setArguments(args);
-                alertDialog.show(fm, "AddBreederDialog");
-                notifyDataSetChanged();
+                }
+            });
 
-            }
-        });
+            holder.open_feeding_records.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create
+                    Intent intent_replacement_feeding_records = new Intent(context, BreederFeedingRecordsActivity.class);
+                    intent_replacement_feeding_records.putExtra("Breeder Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_feeding_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    intent_replacement_feeding_records.putExtra("Breeder Inventory ID",breeders.getId());
+                    context.startActivity(intent_replacement_feeding_records);
+                }
+            });
+            holder.open_egg_production_records.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, EggProductionRecords.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Inventory ID",breeders.getId());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
+                }
+            });
+            holder.open_hatchery_records.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, HatcheryRecords.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
+                }
+            });
+            holder.open_egg_quality_records.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, EggQualityRecords.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
+                }
+            });
+            holder.open_pheno_morpho_records.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //create
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, BreederPhenoMorphoRecordsActivity.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
+                }
+            });
+            holder.open_mortality_and_sales.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent_replacement_pheno_morpho_records = new Intent(context, MortalityAndSalesRecords.class);
+                    intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
+                    intent_replacement_pheno_morpho_records.putExtra("Breeder ID",breeders.getBrooder_inv_brooder_id());
+                    context.startActivity(intent_replacement_pheno_morpho_records);
+                }
+            });
+            holder.cull_breeder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentActivity activity = (FragmentActivity)(context);
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    CullBreederInventoryDialog alertDialog = new CullBreederInventoryDialog();
+                    alertDialog.setArguments(args);
+                    alertDialog.show(fm, "CullBreederInventoryDialog");
+                    notifyDataSetChanged();
+                }
+            });
+      //  }catch (Exception e){}
 
-        holder.open_feeding_records.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //create
-                Intent intent_replacement_feeding_records = new Intent(context, BreederFeedingRecordsActivity.class);
-                intent_replacement_feeding_records.putExtra("Breeder Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_feeding_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                intent_replacement_feeding_records.putExtra("Breeder Inventory ID",breeders.getId());
-                context.startActivity(intent_replacement_feeding_records);
-            }
-        });
-        holder.open_egg_production_records.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //create
-                Intent intent_replacement_pheno_morpho_records = new Intent(context, EggProductionRecords.class);
-                intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Inventory ID",breeders.getId());
-                context.startActivity(intent_replacement_pheno_morpho_records);
-            }
-        });
-        holder.open_hatchery_records.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //create
-                Intent intent_replacement_pheno_morpho_records = new Intent(context, HatcheryRecords.class);
-                intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                context.startActivity(intent_replacement_pheno_morpho_records);
-            }
-        });
-        holder.open_egg_quality_records.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //create
-                Intent intent_replacement_pheno_morpho_records = new Intent(context, EggQualityRecords.class);
-                intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                context.startActivity(intent_replacement_pheno_morpho_records);
-            }
-        });
-        holder.open_pheno_morpho_records.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //create
-                Intent intent_replacement_pheno_morpho_records = new Intent(context, BreederPhenoMorphoRecordsActivity.class);
-                intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                context.startActivity(intent_replacement_pheno_morpho_records);
-            }
-        });
-        holder.open_mortality_and_sales.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent_replacement_pheno_morpho_records = new Intent(context, MortalityAndSalesRecords.class);
-                intent_replacement_pheno_morpho_records.putExtra("Replacement Pen",breeders.getBrooder_inv_pen());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder Tag",breeders.getBrooder_inv_brooder_tag());
-                intent_replacement_pheno_morpho_records.putExtra("Breeder ID",breeders.getBrooder_inv_brooder_id());
-                context.startActivity(intent_replacement_pheno_morpho_records);
-            }
-        });
-        holder.cull_breeder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentActivity activity = (FragmentActivity)(context);
-                FragmentManager fm = activity.getSupportFragmentManager();
-                CullBreederInventoryDialog alertDialog = new CullBreederInventoryDialog();
-                alertDialog.setArguments(args);
-                alertDialog.show(fm, "CullBreederInventoryDialog");
-                notifyDataSetChanged();
-            }
-        });
 
     }
 

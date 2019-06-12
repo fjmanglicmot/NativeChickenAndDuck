@@ -91,6 +91,7 @@ public class AddBreederDialog extends DialogFragment {
                         current_male_count = cursor.getInt(5);
                         current_female_count = cursor.getInt(6);
                     }
+                    cursor.close();
                     Integer new_male_count = Integer.parseInt(male_quantity.getText().toString())+ current_male_count;
                     Integer new_female_count = Integer.parseInt(female_quantity.getText().toString())+ current_female_count;
                     Integer new_total_count = new_female_count+new_male_count;
